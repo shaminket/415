@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Grupo 415 — Reinvención en Proceso | Mac</title>
+  <meta name="theme-color" content="#0B0C10">
+  <style>
+
+    :root {
+      --bg-base: #0B0C10;
+      --bg-panel: rgba(24, 26, 34, 0.75);
+      --bg-panel-border: rgba(229, 169, 60, 0.25);
+      --c-cempasuchil: #FF7A00;
+      --c-cempasuchil-glow: rgba(255, 122, 0, 0.35);
+      --c-oro: #E5A93C;
+      --c-oro-soft: rgba(229, 169, 60, 0.15);
+      --c-hueso: #F4EDE2;
+      --c-hueso-muted: #A3AAB8;
+      --c-obsidiana: #050608;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-base);
+      color: var(--c-hueso);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient background glow */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 20% 25%, rgba(62, 28, 107, 0.45) 0%, transparent 50%),
+        radial-gradient(circle at 80% 75%, rgba(255, 122, 0, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(229, 169, 60, 0.08) 0%, transparent 60%);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      text-align: center;
+    }
+
+    .badge-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(229, 169, 60, 0.12);
+      border: 1px solid var(--c-oro);
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--c-oro);
+      margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(229, 169, 60, 0.15);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--c-cempasuchil);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--c-cempasuchil);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    .main-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--bg-panel-border);
+      border-radius: 24px;
+      padding: clamp(28px, 5vw, 56px);
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 122, 0, 0.1);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--c-cempasuchil), var(--c-oro), transparent);
+    }
+
+    .brand-title {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      color: var(--c-hueso);
+      text-wrap: balance;
+    }
+
+    .brand-title span.shamin {
+      background: linear-gradient(135deg, #FF7A00 0%, #E5A93C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .service-banner {
+      background: rgba(229, 169, 60, 0.08);
+      border: 1px solid rgba(229, 169, 60, 0.3);
+      border-radius: 16px;
+      padding: 16px 24px;
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--c-oro);
+      font-weight: 700;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .subtext {
+      color: var(--c-hueso-muted);
+      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
+      line-height: 1.6;
+      max-width: 650px;
+    }
+
+    .switcher-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      width: 100%;
+    }
+
+    .switcher-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      color: var(--c-hueso-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+    }
+
+    .switcher-link:hover {
+      color: var(--c-hueso);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--c-oro);
+    }
+
+    .switcher-link.active {
+      background: var(--c-oro-soft);
+      border-color: var(--c-oro);
+      color: var(--c-oro);
+    }
+
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 24px 20px;
+      font-size: 0.75rem;
+      color: var(--c-hueso-muted);
+      letter-spacing: 0.04em;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="ambient-bg"></div>
+
+  <main class="container">
+    <div class="badge-bar">
+      <span class="status-dot"></span>
+      <span>Grupo 415 · Prepa 4 UNAM · Experiencia Mac</span>
+    </div>
+
+    <section class="main-card">
+      
+      
+      <div style="font-size:1.8rem; margin-bottom:-10px;">✨</div>
+      
+      <h1 class="brand-title">
+        “Todo el equipo de <span class="shamin">ShaMinKet</span> esta reinventando la MInweb del 415 para el 415”
+      </h1>
+
+      <div class="service-banner">
+        <span style="font-size:1.4rem;">⚡</span>
+        <span>Encardomy esta implementando nuevos servios para ti</span>
+      </div>
+
+      <p class="subtext">
+        Estamos transformando radicalmente la experiencia escolar de la Escuela Nacional Preparatoria Plantel 4 “Vidal Castañeda y Nájera”. Espéralo muy pronto con tecnología de vanguardia, diseño de alta fidelidad e innovaciones diseñadas a la medida de nuestra comunidad.
+      </p>
+
+      
+
+      <nav class="switcher-bar" aria-label="Selector de Experiencia de Dispositivo">
+        <span style="width:100%; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--c-hueso-muted); margin-bottom:4px;">Versiones Disponibles:</span>
+        <a href="index.html" class="switcher-link ">📲 Celular</a>
+        <a href="mac-index.html" class="switcher-link active">💻 Mac</a>
+        <a href="ipad-index.html" class="switcher-link ">📱 iPad</a>
+        <a href="imac-index.html" class="switcher-link ">🖥️ iMac</a>
+        <a href="duo-index.html" class="switcher-link ">📖 iPhone Duo</a>
+      </nav>
+    </section>
+  </main>
+
+  <footer>
+    <p>Encardomy by ShaMinKet · Escuela Nacional Preparatoria Plantel 4 · Ciclo 2026-2027</p>
+  </footer>
+</body>
+</html>
