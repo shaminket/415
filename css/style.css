@@ -1452,3 +1452,46 @@ body[data-current-interface="desktop"] .encardomy-interface-tablet {
   html:not([data-current-interface]) .encardomy-interface-tablet { display: none !important; }
   html:not([data-current-interface]) .encardomy-interface-desktop { display: block !important; }
 }
+
+/* ==========================================================================
+   DOCUMENTOS LEGALES MÓVIL (ALTA LEGIBILIDAD)
+   ========================================================================== */
+.legal-document-card {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  padding: 20px 18px;
+}
+
+.legal-document-card h3 {
+  color: var(--accent-gold);
+  font-size: 15.5px;
+  font-weight: 700;
+  margin: 18px 0 8px 0;
+}
+
+.legal-document-card p {
+  margin-bottom: 12px;
+  line-height: 1.65;
+}
+
+.legal-document-card ul {
+  margin-bottom: 14px;
+  padding-left: 20px;
+}
+
+.legal-document-card li {
+  margin-bottom: 6px;
+  line-height: 1.55;
+}
+
+.legal-meta-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--surface-glass-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}

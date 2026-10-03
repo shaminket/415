@@ -51,6 +51,26 @@
 
   --mac-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
   --mac-mono-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Mapeo de variables genéricas para compatibilidad perfecta en Mac */
+  --text-primary: var(--mac-text-primary);
+  --text-secondary: var(--mac-text-secondary);
+  --text-tertiary: var(--mac-text-tertiary);
+  --text-muted: var(--mac-text-muted);
+  --accent-gold: var(--mac-accent-gold);
+  --accent-gold-soft: var(--mac-accent-gold-soft);
+  --accent-gold-glow: var(--mac-accent-gold-glow);
+  --accent-blue: var(--mac-accent-blue);
+  --accent-green: var(--mac-accent-green);
+  --accent-red: var(--mac-accent-red);
+  --accent-purple: var(--mac-accent-purple);
+  --surface-glass-card: var(--mac-surface-card);
+  --surface-glass-border: var(--mac-border-subtle);
+  --radius-sm: var(--mac-radius-sm);
+  --radius-md: var(--mac-radius-md);
+  --radius-lg: var(--mac-radius-lg);
+  --radius-xl: var(--mac-radius-xl);
+  --radius-full: var(--mac-radius-full);
 }
 
 /* Reset y Base */
@@ -150,7 +170,7 @@ html, body {
 
 .mac-window-frame {
   width: 100%;
-  max-width: 1680px;
+  max-width: min(96vw, 1920px);
   margin: 0 auto;
   min-height: calc(100vh - 36px);
   background: var(--mac-surface-glass);
@@ -168,23 +188,71 @@ html, body {
 
 /* Barra de Título macOS (Titlebar / Chrome) */
 .mac-titlebar {
-  height: 52px;
+  height: auto;
   min-height: 52px;
   background: var(--mac-surface-titlebar);
   border-bottom: 1px solid var(--mac-border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 18px;
+  padding: 6px 18px;
   user-select: none;
   z-index: 50;
-  gap: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .mac-titlebar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 180px;
+}
+
+.mac-titlebar-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 1 auto;
+}
+
+.mac-titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1140px) {
+  .mac-window-mode-pill {
+    display: none !important;
+  }
+}
+
+@media (max-width: 919.98px) {
+  .mac-titlebar {
+    padding: 8px 14px;
+  }
+  .mac-titlebar-left {
+    min-width: 0;
+  }
+  .mac-window-title {
+    font-size: 12.5px;
+  }
+  .mac-window-subtitle {
+    display: none;
+  }
+  .mac-titlebar-center {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    margin-top: 4px;
+  }
 }
 
 /* Botones de Control de Ventana (Traffic Lights) */
@@ -353,20 +421,22 @@ html, body {
   flex: 1;
   display: grid;
   width: 100%;
-  min-height: calc(100vh - 36px - 52px);
+  height: calc(100vh - 36px - 52px);
+  max-height: calc(100vh - 36px - 52px);
+  min-height: 0;
   position: relative;
   overflow: hidden;
   transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* --------------------------------------------------------------------------
-   TIER 3: VENTANA GRANDE (LARGE / >= 1240px)
-   3 Columnas: Sidebar (260px) + Main Stage (1fr) + Inspector (320px)
+   TIER 3: VENTANA GRANDE (LARGE / >= 1360px)
+   3 Columnas: Sidebar (240px) + Main Stage (1fr espacioso >= 800px) + Inspector (280px)
    -------------------------------------------------------------------------- */
-@media (min-width: 1240px) {
+@media (min-width: 1360px) {
   .mac-window-body,
   [data-mac-layout="large"] .mac-window-body {
-    grid-template-columns: 260px 1fr 320px;
+    grid-template-columns: 240px 1fr 280px;
   }
 
   .mac-sidebar {
@@ -380,16 +450,21 @@ html, body {
   .mac-compact-nav-bar {
     display: none !important;
   }
+
+  .mac-inline-secondary-block {
+    display: none !important;
+  }
 }
 
 /* --------------------------------------------------------------------------
-   TIER 2: VENTANA MEDIANA (MEDIUM / 860px a 1239.98px)
-   2 Columnas: Sidebar (250px) + Main Stage (1fr). Inspector integrado o colapsado.
+   TIER 2: VENTANA MEDIANA (MEDIUM / 920px a 1359.98px)
+   2 Columnas: Sidebar (240px) + Main Stage (1fr amplio de 640px a 1080px).
+   Inspector integrado elegantemente en bloque secundario inferior.
    -------------------------------------------------------------------------- */
-@media (min-width: 860px) and (max-width: 1239.98px) {
+@media (min-width: 920px) and (max-width: 1359.98px) {
   .mac-window-body,
   [data-mac-layout="medium"] .mac-window-body {
-    grid-template-columns: 250px 1fr;
+    grid-template-columns: 240px 1fr;
   }
 
   .mac-sidebar {
@@ -411,10 +486,10 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
-   TIER 1: VENTANA PEQUEÑA (COMPACT / < 860px)
-   1 Columna fluida: Main Stage a ancho completo con navegación compacta superior
+   TIER 1: VENTANA PEQUEÑA (COMPACT / < 920px)
+   1 Columna fluida: Main Stage a ancho completo con barra compacta superior
    -------------------------------------------------------------------------- */
-@media (max-width: 859.98px) {
+@media (max-width: 919.98px) {
   .mac-window-body,
   [data-mac-layout="compact"] .mac-window-body {
     grid-template-columns: 1fr;
@@ -437,12 +512,17 @@ html, body {
   }
 
   .mac-desktop-environment {
-    padding: 8px 10px;
+    padding: 10px 12px;
   }
 
   .mac-window-frame {
     border-radius: var(--mac-radius-lg);
-    min-height: calc(100vh - 16px);
+    min-height: calc(100vh - 20px);
+  }
+
+  .mac-main-stage {
+    padding: 16px 14px;
+    gap: 18px;
   }
 }
 
@@ -564,22 +644,42 @@ html, body {
    ========================================================================== */
 .mac-main-stage {
   padding: 24px;
-  overflow-y: auto;
+  overflow-y: auto !important;
   overflow-x: hidden;
-  max-height: calc(100vh - 36px - 52px);
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
   width: 100%;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(229, 192, 123, 0.45) transparent;
+}
+
+/* CRITICAL: Impedir que flexbox aplaste o encoja las tarjetas en mac-main-stage */
+.mac-main-stage > * {
+  flex-shrink: 0 !important;
 }
 
 .mac-main-stage::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
-.mac-main-stage::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+
+.mac-main-stage::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 4px;
+}
+
+.mac-main-stage::-webkit-scrollbar-thumb {
+  background: rgba(229, 192, 123, 0.35);
+  border-radius: 4px;
+}
+
+.mac-main-stage::-webkit-scrollbar-thumb:hover {
+  background: var(--mac-accent-gold);
 }
 
 /* Barra de Navegación Compacta para Ventana Pequeña (< 860px) */
@@ -616,12 +716,12 @@ html, body {
    ========================================================================== */
 .mac-hero-dashboard {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(340px, 1.35fr) minmax(260px, 1fr);
   gap: 20px;
   align-items: stretch;
 }
 
-@media (max-width: 1040px) {
+@media (max-width: 1080px) {
   .mac-hero-dashboard {
     grid-template-columns: 1fr;
   }
@@ -636,9 +736,11 @@ html, body {
   border-radius: var(--mac-radius-lg);
   padding: 22px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   box-shadow: var(--mac-shadow-card);
   transition: transform 0.2s ease, border-color 0.2s ease;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .mac-card:hover {
@@ -1041,14 +1143,8 @@ html, body {
    ========================================================================== */
 .mac-special-subjects-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 16px;
-}
-
-@media (max-width: 900px) {
-  .mac-special-subjects-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .mac-special-link {
@@ -1095,14 +1191,8 @@ html, body {
    ========================================================================== */
 .mac-academic-hub-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-@media (max-width: 1100px) {
-  .mac-academic-hub-grid {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
 }
 
 .mac-hub-panel {
@@ -1164,12 +1254,16 @@ html, body {
   border-left: 1px solid var(--mac-border-subtle);
   display: flex;
   flex-direction: column;
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
   padding: 20px 16px;
   gap: 20px;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100vh - 36px - 52px);
   user-select: none;
+  box-sizing: border-box;
 }
 
 .mac-inspector-column::-webkit-scrollbar {
@@ -1452,4 +1546,118 @@ html, body {
 .mac-btn-primary:hover {
   filter: brightness(1.1);
   transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   ENCABEZADO UNIFICADO DE PÁGINA MAC (Protección de Títulos)
+   ========================================================================== */
+.mac-page-header-card {
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-lg);
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  flex-shrink: 0 !important;
+  box-shadow: var(--mac-shadow-card);
+  box-sizing: border-box;
+}
+
+.mac-page-header-eyebrow {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--mac-accent-gold);
+  letter-spacing: 1.2px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mac-page-header-title {
+  font-size: clamp(22px, 2.5vw, 28px);
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.35;
+  margin: 0;
+  padding-bottom: 2px;
+}
+
+/* ==========================================================================
+   DOCUMENTOS LEGALES MACOS (TÉRMINOS Y PRIVACIDAD DE ALTA LEGIBILIDAD)
+   ========================================================================== */
+.mac-legal-document-card {
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-lg);
+  padding: 30px 34px;
+  font-size: 14px;
+  color: var(--mac-text-secondary);
+  line-height: 1.7;
+  flex-shrink: 0 !important;
+  box-shadow: var(--mac-shadow-card);
+  box-sizing: border-box;
+}
+
+.mac-legal-document-card h3 {
+  color: var(--mac-accent-gold);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 10px 0;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mac-legal-document-card h3:first-of-type {
+  margin-top: 10px;
+}
+
+.mac-legal-document-card p {
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.mac-legal-document-card ul {
+  margin-bottom: 16px;
+  padding-left: 22px;
+}
+
+.mac-legal-document-card li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.mac-legal-meta-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  font-size: 13px;
+  color: var(--mac-text-secondary);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   DASHBOARD MACOS: TAL VEZ TE PUEDA INTERESAR (APROVECHAMIENTO COMPLETO)
+   ========================================================================== */
+.mac-interes-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.35fr);
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .mac-interes-grid {
+    grid-template-columns: 1fr;
+  }
 }

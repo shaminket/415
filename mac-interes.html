@@ -459,109 +459,161 @@
     <!-- Barra Rápida de Navegación Exclusiva para Tableta / iPad -->
     
 
-    <!-- ESTRUCTURA ADAPTATIVA IPAD: SPLIT VIEW (Horizontal) / HERO GRID (Vertical) -->
-    <div class="ipad-layout-container" id="ipad-interes-layout">
+    <!-- ESTRUCTURA RESPONSIVA MACOS: 2 COLUMNAS AMPLIAS (OPORTUNIDADES + FORMULARIO) -->
+    <div class="mac-interes-grid">
 
-      <!-- COLUMNA / PANEL 1: OPORTUNIDADES, ESTADO VACÍO Y CANALES DE PAGO -->
-      <div class="ipad-sidebar-panel">
+      <!-- COLUMNA 1: ESTADO VACÍO OFICIAL, WHATSAPP Y PASARELA CLIP -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
 
         <!-- Tarjeta de Estado Actual (Regla 38: Estado Vacío Oficial) -->
-        <section class="ipad-glass-card" style="border-left: 6px solid var(--accent-gold);" aria-labelledby="ipad-empty-heading">
+        <section class="mac-card" style="border-left: 5px solid var(--mac-accent-gold);" aria-labelledby="mac-empty-heading">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-            <span style="font-size: 26px;">✨</span>
-            <h2 id="ipad-empty-heading" style="font-size: 18px; font-weight: 800; color: var(--accent-gold);">
+            <span style="font-size: 24px;">✨</span>
+            <h2 id="mac-empty-heading" style="font-size: 18px; font-weight: 800; color: var(--mac-accent-gold);">
               Oportunidades Disponibles
             </h2>
           </div>
 
-          <div id="ipad-publicidad-feed">
-            <div class="empty-state-card" style="padding: 32px 16px; margin: 10px 0; background: rgba(0,0,0,0.35);">
-              <div class="empty-state-icon" style="font-size: 36px; margin-bottom: 8px;" aria-hidden="true">🎁</div>
-              <div class="empty-state-text" style="font-size: 16px; font-weight: 700;">No hay nada disponible por ahora.</div>
-              <div class="empty-state-subtext" style="font-size: 13px; line-height: 1.45; margin-top: 6px;">
+          <div id="mac-publicidad-feed">
+            <div class="mac-hub-empty" style="padding: 28px 16px; background: rgba(0,0,0,0.3); border-radius: var(--mac-radius-md); border: 1px solid var(--mac-border-subtle);">
+              <div style="font-size: 34px; margin-bottom: 8px;" aria-hidden="true">🎁</div>
+              <div style="font-size: 16px; font-weight: 700; color: var(--mac-text-primary);">No hay nada disponible por ahora.</div>
+              <p style="font-size: 13px; color: var(--mac-text-secondary); line-height: 1.45; margin-top: 6px; max-width: 380px;">
                 Este espacio mostrará oportunidades, productos y servicios de interés para la comunidad escolar del Grupo 415 cuando estén listos.
-              </div>
+              </p>
             </div>
           </div>
         </section>
+        <!-- Columna 3: Inspector / Barra Derecha (Aprovechamiento Completo de Pantalla) -->
+        <aside class="mac-inspector-column" aria-label="Panel Lateral de Información e Inspector">
+          <div class="mac-inspector-header">
+            <span>ℹ️</span> Resumen Grupo 415
+          </div>
+
+          <div class="mac-inspector-card">
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Plantel:</span>
+              <span class="mac-inspector-value">ENP 4 UNAM</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Turno:</span>
+              <span class="mac-inspector-value">Matutino</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Horario:</span>
+              <span class="mac-inspector-value">07:00 a 15:20 hrs</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Docente:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-gold);">20 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Alumno:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-green);">10 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Zona Horaria:</span>
+              <span class="mac-inspector-value">CDMX (America/Mexico_City)</span>
+            </div>
+          </div>
+
+          <!-- ESPACIO DE INFORMACIÓN EN INSPECTOR: Encardomy Agency -->
+          <div class="mac-ad-spot-container">
+            <span class="mac-ad-eyebrow">Encardomy Agency</span>
+            <h3 class="mac-ad-title">Atención & Pedidos</h3>
+            <div class="mac-ad-empty-message" style="font-size: 12.5px; line-height: 1.45;">
+              <p>Canal directo para solicitudes, problemarios, batas y material escolar del Grupo 415.</p>
+              <p style="margin-top: 8px; font-weight: 700; color: #25D366;">WhatsApp: +52 55 7198 5641</p>
+            </div>
+          </div>
+
+          <!-- Atajos de Teclado macOS -->
+          <div class="mac-inspector-card" style="margin-top: auto;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-text-tertiary); letter-spacing: 0.8px; display: block; margin-bottom: 8px;">Atajos de Teclado macOS</span>
+            <div class="mac-inspector-row"><span class="mac-inspector-label">Inicio:</span> <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">I</kbd></div>
+            <div class="mac-inspector-row"><span class="mac-inspector-label">Profesores:</span> <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">P</kbd></div>
+            <div class="mac-inspector-row"><span class="mac-inspector-label">Sección A / B:</span> <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">S</kbd></div>
+          </div>
+        </aside>
+
 
         <!-- Tarjeta Informativa de Atención y WhatsApp -->
-        <section class="ipad-glass-card">
+        <section class="mac-card">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
             <span style="font-size: 22px;">💬</span>
             <h3 style="font-size: 16px; font-weight: 700; color: #25D366;">
               Atención Directa vía WhatsApp
             </h3>
           </div>
-          <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 12px;">
+          <p style="font-size: 13.5px; color: var(--mac-text-secondary); line-height: 1.5; margin-bottom: 12px;">
             Todos los pedidos son coordinados directamente a través de nuestro número oficial:
           </p>
-          <div style="background: rgba(37, 211, 102, 0.12); border: 1px solid rgba(37, 211, 102, 0.35); padding: 12px 14px; border-radius: var(--radius-md); text-align: center; margin-bottom: 10px;">
+          <div style="background: rgba(37, 211, 102, 0.12); border: 1px solid rgba(37, 211, 102, 0.35); padding: 12px 14px; border-radius: var(--mac-radius-md); text-align: center; margin-bottom: 10px;">
             <span style="font-size: 17px; font-weight: 800; color: #25D366; letter-spacing: 0.5px;">+52 55 7198 5641</span>
           </div>
-          <p style="font-size: 12px; color: var(--text-tertiary); line-height: 1.4;">
+          <p style="font-size: 12px; color: var(--mac-text-tertiary); line-height: 1.4;">
             Al enviar el formulario, el mensaje se genera de forma instantánea con todos tus datos estructurados.
           </p>
         </section>
 
         <!-- Tarjeta de Arquitectura de Pago Clip (Regla 41) -->
-        <section class="ipad-glass-card">
+        <section class="mac-card">
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
             <span style="font-size: 22px;">💳</span>
             <h3 style="font-size: 16px; font-weight: 700; color: #ffa94d;">
               Pagos con Tarjeta vía Clip
             </h3>
           </div>
-          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px;">
+          <p style="font-size: 13px; color: var(--mac-text-secondary); line-height: 1.5; margin-bottom: 10px;">
             La pasarela de pago seguro mediante <strong>Clip</strong> asociará automáticamente el enlace adecuado según el monto o cotización del pedido solicitado.
           </p>
-          <div style="font-size: 11.5px; color: var(--text-tertiary); background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="font-size: 11.5px; color: var(--mac-text-tertiary); background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: var(--mac-radius-sm); border: 1px solid var(--mac-border-subtle);">
             Estado actual: <strong>Disponible próximamente.</strong> (enlaces específicos según cotización).
           </div>
         </section>
 
       </div>
 
-      <!-- COLUMNA / PANEL 2: FORMULARIO AMPLIO DE PEDIDO IPAD -->
-      <div class="ipad-main-stage">
+      <!-- COLUMNA 2: FORMULARIO AMPLIO DE PEDIDO MACOS -->
+      <div>
         
-        <section class="ipad-glass-card ipad-glass-card-elevated" aria-labelledby="ipad-form-heading">
-          <div class="ipad-hub-header">
-            <div class="ipad-hub-title" id="ipad-form-heading" style="font-size: 20px;">
+        <section class="mac-card" aria-labelledby="mac-form-heading">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--mac-border-subtle);">
+            <div id="mac-form-heading" style="font-size: 19px; font-weight: 800; color: var(--mac-text-primary); display: flex; align-items: center; gap: 8px;">
               <span>📝</span>
               <span>Formulario de Solicitud de Pedido</span>
             </div>
-            <span style="font-size: 12.5px; color: var(--accent-gold); font-weight: 600;">Grupo 415 • ENP 4</span>
+            <span style="font-size: 12.5px; color: var(--mac-accent-gold); font-weight: 600;">Grupo 415 • ENP 4</span>
           </div>
 
-          <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 22px;">
+          <p style="font-size: 13.5px; color: var(--mac-text-secondary); line-height: 1.5; margin-bottom: 20px;">
             Completa los siguientes campos para preparar tu solicitud. Este formulario no es una tienda automatizada, sino un canal para gestionar encargos y materiales específicos.
           </p>
 
-          <form id="ipad-order-form" onsubmit="event.preventDefault(); handleIpadOrderSubmit('whatsapp');">
+          <form id="mac-order-form" onsubmit="event.preventDefault(); handleMacOrderSubmit('whatsapp');">
             
             <!-- Fila Doble: ¿Qué desea solicitar? y Nombre -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-              <div class="ios-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-item" class="ios-form-label">
-                  ¿Qué deseas solicitar? <span style="color: var(--accent-red);">*</span>
+              <div class="ios-mac-form-group" style="margin-bottom: 0;">
+                <label for="mac-order-item" class="ios-mac-form-label">
+                  ¿Qué deseas solicitar? <span style="color: var(--mac-accent-red);">*</span>
                 </label>
                 <input 
                   type="text" 
-                  id="ipad-order-item" 
+                  id="mac-order-item" 
                   class="ios-form-control" 
                   placeholder="Ej. Guía impresa, bata de laboratorio, problemario..." 
                   required
                   oninput="updateMessagePreview();">
               </div>
 
-              <div class="ios-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-name" class="ios-form-label">
-                  Tu nombre o identificación <span style="color: var(--accent-red);">*</span>
+              <div class="ios-mac-form-group" style="margin-bottom: 0;">
+                <label for="mac-order-name" class="ios-mac-form-label">
+                  Tu nombre o identificación <span style="color: var(--mac-accent-red);">*</span>
                 </label>
                 <input 
                   type="text" 
-                  id="ipad-order-name" 
+                  id="mac-order-name" 
                   class="ios-form-control" 
                   placeholder="Ej. Sofía R. / Estudiante 415" 
                   required
@@ -570,12 +622,12 @@
             </div>
 
             <!-- Campo Amplio: Descripción y Especificaciones -->
-            <div class="ios-form-group">
-              <label for="ipad-order-desc" class="ios-form-label">
-                Descripción detallada y especificaciones <span style="color: var(--accent-red);">*</span>
+            <div class="ios-mac-form-group" style="margin-bottom: 16px;">
+              <label for="mac-order-desc" class="ios-mac-form-label">
+                Descripción detallada y especificaciones <span style="color: var(--mac-accent-red);">*</span>
               </label>
               <textarea 
-                id="ipad-order-desc" 
+                id="mac-order-desc" 
                 class="ios-form-control" 
                 rows="4" 
                 placeholder="Indica características, materia escolar asociada, tema, tipo de encargo, color o requerimientos específicos..." 
@@ -584,12 +636,12 @@
             </div>
 
             <!-- Fila Doble: Cantidad e Información Adicional -->
-            <div style="display: grid; grid-template-columns: 160px 1fr; gap: 16px; margin-bottom: 20px;">
-              <div class="ios-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-qty" class="ios-form-label">Cantidad</label>
+            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 16px; margin-bottom: 20px;">
+              <div class="ios-mac-form-group" style="margin-bottom: 0;">
+                <label for="mac-order-qty" class="ios-mac-form-label">Cantidad</label>
                 <input 
                   type="number" 
-                  id="ipad-order-qty" 
+                  id="mac-order-qty" 
                   class="ios-form-control" 
                   value="1" 
                   min="1" 
@@ -598,45 +650,45 @@
                   oninput="updateMessagePreview();">
               </div>
 
-              <div class="ios-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-notes" class="ios-form-label">Fecha o notas adicionales (opcional)</label>
+              <div class="ios-mac-form-group" style="margin-bottom: 0;">
+                <label for="mac-order-notes" class="ios-mac-form-label">Fecha o notas adicionales (opcional)</label>
                 <input 
                   type="text" 
-                  id="ipad-order-notes" 
+                  id="mac-order-notes" 
                   class="ios-form-control" 
                   placeholder="Ej. Entregar en descanso o previo al examen..."
                   oninput="updateMessagePreview();">
               </div>
             </div>
 
-            <!-- VISTA PREVIA DEL MENSAJE (Especial para iPad) -->
-            <div style="background: rgba(0, 0, 0, 0.45); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px;">
-              <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent-gold); margin-bottom: 8px;">
+            <!-- VISTA PREVIA DEL MENSAJE (Especial para macOS) -->
+            <div style="background: rgba(0, 0, 0, 0.45); border: 1px solid var(--mac-border-subtle); border-radius: var(--mac-radius-md); padding: 16px; margin-bottom: 22px;">
+              <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--mac-accent-gold); margin-bottom: 8px;">
                 Vista previa del mensaje generado para WhatsApp:
               </div>
-              <pre id="ipad-msg-preview" style="font-family: inherit; font-size: 13px; color: var(--text-secondary); white-space: pre-wrap; line-height: 1.45; margin: 0;">Completa los campos para previsualizar el mensaje...</pre>
+              <pre id="mac-msg-preview" style="font-family: inherit; font-size: 13px; color: var(--mac-text-secondary); white-space: pre-wrap; line-height: 1.45; margin: 0;">Completa los campos para previsualizar el mensaje...</pre>
             </div>
 
-            <!-- BOTONES DE ACCIÓN IPAD (TAMAÑO TÁCTIL GRANDE >= 52px) -->
+            <!-- BOTONES DE ACCIÓN MACOS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
               
               <!-- Opción 1: WhatsApp Directo -->
               <button 
                 type="button" 
-                class="btn-primary-ios" 
-                style="background: #25D366; color: #04140b; height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-weight: 800;"
-                onclick="handleIpadOrderSubmit('whatsapp');">
-                <span style="font-size: 20px;">💬</span>
+                class="mac-btn-tool" 
+                style="background: #25D366; color: #04140b; height: 48px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 800; border: none; border-radius: var(--mac-radius-md); cursor: pointer;"
+                onclick="handleMacOrderSubmit('whatsapp');">
+                <span style="font-size: 18px;">💬</span>
                 <span>Enviar por WhatsApp</span>
               </button>
 
               <!-- Opción 2: Clip Pago -->
               <button 
                 type="button" 
-                class="btn-secondary-ios" 
-                style="height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; border-color: rgba(255, 149, 0, 0.45); color: #ffa94d;"
-                onclick="handleIpadOrderSubmit('clip');">
-                <span style="font-size: 20px;">💳</span>
+                class="mac-btn-tool" 
+                style="height: 48px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14.5px; font-weight: 700; border-color: rgba(255, 149, 0, 0.45); color: #ffa94d; border-radius: var(--mac-radius-md); cursor: pointer;"
+                onclick="handleMacOrderSubmit('clip');">
+                <span style="font-size: 18px;">💳</span>
                 <span>Pagar con Clip (Próximamente)</span>
               </button>
 
@@ -648,8 +700,7 @@
       </div>
 
     </div>
-
-    <!-- Modal Detalle Clip iPad -->
+<!-- Modal Detalle Clip iPad -->
     <div class="ipad-modal-backdrop" id="ipad-clip-modal" role="dialog" aria-modal="true" aria-labelledby="ipad-clip-title">
       <div class="ipad-modal-sheet">
         <div style="font-size: 40px; margin-bottom: 12px; text-align: center;">💳</div>
@@ -788,11 +839,11 @@
             <a href="mac-ayuda.html" class="mac-compact-nav-link ">Ayuda</a>
           </nav>
 
-          <div class="mac-card" style="margin-bottom: 20px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-accent-gold); letter-spacing: 1px; margin-bottom: 4px;">
-              Plataforma Minweb 415 · Mac Edition
+          <div class="mac-page-header-card">
+            <div class="mac-page-header-eyebrow">
+              <span>✦</span> Plataforma Minweb 415 · Mac Edition
             </div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--mac-text-primary); letter-spacing: -0.5px;">
+            <h1 class="mac-page-header-title">
               Tal vez te pueda interesar
             </h1>
           </div>
@@ -884,17 +935,17 @@
             Completa los siguientes campos para preparar tu solicitud. Este formulario no es una tienda automatizada, sino un canal para gestionar encargos y materiales específicos.
           </p>
 
-          <form id="ipad-order-form" onsubmit="event.preventDefault(); handleIpadOrderSubmit('whatsapp');">
+          <form id="mac-order-form" onsubmit="event.preventDefault(); handleMacOrderSubmit('whatsapp');">
             
             <!-- Fila Doble: ¿Qué desea solicitar? y Nombre -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
               <div class="ios-mac-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-item" class="ios-mac-form-label">
+                <label for="mac-order-item" class="ios-mac-form-label">
                   ¿Qué deseas solicitar? <span style="color: var(--accent-red);">*</span>
                 </label>
                 <input 
                   type="text" 
-                  id="ipad-order-item" 
+                  id="mac-order-item" 
                   class="ios-form-control" 
                   placeholder="Ej. Guía impresa, bata de laboratorio, problemario..." 
                   required
@@ -902,12 +953,12 @@
               </div>
 
               <div class="ios-mac-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-name" class="ios-mac-form-label">
+                <label for="mac-order-name" class="ios-mac-form-label">
                   Tu nombre o identificación <span style="color: var(--accent-red);">*</span>
                 </label>
                 <input 
                   type="text" 
-                  id="ipad-order-name" 
+                  id="mac-order-name" 
                   class="ios-form-control" 
                   placeholder="Ej. Sofía R. / Estudiante 415" 
                   required
@@ -917,11 +968,11 @@
 
             <!-- Campo Amplio: Descripción y Especificaciones -->
             <div class="ios-mac-form-group">
-              <label for="ipad-order-desc" class="ios-mac-form-label">
+              <label for="mac-order-desc" class="ios-mac-form-label">
                 Descripción detallada y especificaciones <span style="color: var(--accent-red);">*</span>
               </label>
               <textarea 
-                id="ipad-order-desc" 
+                id="mac-order-desc" 
                 class="ios-form-control" 
                 rows="4" 
                 placeholder="Indica características, materia escolar asociada, tema, tipo de encargo, color o requerimientos específicos..." 
@@ -932,10 +983,10 @@
             <!-- Fila Doble: Cantidad e Información Adicional -->
             <div style="display: grid; grid-template-columns: 160px 1fr; gap: 16px; margin-bottom: 20px;">
               <div class="ios-mac-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-qty" class="ios-mac-form-label">Cantidad</label>
+                <label for="mac-order-qty" class="ios-mac-form-label">Cantidad</label>
                 <input 
                   type="number" 
-                  id="ipad-order-qty" 
+                  id="mac-order-qty" 
                   class="ios-form-control" 
                   value="1" 
                   min="1" 
@@ -945,10 +996,10 @@
               </div>
 
               <div class="ios-mac-form-group" style="margin-bottom: 0;">
-                <label for="ipad-order-notes" class="ios-mac-form-label">Fecha o notas adicionales (opcional)</label>
+                <label for="mac-order-notes" class="ios-mac-form-label">Fecha o notas adicionales (opcional)</label>
                 <input 
                   type="text" 
-                  id="ipad-order-notes" 
+                  id="mac-order-notes" 
                   class="ios-form-control" 
                   placeholder="Ej. Entregar en descanso o previo al examen..."
                   oninput="updateMessagePreview();">
@@ -960,7 +1011,7 @@
               <div style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--accent-gold); margin-bottom: 8px;">
                 Vista previa del mensaje generado para WhatsApp:
               </div>
-              <pre id="ipad-msg-preview" style="font-family: inherit; font-size: 13px; color: var(--text-secondary); white-space: pre-wrap; line-height: 1.45; margin: 0;">Completa los campos para previsualizar el mensaje...</pre>
+              <pre id="mac-msg-preview" style="font-family: inherit; font-size: 13px; color: var(--text-secondary); white-space: pre-wrap; line-height: 1.45; margin: 0;">Completa los campos para previsualizar el mensaje...</pre>
             </div>
 
             <!-- BOTONES DE ACCIÓN IPAD (TAMAÑO TÁCTIL GRANDE >= 52px) -->
@@ -971,7 +1022,7 @@
                 type="button" 
                 class="mac-btn-primary-ios" 
                 style="background: #25D366; color: #04140b; height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px; font-weight: 800;"
-                onclick="handleIpadOrderSubmit('whatsapp');">
+                onclick="handleMacOrderSubmit('whatsapp');">
                 <span style="font-size: 20px;">💬</span>
                 <span>Enviar por WhatsApp</span>
               </button>
@@ -981,7 +1032,7 @@
                 type="button" 
                 class="btn-secondary-ios" 
                 style="height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; border-color: rgba(255, 149, 0, 0.45); color: #ffa94d;"
-                onclick="handleIpadOrderSubmit('clip');">
+                onclick="handleMacOrderSubmit('clip');">
                 <span style="font-size: 20px;">💳</span>
                 <span>Pagar con Clip (Próximamente)</span>
               </button>
@@ -1015,7 +1066,7 @@
         Para mantener la seguridad y exactitud en el cobro, por favor envía primero tu pedido a través de <strong>WhatsApp (+52 55 7198 5641)</strong> para confirmar las especificaciones y recibir tu enlace personalizado de Clip.
       </p>
       <div style="display: flex; gap: 12px;">
-        <button type="button" class="btn-primary-ios" style="background: #25D366; color: #04140b; height: 48px;" onclick="closeIpadClipModal(); handleIpadOrderSubmit('whatsapp');">
+        <button type="button" class="btn-primary-ios" style="background: #25D366; color: #04140b; height: 48px;" onclick="closeIpadClipModal(); handleMacOrderSubmit('whatsapp');">
           Abrir WhatsApp Oficial (+52 55 7198 5641)
         </button>
         <button type="button" class="btn-secondary-ios" style="height: 48px;" onclick="closeIpadClipModal();">

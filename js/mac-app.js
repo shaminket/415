@@ -218,8 +218,8 @@
         if (heroCountdown) heroCountdown.textContent = "--:--";
         if (nextSubject) nextSubject.textContent = "Lunes: Física III (07:00)";
         if (nextMeta) nextMeta.textContent = "Aula B-116 · Prof. Saúl Quintana";
-        if (toleranceProf) toleranceProf.textContent = "10 min";
-        if (toleranceStudent) toleranceStudent.textContent = "15 min";
+        if (toleranceProf) toleranceProf.textContent = "20 min";
+        if (toleranceStudent) toleranceStudent.textContent = "10 min";
         return;
       }
 
@@ -275,14 +275,14 @@
         }
 
         const elapsed = currentMinutes - activeBlock.startMin;
-        if (elapsed <= 10) {
-          if (toleranceProf) toleranceProf.textContent = `${10 - elapsed} min rest.`;
+        if (elapsed <= 20) {
+          if (toleranceProf) toleranceProf.textContent = `${20 - elapsed} min rest.`;
         } else {
           if (toleranceProf) toleranceProf.textContent = "Vencida";
         }
 
-        if (elapsed <= 15) {
-          if (toleranceStudent) toleranceStudent.textContent = `${15 - elapsed} min rest.`;
+        if (elapsed <= 10) {
+          if (toleranceStudent) toleranceStudent.textContent = `${10 - elapsed} min rest.`;
         } else {
           if (toleranceStudent) toleranceStudent.textContent = "Con retardo";
         }
@@ -303,8 +303,8 @@
           `;
         }
 
-        if (toleranceProf) toleranceProf.textContent = "10 min";
-        if (toleranceStudent) toleranceStudent.textContent = "15 min";
+        if (toleranceProf) toleranceProf.textContent = "20 min";
+        if (toleranceStudent) toleranceStudent.textContent = "10 min";
       }
 
       if (nextBlock) {

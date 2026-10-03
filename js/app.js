@@ -539,8 +539,8 @@
 
     if (!activeBlock) {
       groups.forEach(g => { if (g.cont) g.cont.style.display = "none"; });
-      if (macTolProf) macTolProf.textContent = "10 min";
-      if (macTolStudent) macTolStudent.textContent = "15 min";
+      if (macTolProf) macTolProf.textContent = "20 min";
+      if (macTolStudent) macTolStudent.textContent = "10 min";
       return;
     }
 
@@ -559,8 +559,8 @@
 
     if (!isBeginning) {
       groups.forEach(g => { if (g.cont) g.cont.style.display = "none"; });
-      if (macTolProf) macTolProf.textContent = "10 min";
-      if (macTolStudent) macTolStudent.textContent = "15 min";
+      if (macTolProf) macTolProf.textContent = "20 min";
+      if (macTolStudent) macTolStudent.textContent = "10 min";
       return;
     }
 
@@ -602,6 +602,15 @@
         card.classList.add("is-active-subject");
       } else {
         card.classList.remove("is-active-subject");
+      }
+    });
+
+    // Resaltado Mac
+    document.querySelectorAll(".mac-block-card").forEach(card => {
+      if (isSameDay && activeBlock && card.dataset.start === activeBlock.start && card.dataset.end === activeBlock.end) {
+        card.classList.add("is-active-now");
+      } else {
+        card.classList.remove("is-active-now");
       }
     });
   }
@@ -759,6 +768,12 @@
           </div>
         </div>
       `;
+
+      card.style.cursor = "pointer";
+      card.title = "Toca para ver información detallada de la materia y profesor";
+      card.addEventListener("click", () => {
+        openScheduleDetailModal(block, label, salonText, profName, blockColor, isFree);
+      });
 
       list.appendChild(card);
     });
@@ -924,14 +939,6 @@
 
   // Ficha detallada de materia y profesor al pulsar en el horario
   function openScheduleDetailModal(block, label, salon, prof, color, isFree) {
-    const backdrop = document.getElementById("ipad-detail-modal");
-    const titleElem = document.getElementById("ipad-modal-title");
-    const bodyElem = document.getElementById("ipad-modal-body");
-    if (!backdrop || !titleElem || !bodyElem) return;
-
-    titleElem.textContent = label;
-    titleElem.style.color = color || "var(--accent-gold)";
-
     const subj = ENCARDOMY_DATA.subjects[block.subjectId];
     let pageLink = "";
     if (subj && subj.hasOwnPage) {
@@ -944,7 +951,7 @@
       `;
     }
 
-    bodyElem.innerHTML = `
+    const detailsHtml = `
       <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; line-height: 1.5;">
         <div><strong>Profesor Oficial:</strong> ${escapeHtml(prof)}</div>
         <div><strong>Horario de Sesión:</strong> ${block.start} a ${block.end} (${block.durationMinutes} minutos${block.isTwoHours ? ' • 2 horas consecutivas' : ''})</div>
@@ -958,41 +965,95 @@
       </div>
     `;
 
-    backdrop.classList.add("show");
+    const currentInterface = document.documentElement.getAttribute("data-current-interface") || state.device;
+    const macBackdrop = document.getElementById("mac-detail-modal");
+    const ipadBackdrop = document.getElementById("ipad-detail-modal");
+
+    if (currentInterface === "desktop" && macBackdrop) {
+      const macTitle = document.getElementById("mac-modal-title");
+      const macBody = document.getElementById("mac-modal-body");
+      if (macTitle) macTitle.textContent = label;
+      if (macBody) macBody.innerHTML = detailsHtml;
+      macBackdrop.classList.add("show");
+      return;
+    }
+
+    if (ipadBackdrop) {
+      const titleElem = document.getElementById("ipad-modal-title");
+      const bodyElem = document.getElementById("ipad-modal-body");
+      if (titleElem) {
+        titleElem.textContent = label;
+        titleElem.style.color = color || "var(--accent-gold)";
+      }
+      if (bodyElem) bodyElem.innerHTML = detailsHtml;
+      ipadBackdrop.classList.add("show");
+    }
   }
+
+  // Cerrar modales al hacer clic fuera o presionar Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".ipad-modal-backdrop, .mac-modal-backdrop").forEach(m => m.classList.remove("show"));
+    }
+  });
+  document.querySelectorAll(".ipad-modal-backdrop, .mac-modal-backdrop").forEach(m => {
+    m.addEventListener("click", (e) => {
+      if (e.target === m) m.classList.remove("show");
+    });
+  });
 
   // ==========================================================================
   // 7. BUSCADOR INTELIGENTE DE PROFESORES (Regla 63)
-  // Celular + iPad comparten la base de datos completa de profesores del Grupo 415
+  // Celular + iPad + Mac comparten la base de datos completa de profesores del Grupo 415
   // ==========================================================================
+  let activeProfessorQuery = "";
+
   function initSearch() {
-    const input = document.getElementById("search-professors-input");
-    const container = document.getElementById("search-results-container");
+    const inputMob = document.getElementById("search-professors-input");
+    const contMob = document.getElementById("search-results-container");
 
-    const macInput = document.getElementById("mac-prof-search-input");
-    const macContainer = document.getElementById("mac-prof-results-container");
+    const inputIpad = document.getElementById("ipad-prof-search-input");
+    const contIpad = document.getElementById("ipad-prof-results-container");
 
-    const inputs = [
-      { inp: input, cont: container },
-      { inp: macInput, cont: macContainer }
-    ];
+    const inputMac = document.getElementById("mac-prof-search-input");
+    const contMac = document.getElementById("mac-prof-results-container");
 
-    inputs.forEach(pair => {
-      if (!pair.inp || !pair.cont) return;
-      pair.inp.addEventListener("input", (e) => {
-        const query = e.target.value.trim().toLowerCase();
-        renderSearchResults(query, pair.cont);
+    const allInputs = [inputMob, inputIpad, inputMac].filter(Boolean);
+
+    allInputs.forEach(inputElem => {
+      inputElem.addEventListener("input", (e) => {
+        const query = e.target.value;
+        activeProfessorQuery = query;
+
+        // Sincronizar el texto en los otros inputs para que no se pierda al redimensionar
+        allInputs.forEach(other => {
+          if (other !== inputElem) other.value = query;
+        });
+
+        updateAllProfessorContainers(query);
       });
-      renderSearchResults("", pair.cont);
     });
+
+    updateAllProfessorContainers(activeProfessorQuery);
+  }
+
+  function updateAllProfessorContainers(query) {
+    const contMob = document.getElementById("search-results-container");
+    const contIpad = document.getElementById("ipad-prof-results-container");
+    const contMac = document.getElementById("mac-prof-results-container");
+
+    if (contMob) renderSearchResults(query, contMob, "mobile");
+    if (contIpad) renderSearchResults(query, contIpad, "tablet");
+    if (contMac) renderSearchResults(query, contMac, "desktop");
   }
 
   function normalize(str) {
+    if (!str) return "";
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
-  function renderSearchResults(query, container) {
-    const qNorm = normalize(query);
+  function renderSearchResults(query, container, layout) {
+    const qNorm = normalize(query).trim();
     const professors = ENCARDOMY_DATA.professors || [];
     const currentSec = state.section || "A";
 
@@ -1001,8 +1062,8 @@
       const subj = ENCARDOMY_DATA.subjects[p.subjectId];
       const nameMatch = normalize(p.name).includes(qNorm);
       const subjectMatch = normalize(p.subjectName).includes(qNorm);
-      const aliasMatch = subj && subj.aliases.some(alias => normalize(alias).includes(qNorm) || qNorm.includes(normalize(alias)));
-      const salonMatch = p.salons.some(s => normalize(s).includes(qNorm));
+      const aliasMatch = subj && subj.aliases && subj.aliases.some(alias => normalize(alias).includes(qNorm) || qNorm.includes(normalize(alias)));
+      const salonMatch = p.salons && p.salons.some(s => normalize(s).includes(qNorm));
       return nameMatch || subjectMatch || aliasMatch || salonMatch;
     });
 
@@ -1010,19 +1071,29 @@
 
     if (matches.length === 0) {
       container.innerHTML = `
-        <div class="empty-state-card">
-          <div class="empty-state-icon">🔍</div>
-          <div class="empty-state-text">No se encontraron resultados</div>
-          <div class="empty-state-subtext">Prueba buscando por nombre (ej. Saúl, Gabriela, Karina), materia o salón.</div>
+        <div class="empty-state-card" style="grid-column: 1 / -1; padding: 36px 20px;">
+          <div class="empty-state-icon" style="font-size: 32px;">🔍</div>
+          <div class="empty-state-text" style="font-size: 16px; font-weight: 700;">No se encontraron resultados</div>
+          <div class="empty-state-subtext" style="margin-top: 6px;">Prueba buscando por nombre (ej. Saúl, Gabriela, Karina), materia (Español, Inglés, Mate) o salón oficial.</div>
         </div>
       `;
       return;
     }
 
-    // Usar cuadrícula en iPad/Tableta y lista en móvil
-    const isTablet = state.device === "tablet" || state.device === "desktop" || window.innerWidth >= 768;
     const listWrapper = document.createElement("div");
-    listWrapper.className = isTablet ? "tablet-cards-grid" : "professors-list";
+    if (layout === "tablet") {
+      listWrapper.className = "tablet-cards-grid";
+      listWrapper.style.display = "grid";
+      listWrapper.style.gridTemplateColumns = "repeat(auto-fill, minmax(300px, 1fr))";
+      listWrapper.style.gap = "14px";
+    } else if (layout === "desktop") {
+      listWrapper.className = "mac-professors-grid";
+      listWrapper.style.display = "grid";
+      listWrapper.style.gridTemplateColumns = "repeat(auto-fill, minmax(320px, 1fr))";
+      listWrapper.style.gap = "16px";
+    } else {
+      listWrapper.className = "professors-list";
+    }
 
     matches.forEach(item => {
       const subj = ENCARDOMY_DATA.subjects[item.subjectId];
@@ -1030,19 +1101,54 @@
       const isSecMatch = item.section === "ALL" || item.section === currentSec;
 
       const card = document.createElement("div");
-      card.className = "glass-card";
-      card.style.borderLeft = "5px solid " + color;
-      card.style.marginBottom = isTablet ? "0" : "12px";
+      if (layout === "desktop") {
+        card.className = "mac-block-card";
+        card.style.setProperty("--block-color", color);
+        card.style.padding = "18px";
+        card.style.marginBottom = "0";
 
-      card.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(item.subjectName)}</span>
-          ${item.section !== 'ALL' ? `<span class="tag-badge ${isSecMatch ? 'two-hours' : ''}">Sección ${item.section}</span>` : ''}
-        </div>
-        <div style="font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">${escapeHtml(item.name)}</div>
-        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;"><strong>Salones:</strong> ${escapeHtml(item.salons.join(" • "))}</div>
-        <div style="font-size: 12px; color: var(--text-tertiary); line-height: 1.35;">${escapeHtml(item.notes)}</div>
-      `;
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: ${color}; letter-spacing: 0.5px;">${escapeHtml(item.subjectName)}</span>
+            ${item.section !== 'ALL' ? `<span class="mac-block-badge">Sección ${item.section}</span>` : ''}
+          </div>
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--mac-text-primary); margin: 0 0 6px 0;">${escapeHtml(item.name)}</h3>
+          <div style="font-size: 13px; color: var(--mac-text-secondary); margin-bottom: 6px;"><strong>Salones:</strong> ${escapeHtml(item.salons.join(" • "))}</div>
+          <div style="font-size: 12px; color: var(--mac-text-tertiary); line-height: 1.4;">${escapeHtml(item.notes)}</div>
+          ${subj && subj.hasOwnPage ? `<div style="margin-top: 10px;"><a href="${subj.pageUrl}" class="mac-btn-tool" style="display:inline-block; font-size:12px; text-decoration:none;">Módulo de ${subj.name} →</a></div>` : ''}
+        `;
+      } else if (layout === "tablet") {
+        card.className = "ipad-block-card";
+        card.style.setProperty("--block-color", color);
+        card.style.padding = "18px";
+        card.style.marginBottom = "0";
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: ${color}; letter-spacing: 0.5px;">${escapeHtml(item.subjectName)}</span>
+            ${item.section !== 'ALL' ? `<span class="ipad-pill ${isSecMatch ? 'two-hours' : ''}" style="font-size: 11px;">Sección ${item.section}</span>` : ''}
+          </div>
+          <div style="font-size: 18px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">${escapeHtml(item.name)}</div>
+          <div style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 8px;"><strong>Salones oficiales:</strong> ${escapeHtml(item.salons.join(" • "))}</div>
+          <div style="font-size: 12.5px; color: var(--text-tertiary); line-height: 1.45;">${escapeHtml(item.notes)}</div>
+          ${subj && subj.hasOwnPage ? `<div style="margin-top: 12px;"><a href="${subj.pageUrl}" class="ipad-pill" style="text-decoration:none; display:inline-block; font-size:12px; color:var(--accent-gold); background:rgba(245,197,24,0.15);">Ver módulo de ${subj.name} →</a></div>` : ''}
+        `;
+      } else {
+        card.className = "glass-card";
+        card.style.borderLeft = "5px solid " + color;
+        card.style.marginBottom = "12px";
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(item.subjectName)}</span>
+            ${item.section !== 'ALL' ? `<span class="tag-badge ${isSecMatch ? 'two-hours' : ''}">Sección ${item.section}</span>` : ''}
+          </div>
+          <div style="font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">${escapeHtml(item.name)}</div>
+          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;"><strong>Salones:</strong> ${escapeHtml(item.salons.join(" • "))}</div>
+          <div style="font-size: 12px; color: var(--text-tertiary); line-height: 1.35;">${escapeHtml(item.notes)}</div>
+          ${subj && subj.hasOwnPage ? `<div style="margin-top: 10px;"><a href="${subj.pageUrl}" class="ipad-pill" style="text-decoration:none; display:inline-block; font-size:12px; color:var(--accent-gold);">Ir al Módulo de ${subj.name} →</a></div>` : ''}
+        `;
+      }
 
       listWrapper.appendChild(card);
     });
@@ -1052,19 +1158,12 @@
 
   // ==========================================================================
   // 8. GESTIÓN DE TRABAJOS NECESARIOS (Historia, Español, Física)
-  // Celular + iPad comparten el almacenamiento y persistencia de entregas clave
+  // Celular + iPad + Mac comparten el almacenamiento y persistencia de entregas clave
   // ==========================================================================
   function initRequiredWorksModule() {
-    const container = document.getElementById("required-works-container");
-    const subjectId = container ? container.dataset.subjectId : null;
-    if (!container || !subjectId) return;
-
-    const toggleBtn = document.getElementById("toggle-add-work-btn");
-    const form = document.getElementById("add-work-form");
-    const saveBtn = document.getElementById("save-work-btn");
-    const titleInput = document.getElementById("work-title-input");
-    const dateInput = document.getElementById("work-date-input");
-    const notesInput = document.getElementById("work-notes-input");
+    const anyContainer = document.querySelector("[id*='works-container']");
+    const subjectId = anyContainer ? anyContainer.dataset.subjectId : null;
+    if (!anyContainer || !subjectId) return;
 
     const storageKey = "encardomy_trabajos_" + subjectId;
 
@@ -1082,97 +1181,109 @@
     }
 
     function renderWorksList() {
-      const listElem = document.getElementById("required-works-list");
-      if (!listElem) return;
+      const lists = document.querySelectorAll("#required-works-list, #ipad-works-list, #mac-works-list");
+      if (lists.length === 0) return;
 
       const works = getWorks();
-      listElem.innerHTML = "";
 
-      if (works.length === 0) {
-        listElem.innerHTML = `
-          <div class="empty-state-card" style="padding: 24px 16px; margin: 8px 0;">
-            <div class="empty-state-icon" style="font-size: 24px;">📌</div>
-            <div class="empty-state-text" style="font-size: 14px;">No hay trabajos necesarios registrados.</div>
-            <div class="empty-state-subtext">Agrega trabajos obligatorios o entregas clave usando el botón de arriba.</div>
-          </div>
-        `;
-        return;
-      }
+      lists.forEach(listElem => {
+        listElem.innerHTML = "";
 
-      works.forEach((w, index) => {
-        const item = document.createElement("div");
-        item.className = "work-item-card " + (w.completed ? "completed" : "");
-
-        item.innerHTML = `
-          <input type="checkbox" class="work-checkbox" ${w.completed ? "checked" : ""} aria-label="Marcar como entregado">
-          <div class="work-details">
-            <div class="work-title">${escapeHtml(w.title)}</div>
-            <div class="work-meta">
-              <span class="work-meta-badge">Entrega: ${escapeHtml(w.date || 'Sin fecha')}</span>
-              ${w.notes ? `<span>${escapeHtml(w.notes)}</span>` : ''}
+        if (works.length === 0) {
+          listElem.innerHTML = `
+            <div class="empty-state-card" style="padding: 24px 16px; margin: 8px 0;">
+              <div class="empty-state-icon" style="font-size: 24px;">📌</div>
+              <div class="empty-state-text" style="font-size: 14px;">No hay trabajos necesarios registrados.</div>
+              <div class="empty-state-subtext">Agrega trabajos obligatorios o entregas clave usando el botón de arriba.</div>
             </div>
-          </div>
-          <button type="button" class="delete-work-btn" title="Eliminar trabajo" aria-label="Eliminar trabajo">✕</button>
-        `;
-
-        const chk = item.querySelector(".work-checkbox");
-        chk.addEventListener("change", () => {
-          works[index].completed = chk.checked;
-          saveWorks(works);
-        });
-
-        const delBtn = item.querySelector(".delete-work-btn");
-        delBtn.addEventListener("click", () => {
-          works.splice(index, 1);
-          saveWorks(works);
-        });
-
-        listElem.appendChild(item);
-      });
-    }
-
-    if (toggleBtn && form) {
-      toggleBtn.addEventListener("click", () => {
-        form.classList.toggle("show");
-      });
-    }
-
-    if (saveBtn) {
-      saveBtn.addEventListener("click", () => {
-        const title = titleInput.value.trim();
-        const date = dateInput.value;
-        const notes = notesInput.value.trim();
-
-        if (!title) {
-          alert("Por favor escribe el título del trabajo.");
+          `;
           return;
         }
 
-        const works = getWorks();
-        works.unshift({
-          id: Date.now(),
-          title: title,
-          date: date,
-          notes: notes,
-          completed: false,
-          createdAt: new Date().toISOString()
+        works.forEach((w, index) => {
+          const item = document.createElement("div");
+          item.className = "work-item-card " + (w.completed ? "completed" : "");
+
+          item.innerHTML = `
+            <input type="checkbox" class="work-checkbox" ${w.completed ? "checked" : ""} aria-label="Marcar como entregado">
+            <div class="work-details">
+              <div class="work-title">${escapeHtml(w.title)}</div>
+              <div class="work-meta">
+                <span class="work-meta-badge">Entrega: ${escapeHtml(w.date || 'Sin fecha')}</span>
+                ${w.notes ? `<span>${escapeHtml(w.notes)}</span>` : ''}
+              </div>
+            </div>
+            <button type="button" class="delete-work-btn" title="Eliminar trabajo" aria-label="Eliminar trabajo">✕</button>
+          `;
+
+          const chk = item.querySelector(".work-checkbox");
+          chk.addEventListener("change", () => {
+            works[index].completed = chk.checked;
+            saveWorks(works);
+          });
+
+          const delBtn = item.querySelector(".delete-work-btn");
+          delBtn.addEventListener("click", () => {
+            works.splice(index, 1);
+            saveWorks(works);
+          });
+
+          listElem.appendChild(item);
         });
-
-        saveWorks(works);
-
-        titleInput.value = "";
-        dateInput.value = "";
-        notesInput.value = "";
-        form.classList.remove("show");
       });
     }
+
+    // Configurar formularios en móvil, iPad y Mac
+    const formGroups = [
+      { toggle: document.getElementById("toggle-add-work-btn"), form: document.getElementById("add-work-form"), save: document.getElementById("save-work-btn"), title: document.getElementById("work-title-input"), date: document.getElementById("work-date-input"), notes: document.getElementById("work-notes-input") },
+      { toggle: document.getElementById("ipad-toggle-work-btn"), form: document.getElementById("ipad-add-work-form"), save: document.getElementById("ipad-save-work-btn"), title: document.getElementById("ipad-work-title-input"), date: document.getElementById("ipad-work-date-input"), notes: document.getElementById("ipad-work-notes-input") },
+      { toggle: document.getElementById("mac-toggle-work-btn"), form: document.getElementById("mac-add-work-form"), save: document.getElementById("mac-save-work-btn"), title: document.getElementById("mac-work-title-input"), date: document.getElementById("mac-work-date-input"), notes: document.getElementById("mac-work-notes-input") }
+    ];
+
+    formGroups.forEach(grp => {
+      if (grp.toggle && grp.form) {
+        grp.toggle.addEventListener("click", () => {
+          grp.form.classList.toggle("show");
+        });
+      }
+
+      if (grp.save && grp.title) {
+        grp.save.addEventListener("click", () => {
+          const title = grp.title.value.trim();
+          const date = grp.date ? grp.date.value : "";
+          const notes = grp.notes ? grp.notes.value.trim() : "";
+
+          if (!title) {
+            alert("Por favor escribe el título del trabajo.");
+            return;
+          }
+
+          const works = getWorks();
+          works.unshift({
+            id: Date.now(),
+            title: title,
+            date: date,
+            notes: notes,
+            completed: false,
+            createdAt: new Date().toISOString()
+          });
+
+          saveWorks(works);
+
+          grp.title.value = "";
+          if (grp.date) grp.date.value = "";
+          if (grp.notes) grp.notes.value = "";
+          if (grp.form) grp.form.classList.remove("show");
+        });
+      }
+    });
 
     renderWorksList();
   }
 
   // ==========================================================================
   // 9. SINCRONIZACIÓN CENTRALIZADA DE PÁGINAS ACADÉMICAS (Avisos, Tareas, Exámenes)
-  // Celular + iPad conectados a la Fuente Central de Datos (Single Source of Truth)
+  // Celular + iPad + Mac conectados a la Fuente Central de Datos (Single Source of Truth)
   // ==========================================================================
   function initDynamicPagesSync() {
     renderAvisosView();
@@ -1181,109 +1292,115 @@
   }
 
   function renderAvisosView() {
-    const emptyState = document.getElementById("avisos-empty-state");
-    if (!emptyState) return;
-    const parent = emptyState.parentElement;
-    if (!parent) return;
+    const targets = document.querySelectorAll("#avisos-empty-state, #ipad-avisos-empty-state, #mac-avisos-empty-state");
+    if (targets.length === 0) return;
 
     const avisos = ENCARDOMY_DATA.getAvisos("all", "all", false);
     if (avisos.length > 0) {
-      let html = '<div class="schedule-list tablet-cards-grid">';
-      avisos.forEach(a => {
-        const subj = ENCARDOMY_DATA.subjects[a.subjectId];
-        const color = subj ? subj.color : "var(--accent-gold)";
-        html += `
-          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-              ${escapeHtml(a.subjectName || '')}
+      targets.forEach(emptyState => {
+        const parent = emptyState.parentElement;
+        if (!parent) return;
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        avisos.forEach(a => {
+          const subj = ENCARDOMY_DATA.subjects[a.subjectId];
+          const color = subj ? subj.color : "var(--accent-gold)";
+          html += `
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+                ${escapeHtml(a.subjectName || '')}
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+                ${escapeHtml(a.title)}
+              </div>
+              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+                ${escapeHtml(a.content || '')}
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+                Fecha: ${escapeHtml(a.date || 'Sin fecha')}
+              </div>
             </div>
-            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-              ${escapeHtml(a.title)}
-            </div>
-            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-              ${escapeHtml(a.content || '')}
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-              Fecha: ${escapeHtml(a.date || 'Sin fecha')}
-            </div>
-          </div>
-        `;
+          `;
+        });
+        html += '</div>';
+        parent.innerHTML = html;
       });
-      html += '</div>';
-      parent.innerHTML = html;
     }
   }
 
   function renderTareasView() {
-    const emptyState = document.getElementById("tareas-empty-state");
-    if (!emptyState) return;
-    const parent = emptyState.parentElement;
-    if (!parent) return;
+    const targets = document.querySelectorAll("#tareas-empty-state, #ipad-tareas-empty-state, #mac-tareas-empty-state");
+    if (targets.length === 0) return;
 
     const tareas = ENCARDOMY_DATA.getTareas("all", false);
     if (tareas.length > 0) {
-      let html = '<div class="schedule-list tablet-cards-grid">';
-      tareas.forEach(t => {
-        const subj = ENCARDOMY_DATA.subjects[t.subjectId];
-        const color = subj ? subj.color : "var(--accent-gold)";
-        html += `
-          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-              ${escapeHtml(t.subjectName || '')}
+      targets.forEach(emptyState => {
+        const parent = emptyState.parentElement;
+        if (!parent) return;
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        tareas.forEach(t => {
+          const subj = ENCARDOMY_DATA.subjects[t.subjectId];
+          const color = subj ? subj.color : "var(--accent-gold)";
+          html += `
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+                ${escapeHtml(t.subjectName || '')}
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+                ${escapeHtml(t.title)}
+              </div>
+              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+                ${escapeHtml(t.description || '')}
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+                Fecha límite: ${escapeHtml(t.dueDate || 'Sin fecha')}
+              </div>
             </div>
-            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-              ${escapeHtml(t.title)}
-            </div>
-            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-              ${escapeHtml(t.description || '')}
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-              Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}
-            </div>
-          </div>
-        `;
+          `;
+        });
+        html += '</div>';
+        parent.innerHTML = html;
       });
-      html += '</div>';
-      parent.innerHTML = html;
     }
   }
 
   function renderExamenesView() {
-    const emptyState = document.getElementById("examenes-empty-state");
-    if (!emptyState) return;
-    const parent = emptyState.parentElement;
-    if (!parent) return;
+    const targets = document.querySelectorAll("#examenes-empty-state, #ipad-examenes-empty-state, #mac-examenes-empty-state");
+    if (targets.length === 0) return;
 
     const examenes = ENCARDOMY_DATA.getExamenes("all", false);
     if (examenes.length > 0) {
-      let html = '<div class="schedule-list tablet-cards-grid">';
-      examenes.forEach(ex => {
-        const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
-        const color = subj ? subj.color : "var(--accent-gold)";
-        html += `
-          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-              ${escapeHtml(ex.subjectName || '')}
+      targets.forEach(emptyState => {
+        const parent = emptyState.parentElement;
+        if (!parent) return;
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        examenes.forEach(ex => {
+          const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
+          const color = subj ? subj.color : "var(--accent-gold)";
+          html += `
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
+              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+                ${escapeHtml(ex.subjectName || '')}
+              </div>
+              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+                ${escapeHtml(ex.title)}
+              </div>
+              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+                Temario: ${escapeHtml(ex.topics || 'Por confirmar')}
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+                Fecha: ${escapeHtml(ex.date || 'Por confirmar')}
+              </div>
             </div>
-            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-              ${escapeHtml(ex.title)}
-            </div>
-            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-              Temario: ${escapeHtml(ex.topics || 'Por confirmar')}
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-              Fecha: ${escapeHtml(ex.date || 'Por confirmar')}
-            </div>
-          </div>
-        `;
+          `;
+        });
+        html += '</div>';
+        parent.innerHTML = html;
       });
-      html += '</div>';
-      parent.innerHTML = html;
     }
   }
 
   // ==========================================================================
-  // 10. ACADEMIC HUB SINCRONIZADO EN IPAD (Avisos, Tareas y Exámenes)
+  // 10. ACADEMIC HUB SINCRONIZADO EN IPAD Y MAC (Avisos, Tareas y Exámenes)
   // ==========================================================================
   function initAcademicHubSync() {
     renderAvisosHub();
@@ -1292,121 +1409,144 @@
   }
 
   function renderAvisosHub() {
-    const list = document.getElementById("ipad-avisos-list");
-    if (!list) return;
+    const ipadList = document.getElementById("ipad-avisos-list");
+    const macList = document.getElementById("mac-avisos-list");
+    const lists = [ipadList, macList].filter(Boolean);
+    if (lists.length === 0) return;
 
     const avisos = ENCARDOMY_DATA.getAvisos("all", "all", false);
-    list.innerHTML = "";
 
-    if (avisos.length === 0) {
-      list.innerHTML = `
-        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
-          <div style="font-size: 26px; margin-bottom: 6px;">📢</div>
-          <strong style="color: var(--text-secondary);">No hay avisos por ahora.</strong>
-        </div>
-      `;
-      return;
-    }
+    lists.forEach(list => {
+      list.innerHTML = "";
+      if (avisos.length === 0) {
+        list.innerHTML = `
+          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+            <div style="font-size: 26px; margin-bottom: 6px;">📢</div>
+            <strong style="color: var(--text-secondary);">No hay avisos por ahora.</strong>
+          </div>
+        `;
+        return;
+      }
 
-    avisos.forEach(a => {
-      const subj = ENCARDOMY_DATA.subjects[a.subjectId];
-      const color = subj ? subj.color : "var(--accent-gold)";
-      const item = document.createElement("div");
-      item.className = "ipad-academic-card";
-      item.style.setProperty("--item-color", color);
-      item.innerHTML = `
-        <div class="ipad-card-title">${escapeHtml(a.title)}</div>
-        <div class="ipad-card-snippet">${escapeHtml(a.content || '')}</div>
-        <div class="ipad-card-meta-row">
-          <span>${escapeHtml(a.subjectName || '')}</span>
-          <span>${escapeHtml(a.date || '')}</span>
-        </div>
-      `;
-      item.addEventListener("click", () => openDetailModal("Aviso", a, color));
-      list.appendChild(item);
+      avisos.forEach(a => {
+        const subj = ENCARDOMY_DATA.subjects[a.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        const item = document.createElement("div");
+        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.style.setProperty("--item-color", color);
+        item.style.borderLeft = "4px solid " + color;
+        item.style.padding = "10px 12px";
+        item.style.borderRadius = "8px";
+        item.style.background = "rgba(255,255,255,0.04)";
+        item.style.cursor = "pointer";
+        item.innerHTML = `
+          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(a.title)}</div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">${escapeHtml(a.content || '')}</div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
+            <span>${escapeHtml(a.subjectName || '')}</span>
+            <span>${escapeHtml(a.date || '')}</span>
+          </div>
+        `;
+        item.addEventListener("click", () => openDetailModal("Aviso", a, color));
+        list.appendChild(item);
+      });
     });
   }
 
   function renderTareasHub() {
-    const list = document.getElementById("ipad-tareas-list");
-    if (!list) return;
+    const ipadList = document.getElementById("ipad-tareas-list");
+    const macList = document.getElementById("mac-tareas-list");
+    const lists = [ipadList, macList].filter(Boolean);
+    if (lists.length === 0) return;
 
     const tareas = ENCARDOMY_DATA.getTareas("all", false);
-    list.innerHTML = "";
 
-    if (tareas.length === 0) {
-      list.innerHTML = `
-        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
-          <div style="font-size: 26px; margin-bottom: 6px;">📝</div>
-          <strong style="color: var(--text-secondary);">No hay tareas por ahora.</strong>
-        </div>
-      `;
-      return;
-    }
+    lists.forEach(list => {
+      list.innerHTML = "";
+      if (tareas.length === 0) {
+        list.innerHTML = `
+          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+            <div style="font-size: 26px; margin-bottom: 6px;">📝</div>
+            <strong style="color: var(--text-secondary);">No hay tareas por ahora.</strong>
+          </div>
+        `;
+        return;
+      }
 
-    tareas.forEach(t => {
-      const subj = ENCARDOMY_DATA.subjects[t.subjectId];
-      const color = subj ? subj.color : "var(--accent-gold)";
-      const item = document.createElement("div");
-      item.className = "ipad-academic-card";
-      item.style.setProperty("--item-color", color);
-      item.innerHTML = `
-        <div class="ipad-card-title">${escapeHtml(t.title)}</div>
-        <div class="ipad-card-snippet">${escapeHtml(t.description || '')}</div>
-        <div class="ipad-card-meta-row">
-          <span>${escapeHtml(t.subjectName || '')}</span>
-          <span>Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
-        </div>
-      `;
-      item.addEventListener("click", () => openDetailModal("Tarea", t, color));
-      list.appendChild(item);
+      tareas.forEach(t => {
+        const subj = ENCARDOMY_DATA.subjects[t.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        const item = document.createElement("div");
+        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.style.setProperty("--item-color", color);
+        item.style.borderLeft = "4px solid " + color;
+        item.style.padding = "10px 12px";
+        item.style.borderRadius = "8px";
+        item.style.background = "rgba(255,255,255,0.04)";
+        item.style.cursor = "pointer";
+        item.innerHTML = `
+          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(t.title)}</div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">${escapeHtml(t.description || '')}</div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
+            <span>${escapeHtml(t.subjectName || '')}</span>
+            <span>Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
+          </div>
+        `;
+        item.addEventListener("click", () => openDetailModal("Tarea", t, color));
+        list.appendChild(item);
+      });
     });
   }
 
   function renderExamenesHub() {
-    const list = document.getElementById("ipad-examenes-list");
-    if (!list) return;
+    const ipadList = document.getElementById("ipad-examenes-list");
+    const macList = document.getElementById("mac-examenes-list");
+    const lists = [ipadList, macList].filter(Boolean);
+    if (lists.length === 0) return;
 
     const examenes = ENCARDOMY_DATA.getExamenes("all", false);
-    list.innerHTML = "";
 
-    if (examenes.length === 0) {
-      list.innerHTML = `
-        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
-          <div style="font-size: 26px; margin-bottom: 6px;">📋</div>
-          <strong style="color: var(--text-secondary);">No hay exámenes por ahora.</strong>
-        </div>
-      `;
-      return;
-    }
+    lists.forEach(list => {
+      list.innerHTML = "";
+      if (examenes.length === 0) {
+        list.innerHTML = `
+          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+            <div style="font-size: 26px; margin-bottom: 6px;">📋</div>
+            <strong style="color: var(--text-secondary);">No hay exámenes por ahora.</strong>
+          </div>
+        `;
+        return;
+      }
 
-    examenes.forEach(ex => {
-      const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
-      const color = subj ? subj.color : "var(--accent-gold)";
-      const item = document.createElement("div");
-      item.className = "ipad-academic-card";
-      item.style.setProperty("--item-color", color);
-      item.innerHTML = `
-        <div class="ipad-card-title">${escapeHtml(ex.title)}</div>
-        <div class="ipad-card-snippet">Temario: ${escapeHtml(ex.topics || 'Por confirmar')}</div>
-        <div class="ipad-card-meta-row">
-          <span>${escapeHtml(ex.subjectName || '')}</span>
-          <span>Fecha: ${escapeHtml(ex.date || 'Por confirmar')}</span>
-        </div>
-      `;
-      item.addEventListener("click", () => openDetailModal("Examen", ex, color));
-      list.appendChild(item);
+      examenes.forEach(ex => {
+        const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        const item = document.createElement("div");
+        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.style.setProperty("--item-color", color);
+        item.style.borderLeft = "4px solid " + color;
+        item.style.padding = "10px 12px";
+        item.style.borderRadius = "8px";
+        item.style.background = "rgba(255,255,255,0.04)";
+        item.style.cursor = "pointer";
+        item.innerHTML = `
+          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(ex.title)}</div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">Temario: ${escapeHtml(ex.topics || 'Por confirmar')}</div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
+            <span>${escapeHtml(ex.subjectName || '')}</span>
+            <span>Fecha: ${escapeHtml(ex.date || 'Por confirmar')}</span>
+          </div>
+        `;
+        item.addEventListener("click", () => openDetailModal("Examen", ex, color));
+        list.appendChild(item);
+      });
     });
   }
 
   function openDetailModal(type, data, color) {
-    const backdrop = document.getElementById("ipad-detail-modal");
-    const title = document.getElementById("ipad-modal-title");
-    const body = document.getElementById("ipad-modal-body");
-    if (!backdrop || !title || !body) return;
-
-    title.textContent = `${type}: ${data.title}`;
-    title.style.color = color || "var(--accent-gold)";
+    const currentInterface = document.documentElement.getAttribute("data-current-interface") || state.device;
+    const macBackdrop = document.getElementById("mac-detail-modal");
+    const ipadBackdrop = document.getElementById("ipad-detail-modal");
 
     let detailsHtml = `
       <div style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">
@@ -1420,14 +1560,31 @@
       </div>
     `;
 
-    body.innerHTML = detailsHtml;
-    backdrop.classList.add("show");
+    if (currentInterface === "desktop" && macBackdrop) {
+      const macTitle = document.getElementById("mac-modal-title");
+      const macBody = document.getElementById("mac-modal-body");
+      if (macTitle) macTitle.textContent = `${type}: ${data.title}`;
+      if (macBody) macBody.innerHTML = detailsHtml;
+      macBackdrop.classList.add("show");
+      return;
+    }
+
+    if (ipadBackdrop) {
+      const title = document.getElementById("ipad-modal-title");
+      const body = document.getElementById("ipad-modal-body");
+      if (title) {
+        title.textContent = `${type}: ${data.title}`;
+        title.style.color = color || "var(--accent-gold)";
+      }
+      if (body) body.innerHTML = detailsHtml;
+      ipadBackdrop.classList.add("show");
+    }
   }
 
-  // Cerrar modal iPadOS
-  const closeBtn = document.getElementById("ipad-modal-close");
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
+  // Cerrar modales
+  const closeBtnIpad = document.getElementById("ipad-modal-close");
+  if (closeBtnIpad) {
+    closeBtnIpad.addEventListener("click", () => {
       const backdrop = document.getElementById("ipad-detail-modal");
       if (backdrop) backdrop.classList.remove("show");
     });
@@ -1441,6 +1598,8 @@
     // Vincular funciones a window para soporte inline
     window.handleOrderSubmit = handleOrderSubmit;
     window.handleIpadOrderSubmit = handleOrderSubmit;
+    window.handleMacOrderSubmit = handleOrderSubmit;
+    window.handleMacOrderSubmit = handleOrderSubmit;
     window.openClipModal = openClipModal;
     window.closeClipModal = closeClipModal;
     window.updateMessagePreview = updateMessagePreview;
@@ -1471,15 +1630,20 @@
   }
 
   function updateMessagePreview() {
-    const item = (document.getElementById("ipad-order-item")?.value.trim()) || 
+    const item = (document.getElementById("mac-order-item")?.value.trim()) ||
+                 (document.getElementById("ipad-order-item")?.value.trim()) || 
                  (document.getElementById("order-item")?.value.trim()) || "[Artículo o solicitud]";
-    const name = (document.getElementById("ipad-order-name")?.value.trim()) || 
+    const name = (document.getElementById("mac-order-name")?.value.trim()) ||
+                 (document.getElementById("ipad-order-name")?.value.trim()) || 
                  (document.getElementById("order-name")?.value.trim()) || "[Tu nombre]";
-    const desc = (document.getElementById("ipad-order-desc")?.value.trim()) || 
+    const desc = (document.getElementById("mac-order-desc")?.value.trim()) ||
+                 (document.getElementById("ipad-order-desc")?.value.trim()) || 
                  (document.getElementById("order-desc")?.value.trim()) || "[Descripción / Especificaciones]";
-    const qty = (document.getElementById("ipad-order-qty")?.value.trim()) || 
+    const qty = (document.getElementById("mac-order-qty")?.value.trim()) ||
+                (document.getElementById("ipad-order-qty")?.value.trim()) || 
                 (document.getElementById("order-qty")?.value.trim()) || "1";
-    const notes = (document.getElementById("ipad-order-notes")?.value.trim()) || 
+    const notes = (document.getElementById("mac-order-notes")?.value.trim()) ||
+                  (document.getElementById("ipad-order-notes")?.value.trim()) || 
                   (document.getElementById("order-notes")?.value.trim()) || "Ninguna";
 
     const previewText = 
@@ -1492,16 +1656,18 @@
       "• Información adicional / Fecha: " + notes + "\n\n" +
       "¿Podrían confirmarme los detalles y disponibilidad? ¡Muchas gracias!";
 
-    const elem = document.getElementById("ipad-msg-preview");
-    if (elem) elem.textContent = previewText;
+    const elemIpad = document.getElementById("ipad-msg-preview");
+    if (elemIpad) elemIpad.textContent = previewText;
+    const elemMac = document.getElementById("mac-msg-preview");
+    if (elemMac) elemMac.textContent = previewText;
   }
 
   function handleOrderSubmit(channel) {
-    const itemElem = document.getElementById("ipad-order-item") || document.getElementById("order-item");
-    const nameElem = document.getElementById("ipad-order-name") || document.getElementById("order-name");
-    const descElem = document.getElementById("ipad-order-desc") || document.getElementById("order-desc");
-    const qtyElem = document.getElementById("ipad-order-qty") || document.getElementById("order-qty");
-    const notesElem = document.getElementById("ipad-order-notes") || document.getElementById("order-notes");
+    const itemElem = document.getElementById("mac-order-item") || document.getElementById("ipad-order-item") || document.getElementById("order-item");
+    const nameElem = document.getElementById("mac-order-name") || document.getElementById("ipad-order-name") || document.getElementById("order-name");
+    const descElem = document.getElementById("mac-order-desc") || document.getElementById("ipad-order-desc") || document.getElementById("order-desc");
+    const qtyElem = document.getElementById("mac-order-qty") || document.getElementById("ipad-order-qty") || document.getElementById("order-qty");
+    const notesElem = document.getElementById("mac-order-notes") || document.getElementById("ipad-order-notes") || document.getElementById("order-notes");
 
     const item = itemElem ? itemElem.value.trim() : "";
     const name = nameElem ? nameElem.value.trim() : "";
@@ -1562,23 +1728,23 @@
   // 12. OTROS FORMULARIOS (Sugerencias y Sección B)
   // ==========================================================================
   function initFeedbackForms() {
-    const sugForm = document.getElementById("sugerencias-form");
-    if (sugForm) {
-      sugForm.addEventListener("submit", (e) => {
+    const sugForms = document.querySelectorAll("#sugerencias-form, #ipad-sugerencias-form, #mac-sugerencias-form");
+    sugForms.forEach(form => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         alert("¡Muchas gracias por tu sugerencia! Ha sido registrada con éxito para mejorar la Minweb 415.");
-        sugForm.reset();
+        form.reset();
       });
-    }
+    });
 
-    const secBForm = document.getElementById("seccion-b-form");
-    if (secBForm) {
-      secBForm.addEventListener("submit", (e) => {
+    const secBForms = document.querySelectorAll("#seccion-b-form, #ipad-seccion-b-form, #mac-seccion-b-form");
+    secBForms.forEach(form => {
+      form.addEventListener("submit", (e) => {
         e.preventDefault();
         alert("¡Muchas gracias! Tu reporte ha sido recibido para actualizar los salones y particularidades de la Sección B.");
-        secBForm.reset();
+        form.reset();
       });
-    }
+    });
   }
 
   // ==========================================================================
@@ -1801,6 +1967,9 @@
     renderSchedule();
     initDynamicPagesSync();
     initAcademicHubSync();
+    if (typeof updateAllProfessorContainers === "function") {
+      updateAllProfessorContainers(activeProfessorQuery || "");
+    }
   }
 
   // Exportar API para interoperabilidad

@@ -58,6 +58,20 @@
     },
 
     determineInterface: function (v) {
+      const path = (typeof window !== "undefined" && window.location.pathname) ? window.location.pathname.split("/").pop() : "";
+      
+      // Si la URL es explícitamente ipad-*, siempre preservar la interfaz de tableta
+      // y adaptar la composición internamente a la orientación, ancho o Split View real.
+      if (path.startsWith("ipad-")) {
+        return "tablet";
+      }
+      
+      // Si la URL es explícitamente mac-*, siempre preservar la interfaz de computadora
+      // y adaptar la composición internamente al nivel de ventana (compacta, mediana, grande, ultrawide).
+      if (path.startsWith("mac-")) {
+        return "desktop";
+      }
+
       const w = v.width;
       const aspect = v.aspect;
       const current = this.currentInterface;
@@ -95,8 +109,8 @@
         return "tablet";
       }
 
-      // 4. Primera evaluación (sin estado previo):
-      if (w >= 1120 && aspect >= 0.95) {
+      // 4. Primera evaluación (sin estado previo para index.html general):
+      if (w >= 1140 && aspect >= 0.95) {
         return "desktop";
       } else if (w >= 720) {
         return "tablet";
@@ -129,12 +143,21 @@
         document.body.setAttribute("data-ipad-orientation", v.orientation);
       }
 
-      // Nivel de layout interno para computadoras Mac
+      // Nivel de layout interno proporcional para computadoras Mac
+      // Compact: < 920px (1 col fluida sin sidebar ni inspector)
+      // Medium: 920px a 1359px (2 col: sidebar + main stage espacioso)
+      // Large / Ultrawide: >= 1360px (3 col completas: sidebar + main stage amplio + inspector)
       let macLayout = "large";
-      if (v.width < 860) macLayout = "compact";
-      else if (v.width < 1240) macLayout = "medium";
+      if (v.width < 920) macLayout = "compact";
+      else if (v.width < 1360) macLayout = "medium";
       root.setAttribute("data-mac-layout", macLayout);
       if (document.body) document.body.setAttribute("data-mac-layout", macLayout);
+
+      // En iPad: si el ancho es menor a 880px (Split View 1/2 o 1/3, o pantalla angosta),
+      // usar modo vertical/dock inferior para evitar que una barra lateral devore la pantalla.
+      const ipadEffectiveOrientation = (v.isLandscape && v.width >= 880) ? "landscape" : "portrait";
+      root.setAttribute("data-ipad-orientation", ipadEffectiveOrientation);
+      if (document.body) document.body.setAttribute("data-ipad-orientation", ipadEffectiveOrientation);
 
       // Si cambió de interfaz o es la primera carga:
       if (interfaceChanged || immediate) {
@@ -160,9 +183,18 @@
       this.syncUrl(newInterface);
 
       // Sincronizar badges de orientación
+      const effectiveIpadMode = (v.isLandscape && v.width >= 880) ? "⟳ Horizontal" : "⟲ Vertical";
       document.querySelectorAll(".ipad-orientation-badge, #ipad-orientation-badge").forEach(badge => {
-        badge.textContent = v.isLandscape ? "⟳ Horizontal" : "⟲ Vertical";
+        badge.textContent = effectiveIpadMode;
         badge.title = `Resolución: ${v.width} × ${v.height} px (${newInterface.toUpperCase()})`;
+      });
+
+      // Sincronizar pills de modo de ventana Mac según el ancho real
+      let currentMacMode = "Ventana Grande (3 Col)";
+      if (v.width < 920) currentMacMode = "Ventana Compacta (1 Col)";
+      else if (v.width < 1360) currentMacMode = "Ventana Mediana (2 Col)";
+      document.querySelectorAll(".mac-window-mode-pill").forEach(pill => {
+        pill.textContent = currentMacMode;
       });
 
       // Refrescar componentes activos en el nuevo contenedor sin parpadeo
@@ -186,6 +218,10 @@
       if (typeof history === "undefined" || !history.replaceState) return;
 
       const currentPath = window.location.pathname.split("/").pop() || "index.html";
+      // Si el usuario ya está en una página dedicada ipad-* o mac-*, mantener la URL intacta
+      if (currentPath.startsWith("ipad-") || currentPath.startsWith("mac-")) {
+        return;
+      }
       let baseName = currentPath;
 
       if (baseName.startsWith("ipad-")) {

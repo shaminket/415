@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/ipad.css">
   <link rel="stylesheet" href="css/mac.css">
+  <link rel="stylesheet" href="css/pdf-tools.css">
   <meta name="description" content="Plataforma académica interactiva del Grupo 415 con adaptación continua y automática a Celular, Tableta y Computadora en tiempo real.">
 </head>
 <body>
@@ -80,21 +81,8 @@
         </div>
     </header>
 
-    <!-- Estado Oficial de Herramientas (Regla 22 y 34) -->
-    <section aria-labelledby="tools-status-heading">
-      <h2 id="tools-status-heading" class="visually-hidden" style="display:none;">Estado de Herramientas</h2>
-      
-      <div class="empty-state-card" style="padding: 48px 20px;">
-        <div class="empty-state-icon" aria-hidden="true">🛠️</div>
-        <!-- Texto exacto requerido por la Regla 22 -->
-        <div class="empty-state-text" style="font-size: 17px; color: var(--text-primary);">
-          No hay herramientas disponibles por ahora.
-        </div>
-        <div class="empty-state-subtext" style="margin-top: 10px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.45;">
-          Posteriormente se integrarán utilidades académicas para la comunidad del grupo 415.
-        </div>
-      </div>
-    </section>
+    <!-- Montaje de la Suite Oficial de Herramientas PDF24 -->
+    <div id="pdf-tools-mount-mobile"></div>
 
     <!-- Pie Institucional -->
     <footer class="app-footer">
@@ -313,21 +301,8 @@
     
     
 
-    <!-- Estado Oficial de Herramientas (Regla 22 y 34) -->
-    <section aria-labelledby="tools-status-heading">
-      <h2 id="tools-status-heading" class="visually-hidden" style="display:none;">Estado de Herramientas</h2>
-      
-      <div class="empty-state-card" style="padding: 48px 20px;">
-        <div class="empty-state-icon" aria-hidden="true">🛠️</div>
-        <!-- Texto exacto requerido por la Regla 22 -->
-        <div class="empty-state-text" style="font-size: 17px; color: var(--text-primary);">
-          No hay herramientas disponibles por ahora.
-        </div>
-        <div class="empty-state-subtext" style="margin-top: 10px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.45;">
-          Posteriormente se integrarán utilidades académicas para la comunidad del grupo 415.
-        </div>
-      </div>
-    </section>
+    <!-- Montaje de la Suite Oficial de Herramientas PDF24 -->
+    <div id="pdf-tools-mount-tablet"></div>
 
     <!-- Pie Institucional -->
     <footer class="app-footer">
@@ -445,11 +420,11 @@
             <a href="mac-ayuda.html" class="mac-compact-nav-link ">Ayuda</a>
           </nav>
 
-          <div class="mac-card" style="margin-bottom: 20px;">
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-accent-gold); letter-spacing: 1px; margin-bottom: 4px;">
-              Plataforma Minweb 415 · Mac Edition
+          <div class="mac-page-header-card">
+            <div class="mac-page-header-eyebrow">
+              <span>✦</span> Plataforma Minweb 415 · Mac Edition
             </div>
-            <h1 style="font-size: 26px; font-weight: 800; color: var(--mac-text-primary); letter-spacing: -0.5px;">
+            <h1 class="mac-page-header-title">
               Herramientas Escolares
             </h1>
           </div>
@@ -463,21 +438,8 @@
     
     
 
-    <!-- Estado Oficial de Herramientas (Regla 22 y 34) -->
-    <section aria-labelledby="tools-status-heading">
-      <h2 id="tools-status-heading" class="visually-hidden" style="display:none;">Estado de Herramientas</h2>
-      
-      <div class="empty-state-card" style="padding: 48px 20px;">
-        <div class="empty-state-icon" aria-hidden="true">🛠️</div>
-        <!-- Texto exacto requerido por la Regla 22 -->
-        <div class="empty-state-text" style="font-size: 17px; color: var(--text-primary);">
-          No hay herramientas disponibles por ahora.
-        </div>
-        <div class="empty-state-subtext" style="margin-top: 10px; max-width: 320px; margin-left: auto; margin-right: auto; line-height: 1.45;">
-          Posteriormente se integrarán utilidades académicas para la comunidad del grupo 415.
-        </div>
-      </div>
-    </section>
+    <!-- Montaje de la Suite Oficial de Herramientas PDF24 -->
+    <div id="pdf-tools-mount-desktop"></div>
 
     <!-- Pie Institucional -->
 
@@ -515,11 +477,11 @@
             </div>
             <div class="mac-inspector-row">
               <span class="mac-inspector-label">Tolerancia Docente:</span>
-              <span class="mac-inspector-value" style="color: var(--mac-accent-gold);">10 minutos</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-gold);">20 minutos</span>
             </div>
             <div class="mac-inspector-row">
               <span class="mac-inspector-label">Tolerancia Alumno:</span>
-              <span class="mac-inspector-value" style="color: var(--mac-accent-green);">15 minutos</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-green);">10 minutos</span>
             </div>
             <div class="mac-inspector-row">
               <span class="mac-inspector-label">Zona Horaria:</span>
@@ -567,5 +529,7 @@
   <script src="js/data.js"></script>
   <script src="js/layout-engine.js"></script>
   <script src="js/app.js"></script>
+  <script src="https://tools.pdf24.org/static/js/widget.js"></script>
+  <script src="js/pdf-tools.js"></script>
 </body>
 </html>
