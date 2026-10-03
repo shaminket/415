@@ -1,0 +1,1455 @@
+/* ==========================================================================
+   ENCARDOMY — MINWEB 415 (macOS Desktop Edition)
+   Diseño Exclusivo para Computadoras Mac (MacBook, MacBook Air/Pro, iMac, Monitores Externos)
+   Inspirado en Apple macOS Sequoia/Sonoma + Encardomy Agency + Temática Navideña Sutil
+   ========================================================================== */
+
+:root {
+  /* Paleta Base macOS Dark Glass */
+  --mac-bg-base: #06140e;
+  --mac-surface-glass: rgba(14, 32, 22, 0.82);
+  --mac-surface-card: rgba(255, 255, 255, 0.065);
+  --mac-surface-card-hover: rgba(255, 255, 255, 0.11);
+  --mac-surface-elevated: rgba(255, 255, 255, 0.14);
+  --mac-surface-sidebar: rgba(8, 22, 15, 0.88);
+  --mac-surface-inspector: rgba(10, 26, 18, 0.84);
+  --mac-surface-titlebar: rgba(12, 28, 19, 0.94);
+  --mac-border-subtle: rgba(255, 255, 255, 0.11);
+  --mac-border-highlight: rgba(229, 192, 123, 0.35);
+
+  /* Tipografía y Textos macOS */
+  --mac-text-primary: #F5F5F7;
+  --mac-text-secondary: rgba(235, 235, 245, 0.76);
+  --mac-text-tertiary: rgba(235, 235, 245, 0.5);
+  --mac-text-muted: rgba(235, 235, 245, 0.32);
+
+  /* Acentos Navideños y Sistema */
+  --mac-accent-gold: #E5C07B;
+  --mac-accent-gold-glow: rgba(229, 192, 123, 0.36);
+  --mac-accent-gold-soft: rgba(229, 192, 123, 0.13);
+  --mac-accent-red: #FF453A;
+  --mac-accent-green: #30D158;
+  --mac-accent-blue: #2997FF;
+  --mac-accent-purple: #BF5AF2;
+
+  /* Controles de Ventana macOS (Traffic Lights) */
+  --mac-traffic-close: #FF5F56;
+  --mac-traffic-minimize: #FFBD2E;
+  --mac-traffic-zoom: #27C93F;
+
+  /* Radios y Dimensiones */
+  --mac-radius-sm: 8px;
+  --mac-radius-md: 14px;
+  --mac-radius-lg: 20px;
+  --mac-radius-xl: 26px;
+  --mac-radius-full: 9999px;
+
+  /* Sombras y Luces */
+  --mac-shadow-window: 0 24px 70px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  --mac-shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --mac-shadow-glow: 0 0 28px rgba(229, 192, 123, 0.28);
+
+  --mac-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --mac-mono-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* Reset y Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--mac-bg-base);
+  color: var(--mac-text-primary);
+  font-family: var(--mac-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Video de Fondo Atmosférico macOS */
+.mac-video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mac-video-background video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.38;
+  filter: brightness(0.62) saturate(1.25);
+}
+
+.mac-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 15%, rgba(6, 20, 14, 0.4) 0%, rgba(3, 10, 6, 0.92) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Copos de Nieve Navideños Sutiles */
+.mac-snow-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.mac-snowflake {
+  position: absolute;
+  top: -10px;
+  width: 3.5px;
+  height: 3.5px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  animation: mac-fall linear infinite;
+  filter: blur(0.4px);
+}
+
+@keyframes mac-fall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  20% { opacity: 0.7; }
+  80% { opacity: 0.7; }
+  100% { transform: translateY(105vh) translateX(35px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mac-snowflake { display: none; animation: none; }
+}
+
+/* ==========================================================================
+   ESTRUCTURA DE VENTANA MACOS (Mac Window Shell)
+   ========================================================================== */
+.mac-desktop-environment {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 24px;
+  box-sizing: border-box;
+}
+
+.mac-window-frame {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  min-height: calc(100vh - 36px);
+  background: var(--mac-surface-glass);
+  backdrop-filter: blur(48px) saturate(180%);
+  -webkit-backdrop-filter: blur(48px) saturate(180%);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-xl);
+  box-shadow: var(--mac-shadow-window);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Barra de Título macOS (Titlebar / Chrome) */
+.mac-titlebar {
+  height: 52px;
+  min-height: 52px;
+  background: var(--mac-surface-titlebar);
+  border-bottom: 1px solid var(--mac-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  user-select: none;
+  z-index: 50;
+  gap: 16px;
+}
+
+.mac-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Botones de Control de Ventana (Traffic Lights) */
+.mac-traffic-lights {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mac-traffic-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.mac-traffic-dot:hover {
+  filter: brightness(0.85);
+  transform: scale(1.08);
+}
+
+.mac-traffic-dot.close { background-color: var(--mac-traffic-close); }
+.mac-traffic-dot.minimize { background-color: var(--mac-traffic-minimize); }
+.mac-traffic-dot.zoom { background-color: var(--mac-traffic-zoom); }
+
+.mac-window-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mac-window-icon {
+  font-size: 15px;
+  color: var(--mac-accent-gold);
+}
+
+.mac-window-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mac-text-primary);
+  letter-spacing: -0.2px;
+}
+
+.mac-window-subtitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mac-accent-gold);
+  background: var(--mac-accent-gold-soft);
+  border: 1px solid rgba(229, 192, 123, 0.28);
+  padding: 2px 8px;
+  border-radius: var(--mac-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* Centro de Barra de Título: Selector A/B + Reloj CDMX */
+.mac-titlebar-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mac-segmented-section {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 3px;
+  border-radius: var(--mac-radius-full);
+  border: 1px solid var(--mac-border-subtle);
+}
+
+.mac-segment-btn {
+  border: none;
+  background: transparent;
+  color: var(--mac-text-secondary);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: var(--mac-radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mac-segment-btn.active {
+  background: var(--mac-text-primary);
+  color: #04140b;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.mac-cdmx-clock-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--mac-border-subtle);
+  padding: 5px 12px;
+  border-radius: var(--mac-radius-full);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--mac-text-secondary);
+}
+
+.mac-cdmx-dot {
+  width: 7px;
+  height: 7px;
+  background-color: var(--mac-accent-green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--mac-accent-green);
+}
+
+.mac-cdmx-time {
+  font-family: var(--mac-mono-font);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mac-accent-gold);
+}
+
+/* Derecha de Barra de Título: Herramientas y Dispositivos */
+.mac-titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mac-btn-tool {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--mac-border-subtle);
+  color: var(--mac-text-secondary);
+  padding: 5px 12px;
+  border-radius: var(--mac-radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.mac-btn-tool:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--mac-text-primary);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.mac-window-mode-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mac-text-tertiary);
+  background: rgba(0, 0, 0, 0.35);
+  padding: 4px 9px;
+  border-radius: var(--mac-radius-full);
+  border: 1px solid var(--mac-border-subtle);
+}
+
+/* ==========================================================================
+   SISTEMA DE DISTRIBUCIÓN RESPONSIVE MAC (3 TIERS)
+   Tier 1: Compact (< 860px)
+   Tier 2: Medium (860px - 1240px)
+   Tier 3: Large (>= 1240px)
+   ========================================================================== */
+.mac-window-body {
+  flex: 1;
+  display: grid;
+  width: 100%;
+  min-height: calc(100vh - 36px - 52px);
+  position: relative;
+  overflow: hidden;
+  transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   TIER 3: VENTANA GRANDE (LARGE / >= 1240px)
+   3 Columnas: Sidebar (260px) + Main Stage (1fr) + Inspector (320px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1240px) {
+  .mac-window-body,
+  [data-mac-layout="large"] .mac-window-body {
+    grid-template-columns: 260px 1fr 320px;
+  }
+
+  .mac-sidebar {
+    display: flex !important;
+  }
+
+  .mac-inspector-column {
+    display: flex !important;
+  }
+
+  .mac-compact-nav-bar {
+    display: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TIER 2: VENTANA MEDIANA (MEDIUM / 860px a 1239.98px)
+   2 Columnas: Sidebar (250px) + Main Stage (1fr). Inspector integrado o colapsado.
+   -------------------------------------------------------------------------- */
+@media (min-width: 860px) and (max-width: 1239.98px) {
+  .mac-window-body,
+  [data-mac-layout="medium"] .mac-window-body {
+    grid-template-columns: 250px 1fr;
+  }
+
+  .mac-sidebar {
+    display: flex !important;
+  }
+
+  .mac-inspector-column {
+    display: none !important;
+  }
+
+  .mac-compact-nav-bar {
+    display: none !important;
+  }
+
+  /* El bloque secundario de publicidad/info se muestra al final del main stage */
+  .mac-inline-secondary-block {
+    display: block !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   TIER 1: VENTANA PEQUEÑA (COMPACT / < 860px)
+   1 Columna fluida: Main Stage a ancho completo con navegación compacta superior
+   -------------------------------------------------------------------------- */
+@media (max-width: 859.98px) {
+  .mac-window-body,
+  [data-mac-layout="compact"] .mac-window-body {
+    grid-template-columns: 1fr;
+  }
+
+  .mac-sidebar {
+    display: none !important;
+  }
+
+  .mac-inspector-column {
+    display: none !important;
+  }
+
+  .mac-compact-nav-bar {
+    display: flex !important;
+  }
+
+  .mac-inline-secondary-block {
+    display: block !important;
+  }
+
+  .mac-desktop-environment {
+    padding: 8px 10px;
+  }
+
+  .mac-window-frame {
+    border-radius: var(--mac-radius-lg);
+    min-height: calc(100vh - 16px);
+  }
+}
+
+/* ==========================================================================
+   COLUMNA 1: SIDEBAR DE MACOS (Barra Lateral Izquierda)
+   ========================================================================== */
+.mac-sidebar {
+  background: var(--mac-surface-sidebar);
+  border-right: 1px solid var(--mac-border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 36px - 52px);
+  user-select: none;
+}
+
+.mac-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+.mac-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+.mac-sidebar-brand {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px 10px 8px;
+  border-bottom: 1px solid var(--mac-border-subtle);
+}
+
+.mac-sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  letter-spacing: -0.4px;
+}
+
+.mac-sidebar-brand-sub {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--mac-accent-gold);
+  letter-spacing: 1px;
+}
+
+.mac-sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mac-sidebar-header-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--mac-text-tertiary);
+  padding: 8px 10px 4px 10px;
+}
+
+.mac-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--mac-radius-sm);
+  color: var(--mac-text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+}
+
+.mac-nav-item:hover {
+  background: var(--mac-surface-card-hover);
+  color: var(--mac-text-primary);
+}
+
+.mac-nav-item.active {
+  background: var(--mac-accent-gold-soft);
+  color: var(--mac-accent-gold);
+  border-color: rgba(229, 192, 123, 0.35);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.mac-nav-item .nav-icon {
+  font-size: 16px;
+  line-height: 1;
+  min-width: 20px;
+  text-align: center;
+}
+
+.mac-sidebar-footer {
+  margin-top: auto;
+  padding: 12px 8px 4px 8px;
+  border-top: 1px solid var(--mac-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mac-sidebar-status-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 10px;
+  font-size: 11.5px;
+  color: var(--mac-text-secondary);
+}
+
+/* ==========================================================================
+   COLUMNA 2: MAIN STAGE (Escenario Principal de Contenido)
+   ========================================================================== */
+.mac-main-stage {
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 36px - 52px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mac-main-stage::-webkit-scrollbar {
+  width: 6px;
+}
+.mac-main-stage::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+}
+
+/* Barra de Navegación Compacta para Ventana Pequeña (< 860px) */
+.mac-compact-nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.mac-compact-nav-link {
+  color: var(--mac-text-secondary);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--mac-radius-sm);
+  background: rgba(255, 255, 255, 0.06);
+  transition: all 0.15s ease;
+}
+
+.mac-compact-nav-link:hover, .mac-compact-nav-link.active {
+  background: var(--mac-accent-gold);
+  color: #04140b;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   HERO ROW: CLASE ACTUAL + PRÓXIMA CLASE + TOLERANCIAS
+   ========================================================================== */
+.mac-hero-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 1040px) {
+  .mac-hero-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tarjeta Principal: Clase en Vivo */
+.mac-card {
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-lg);
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--mac-shadow-card);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.mac-card:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.mac-current-class-card {
+  border-left: 6px solid var(--mac-accent-gold);
+  background: linear-gradient(135deg, rgba(229, 192, 123, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Luces Navideñas Animadas Sutiles */
+.mac-lights-garland {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px 10px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 14px;
+}
+
+.mac-light-bulb {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  animation: mac-twinkle 1.6s infinite alternate ease-in-out;
+}
+
+.mac-light-bulb.red { background: #FF453A; box-shadow: 0 0 10px 2px rgba(255, 69, 58, 0.85); animation-delay: 0s; }
+.mac-light-bulb.green { background: #30D158; box-shadow: 0 0 10px 2px rgba(48, 209, 88, 0.85); animation-delay: 0.35s; }
+.mac-light-bulb.gold { background: #FFD60A; box-shadow: 0 0 10px 2px rgba(255, 214, 10, 0.85); animation-delay: 0.7s; }
+.mac-light-bulb.blue { background: #0A84FF; box-shadow: 0 0 10px 2px rgba(10, 132, 255, 0.85); animation-delay: 1.05s; }
+.mac-light-bulb.purple { background: #BF5AF2; box-shadow: 0 0 10px 2px rgba(191, 90, 242, 0.85); animation-delay: 1.4s; }
+
+@keyframes mac-twinkle {
+  0% { opacity: 0.35; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1.25); }
+}
+
+.mac-card-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mac-status-live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--mac-accent-gold);
+}
+
+.mac-live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--mac-accent-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--mac-accent-gold);
+  animation: mac-pulse 2s infinite;
+}
+
+@keyframes mac-pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--mac-accent-gold); }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.mac-subject-title {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  color: var(--mac-text-primary);
+  margin-bottom: 12px;
+}
+
+.mac-meta-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.mac-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  border-radius: var(--mac-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mac-text-primary);
+  border: 1px solid var(--mac-border-subtle);
+}
+
+.mac-pill-salon {
+  background: rgba(41, 151, 255, 0.16);
+  border-color: rgba(41, 151, 255, 0.35);
+  color: #70BAFF;
+}
+
+.mac-pill-prof {
+  background: rgba(229, 192, 123, 0.16);
+  border-color: rgba(229, 192, 123, 0.35);
+  color: var(--mac-accent-gold);
+}
+
+.mac-countdown-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.48);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 12px 18px;
+}
+
+.mac-countdown-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--mac-text-secondary);
+}
+
+.mac-countdown-digits {
+  font-family: var(--mac-mono-font);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--mac-accent-gold);
+  letter-spacing: 0.5px;
+}
+
+/* Tarjeta Lateral: Próxima Clase & Tolerancias */
+.mac-next-class-card {
+  border-left: 6px solid var(--mac-accent-blue);
+  background: linear-gradient(135deg, rgba(41, 151, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mac-next-eyebrow {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #70BAFF;
+  margin-bottom: 8px;
+}
+
+.mac-next-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.mac-tolerances-inline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.mac-tolerance-item {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-sm);
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.mac-tolerance-item.prof { border-top: 3px solid var(--mac-accent-gold); }
+.mac-tolerance-item.student { border-top: 3px solid var(--mac-accent-green); }
+
+.mac-tolerance-tag {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--mac-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.mac-tolerance-val {
+  font-family: var(--mac-mono-font);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+}
+
+.mac-tolerance-item.prof .mac-tolerance-val { color: var(--mac-accent-gold); }
+.mac-tolerance-item.student .mac-tolerance-val { color: var(--mac-accent-green); }
+
+/* ==========================================================================
+   SECCIÓN HORARIO EN MAC (Vistas Inteligentes)
+   1. Vista Semanal Extendida de 5 Columnas (Ventanas Grandes)
+   2. Vista con Selector Diario (Ventanas Medianas y Pequeñas)
+   ========================================================================== */
+.mac-schedule-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mac-schedule-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.mac-section-heading {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.4px;
+}
+
+.mac-days-tabs {
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 4px;
+  border-radius: var(--mac-radius-md);
+  border: 1px solid var(--mac-border-subtle);
+}
+
+.mac-day-btn {
+  border: none;
+  background: transparent;
+  color: var(--mac-text-secondary);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--mac-radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mac-day-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--mac-text-primary);
+}
+
+.mac-day-btn.active {
+  background: var(--mac-accent-gold);
+  color: #04140b;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(229, 192, 123, 0.35);
+}
+
+/* Grid de Bloques del Día */
+.mac-blocks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+}
+
+.mac-block-card {
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.mac-block-card:hover {
+  background: var(--mac-surface-card-hover);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: var(--mac-shadow-card);
+}
+
+.mac-block-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 5px;
+  background-color: var(--block-color, var(--mac-accent-blue));
+}
+
+.mac-block-card.is-active-now {
+  border: 2px solid var(--mac-accent-gold) !important;
+  background: linear-gradient(135deg, rgba(229, 192, 123, 0.2) 0%, rgba(48, 209, 88, 0.15) 100%) !important;
+  box-shadow: 0 0 26px rgba(229, 192, 123, 0.45) !important;
+}
+
+.mac-block-card.is-active-now::after {
+  content: "✦ CLASE ACTUAL";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--mac-accent-gold);
+}
+
+.mac-block-time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mac-block-hours {
+  font-family: var(--mac-mono-font);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--mac-text-primary);
+}
+
+.mac-block-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--mac-accent-gold);
+  background: var(--mac-accent-gold-soft);
+  padding: 2px 7px;
+  border-radius: var(--mac-radius-full);
+  text-transform: uppercase;
+}
+
+.mac-block-subject {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.mac-block-prof {
+  font-size: 13px;
+  color: var(--mac-text-secondary);
+  margin-bottom: 12px;
+}
+
+.mac-block-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mac-block-room {
+  font-size: 12px;
+  font-weight: 700;
+  color: #70BAFF;
+  background: rgba(41, 151, 255, 0.15);
+  padding: 3px 8px;
+  border-radius: var(--mac-radius-sm);
+}
+
+.mac-block-tag {
+  font-size: 11.5px;
+  color: var(--mac-text-tertiary);
+}
+
+/* Alerta de Cambio de Salón */
+.mac-room-change-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(90deg, rgba(255, 149, 0, 0.25), rgba(255, 69, 58, 0.22));
+  border: 1px solid rgba(255, 149, 0, 0.45);
+  color: #FFA500;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--mac-radius-sm);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   MATERIAS ESPECIALES (Física, Historia, Español)
+   ========================================================================== */
+.mac-special-subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .mac-special-subjects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mac-special-link {
+  text-decoration: none;
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--mac-text-primary);
+  transition: all 0.2s ease;
+}
+
+.mac-special-link:hover {
+  background: var(--mac-surface-card-hover);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.mac-special-link.historia { border-left: 5px solid #AF52DE; }
+.mac-special-link.espanol { border-left: 5px solid #FF9500; }
+.mac-special-link.fisica { border-left: 5px solid #00C7BE; }
+
+.mac-special-icon {
+  font-size: 28px;
+}
+
+.mac-special-meta h4 {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+
+.mac-special-meta p {
+  font-size: 12px;
+  color: var(--mac-text-secondary);
+}
+
+/* ==========================================================================
+   ACADEMIC HUB (Avisos, Tareas, Exámenes)
+   ========================================================================== */
+.mac-academic-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1100px) {
+  .mac-academic-hub-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mac-hub-panel {
+  background: var(--mac-surface-card);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mac-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--mac-border-subtle);
+}
+
+.mac-hub-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mac-hub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 120px;
+}
+
+.mac-hub-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 16px;
+  color: var(--mac-text-tertiary);
+  font-size: 13px;
+  line-height: 1.5;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--mac-radius-md);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   COLUMNA 3: INSPECTOR / BARRA DERECHA (macOS Inspector Panel)
+   Espacio para Información Secundaria y "Tal vez te pueda interesar"
+   ========================================================================== */
+.mac-inspector-column {
+  background: var(--mac-surface-inspector);
+  border-left: 1px solid var(--mac-border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 16px;
+  gap: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 36px - 52px);
+  user-select: none;
+}
+
+.mac-inspector-column::-webkit-scrollbar {
+  width: 4px;
+}
+.mac-inspector-column::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+.mac-inspector-header {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--mac-accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Tarjeta de Tolerancias Oficiales */
+.mac-inspector-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mac-inspector-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.mac-inspector-label {
+  color: var(--mac-text-secondary);
+}
+
+.mac-inspector-value {
+  font-weight: 700;
+  color: var(--mac-text-primary);
+}
+
+/* ESPACIO DE PUBLICIDAD: "Tal vez te pueda interesar" */
+.mac-ad-spot-container {
+  background: linear-gradient(135deg, rgba(229, 192, 123, 0.08) 0%, rgba(0, 0, 0, 0.45) 100%);
+  border: 1px solid rgba(229, 192, 123, 0.28);
+  border-radius: var(--mac-radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mac-ad-eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--mac-accent-gold);
+}
+
+.mac-ad-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+  line-height: 1.3;
+}
+
+.mac-ad-empty-message {
+  font-size: 13px;
+  color: var(--mac-text-secondary);
+  line-height: 1.45;
+  background: rgba(0, 0, 0, 0.35);
+  padding: 12px;
+  border-radius: var(--mac-radius-sm);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+}
+
+.mac-btn-ad-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--mac-accent-gold);
+  color: #04140b;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 9px 16px;
+  border-radius: var(--mac-radius-md);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px var(--mac-accent-gold-glow);
+}
+
+.mac-btn-ad-action:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+/* ==========================================================================
+   MODAL DE FICHA TÉCNICA (macOS Sheet Modal)
+   ========================================================================== */
+.mac-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.mac-modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mac-modal-window {
+  background: #0c2417;
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-lg);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mac-modal-backdrop.show .mac-modal-window {
+  transform: scale(1);
+}
+
+.mac-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mac-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.mac-modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--mac-text-primary);
+}
+
+.mac-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--mac-text-tertiary);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.mac-modal-close-btn:hover {
+  color: var(--mac-text-primary);
+}
+
+.mac-modal-content {
+  padding: 22px;
+  font-size: 14px;
+  color: var(--mac-text-secondary);
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   ESTILOS COMPLEMENTARIOS PARA OTRAS PÁGINAS MAC
+   ========================================================================== */
+.mac-search-bar-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.mac-search-input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-md);
+  padding: 12px 18px;
+  font-size: 14px;
+  color: var(--mac-text-primary);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mac-search-input:focus {
+  border-color: var(--mac-accent-gold);
+  box-shadow: 0 0 14px rgba(229, 192, 123, 0.25);
+}
+
+.mac-filter-pills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.mac-filter-pill {
+  border: 1px solid var(--mac-border-subtle);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--mac-text-secondary);
+  padding: 7px 16px;
+  border-radius: var(--mac-radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mac-filter-pill.active {
+  background: var(--mac-accent-gold);
+  color: #04140b;
+  font-weight: 800;
+  border-color: var(--mac-accent-gold);
+}
+
+.mac-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.mac-form-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--mac-text-secondary);
+}
+
+.mac-form-input, .mac-form-textarea {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--mac-border-subtle);
+  border-radius: var(--mac-radius-sm);
+  padding: 10px 14px;
+  font-size: 13.5px;
+  color: var(--mac-text-primary);
+  outline: none;
+  font-family: inherit;
+}
+
+.mac-form-input:focus, .mac-form-textarea:focus {
+  border-color: var(--mac-accent-gold);
+}
+
+.mac-btn-primary {
+  background: var(--mac-accent-gold);
+  color: #04140b;
+  font-weight: 800;
+  padding: 12px 24px;
+  border-radius: var(--mac-radius-md);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mac-btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}

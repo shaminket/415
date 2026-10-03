@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="es" data-current-interface="desktop" data-device="desktop">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Historia Universal III — ENCARDOMY MINWEB 415</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ipad.css">
+  <link rel="stylesheet" href="css/mac.css">
+  <meta name="description" content="Plataforma académica interactiva del Grupo 415 con adaptación continua y automática a Celular, Tableta y Computadora en tiempo real.">
+</head>
+<body>
+  <!-- Video de Fondo en Bucle Común -->
+  <div class="bg-video-container mac-video-background" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" src="gemini_generated_video_cdb14bc2.mp4"></video>
+    <div class="bg-video-overlay mac-video-overlay"></div>
+  </div>
+
+  <!-- Decoraciones Navideñas Minimalistas -->
+  <div class="christmas-ambient-tree" aria-hidden="true"></div>
+  <div class="christmas-star-accent ipad-christmas-star" aria-hidden="true"></div>
+  <div class="snowfall-container mac-snow-layer" aria-hidden="true"></div>
+
+  <!-- ====================================================================
+       INTERFAZ 1: CELULAR (< 720px) — Modo Móvil Nativo
+       ==================================================================== -->
+  <div class="encardomy-interface-mobile" id="encardomy-interface-mobile" role="region" aria-label="Interfaz Móvil">
+    <main class="mobile-app-shell">
+
+    <!-- Navegación superior -->
+    <a href="index.html" class="back-btn-header" aria-label="Volver al inicio">
+      ← Volver al Inicio
+    </a>
+
+        <!-- Barra Rápida de Navegación Exclusiva para Tableta / iPad -->
+    <div class="tablet-quick-links-bar" role="navigation" aria-label="Navegación para Tableta">
+      <a href="index.html" class="ipad-nav-pill-btn">🏠 Inicio</a>
+      <a href="avisos.html" class="ipad-nav-pill-btn">📢 Avisos</a>
+      <a href="tareas.html" class="ipad-nav-pill-btn">📝 Tareas</a>
+      <a href="examenes.html" class="ipad-nav-pill-btn">📋 Exámenes</a>
+      <a href="interes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🎁</span>
+        <span>Interés</span>
+      </a>
+      <a href="historia.html" class="ipad-nav-pill-btn active">🏛️ Historia</a>
+      <a href="lengua-espanola.html" class="ipad-nav-pill-btn">📖 Español</a>
+      <a href="fisica.html" class="ipad-nav-pill-btn">⚡ Física</a>
+      <a href="profesores.html" class="ipad-nav-pill-btn">🔍 Profesores</a>
+      <a href="clases-perdidas.html" class="ipad-nav-pill-btn">🗓️ Inasistencias</a>
+      <a href="seccion-b.html" class="ipad-nav-pill-btn">👥 Sección B</a>
+      <a href="herramientas.html" class="ipad-nav-pill-btn">🛠️ Herramientas</a>
+      <a href="ayuda.html" class="ipad-nav-pill-btn">❓ Ayuda</a>
+    </div>
+    <header class="app-header" style="margin-bottom: 12px;">
+      <div class="brand-badge">
+        <span class="brand-subtitle" style="color: #AF52DE;">Materia Oficial</span>
+        <h1 class="brand-title">Historia Universal III</h1>
+      </div>
+        <div class="header-actions">
+          <!-- Reloj CDMX en Tablet -->
+          <div class="cdmx-clock-badge" style="padding: 4px 10px; font-size: 12px;">
+            <span class="cdmx-indicator-dot"></span>
+            <span class="cdmx-time-digits current-time-clock" id="current-time-clock">--:-- CDMX</span>
+          </div>
+
+          <!-- Selector de Sección A / B -->
+          <div class="section-selector-pill" role="group" aria-label="Seleccionar sección">
+            <button type="button" id="pill-section-a" class="section-btn" aria-label="Sección A">Sec. A</button>
+            <button type="button" id="pill-section-b" class="section-btn" aria-label="Sección B">Sec. B</button>
+          </div>
+
+          <!-- Botón de Audio Navideño -->
+          <button type="button" class="sound-toggle-btn" id="btn-play-jingle" aria-label="Campanitas navideñas" title="Campanitas Navideñas">
+            <span aria-hidden="true">🔔</span>
+            <span>Navidad</span>
+          </button>
+
+          <!-- Indicador de Orientación de Tableta -->
+          <span class="orientation-pill ipad-orientation-badge" style="display: inline-flex; align-items: center;">⟲ Vertical</span>
+        </div>
+    </header>
+
+    <!-- Tarjeta Principal de la Materia -->
+    <section class="glass-card" style="border-left: 5px solid #AF52DE; margin-bottom: 16px;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🏛️</div>
+      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+        Historia Universal III
+      </h2>
+      <div style="font-size: 13.5px; font-weight: 600; color: var(--accent-gold); margin-bottom: 10px;">
+        Profesor(a): CAPPELLO SANCHEZ KARINA
+      </div>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+        Clave y programa oficial para el cuarto año de la Escuela Nacional Preparatoria Plantel 4.
+      </p>
+
+      <!-- Mensaje Oficial Requerido (Regla 19) -->
+      <div style="background: rgba(175, 82, 222, 0.14); border: 1px solid rgba(175, 82, 222, 0.35); border-radius: var(--radius-md); padding: 12px 14px;">
+        <p style="font-size: 13.5px; font-weight: 600; color: #d0b3ff; line-height: 1.45;">
+          "ShaMinKet podrá dar información importante de estas materias."
+        </p>
+      </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: TRABAJOS Y REQUISITOS NECESARIOS (Exclusivo para Historia) -->
+    <section class="required-works-card" id="required-works-container" data-subject-id="historia" aria-labelledby="works-historia-title">
+      <div class="required-works-header">
+        <h3 class="required-works-title" id="works-historia-title">
+          <span>📋</span>
+          <span>Trabajos Necesarios y Entregas</span>
+        </h3>
+        <button type="button" class="add-work-btn" id="toggle-add-work-btn">
+          <span>+ Agregar</span>
+        </button>
+      </div>
+
+      <!-- Formulario para agregar trabajo necesario -->
+      <div class="add-work-form" id="add-work-form">
+        <label for="work-title-input" class="ios-form-label">Título del trabajo obligatorio / necesario</label>
+        <input type="text" id="work-title-input" class="ios-form-control" placeholder="Ej. Línea del tiempo, Ensayo, Resumen...">
+
+        <label for="work-date-input" class="ios-form-label">Fecha límite de entrega</label>
+        <input type="date" id="work-date-input" class="ios-form-control">
+
+        <label for="work-notes-input" class="ios-form-label">Especificaciones necesarias (opcional)</label>
+        <input type="text" id="work-notes-input" class="ios-form-control" placeholder="Ej. A mano, hojas blancas, rúbrica...">
+
+        <button type="button" id="save-work-btn" class="btn-primary-ios" style="margin-top: 6px;">
+          Guardar Trabajo Necesario
+        </button>
+      </div>
+
+      <!-- Lista de trabajos guardados en LocalStorage -->
+      <div id="required-works-list">
+        <!-- Renderizado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Horarios Oficiales del Grupo 415 para Historia -->
+    <section class="glass-card" style="margin-bottom: 16px;">
+      <h3 style="font-size: 15px; font-weight: 700; color: #AF52DE; margin-bottom: 12px;">
+        Sesiones Semanales Programadas
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Jueves</span>
+            <span class="tag-badge two-hours">2 Horas continuas</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            10:20 - 12:00 • <strong>Salón B-109</strong>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Viernes</span>
+            <span class="tag-badge">50 minutos</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            07:50 - 08:40 • <strong>Salón B-117</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pie Institucional -->
+    <footer class="app-footer">
+      <p>ENCARDOMY • Sistema Académico Grupo 415</p>
+      <p><a href="terminos.html">Términos</a> • <a href="privacidad.html">Privacidad</a></p>
+    </footer>
+
+  </main>
+
+  <!-- MENÚ DE NAVEGACIÓN INFERIOR (Desplazamiento horizontal exclusivo) -->
+  <nav class="bottom-nav-bar" aria-label="Menú de navegación principal">
+    <div class="nav-track">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="avisos.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📢</span>
+        <span>Avisos</span>
+      </a>
+      <a href="tareas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📝</span>
+        <span>Tareas</span>
+      </a>
+      <a href="examenes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📋</span>
+        <span>Exámenes</span>
+      </a>
+      <a href="clases-perdidas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🗓️</span>
+        <span>Inasistencias</span>
+      </a>
+      <a href="profesores.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🔍</span>
+        <span>Profesores</span>
+      </a>
+      <a href="herramientas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🛠️</span>
+        <span>Herramientas</span>
+      </a>
+      <a href="seccion-b.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">👥</span>
+        <span>Sección B</span>
+      </a>
+      <a href="sugerencias.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">💡</span>
+        <span>Sugerencias</span>
+      </a>
+      <a href="ayuda.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">❓</span>
+        <span>Ayuda</span>
+      </a>
+    </div>
+  </nav>
+  </div>
+
+  <!-- ====================================================================
+       INTERFAZ 2: TABLETA / IPAD (720px a 1120px) — Modo iPadOS
+       ==================================================================== -->
+  <div class="encardomy-interface-tablet" id="encardomy-interface-tablet" role="region" aria-label="Interfaz Tableta">
+    <div class="ipad-app-layout-wrapper">
+
+    <!-- ====================================================================
+         1. PANEL LATERAL IZQUIERDO: CONTROLES Y NAVEGACIÓN (ORIENTACIÓN HORIZONTAL)
+         Regla 50: En orientación horizontal, los controles se ubican en el lateral izquierdo
+         Regla 58: En vertical se oculta por completo
+         ==================================================================== -->
+    <aside class="ipad-lateral-nav-panel" aria-label="Controles y navegación lateral">
+      <div class="ipad-sidebar-header">
+        <div class="ipad-sidebar-brand">
+          <span class="ipad-sidebar-brand-subtitle">Encardomy • Grupo 415</span>
+          <h2 class="ipad-sidebar-brand-title">Minweb 415 <span style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">iPad Edition</span></h2>
+        </div>
+
+        <div class="ipad-sidebar-controls-row">
+          <!-- Reloj Oficial CDMX -->
+          <div class="ipad-sidebar-clock" title="Hora Oficial de la Ciudad de México">
+            <span class="cdmx-indicator-dot" aria-hidden="true"></span>
+            <span class="current-time-clock" id="ipad-sidebar-cdmx-clock">--:--:--</span>
+          </div>
+
+          <!-- Botón Campanitas Navideñas -->
+          <button type="button" class="sound-toggle-btn" id="ipad-sidebar-jingle" style="padding: 4px 8px; font-size: 11px;" title="Campanitas Navideñas">
+            <span aria-hidden="true">🔔</span>
+            <span>Navidad</span>
+          </button>
+        </div>
+
+        <!-- Selector de Sección A / B -->
+        <div class="ipad-section-segmented" role="group" aria-label="Seleccionar sección escolar" style="width: 100%;">
+          <button type="button" id="sidebar-sec-a" class="ipad-section-btn active" style="flex: 1;" aria-label="Sección A">Sec. A</button>
+          <button type="button" id="sidebar-sec-b" class="ipad-section-btn" style="flex: 1;" aria-label="Sección B">Sec. B</button>
+        </div>
+      </div>
+
+      <!-- Grupos de Navegación Vertical en Sidebar -->
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Principal</div>
+        <a href="ipad-index.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🏠</span>
+          <span>Inicio</span>
+        </a>
+        <a href="ipad-avisos.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📢</span>
+          <span>Avisos</span>
+        </a>
+        <a href="ipad-tareas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📝</span>
+          <span>Tareas</span>
+        </a>
+        <a href="ipad-examenes.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📋</span>
+          <span>Exámenes</span>
+        </a>
+        <a href="ipad-interes.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🎁</span>
+          <span>Te Puede Interesar</span>
+        </a>
+      </div>
+
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Materias Destacadas</div>
+        <a href="ipad-historia.html" class="ipad-sidebar-nav-link active">
+          <span class="nav-icon" aria-hidden="true">🏛️</span>
+          <span>Historia Universal III</span>
+        </a>
+        <a href="ipad-lengua-espanola.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📖</span>
+          <span>Lengua Española</span>
+        </a>
+        <a href="ipad-fisica.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">⚡</span>
+          <span>Física III (Cambio aula)</span>
+        </a>
+      </div>
+
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Comunidad & Herramientas</div>
+        <a href="ipad-profesores.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🔍</span>
+          <span>Profesores</span>
+        </a>
+        <a href="ipad-clases-perdidas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🗓️</span>
+          <span>Inasistencias</span>
+        </a>
+        <a href="ipad-seccion-b.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">👥</span>
+          <span>Espacio Sección B</span>
+        </a>
+        <a href="ipad-herramientas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🛠️</span>
+          <span>Herramientas</span>
+        </a>
+        <a href="ipad-sugerencias.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">💡</span>
+          <span>Sugerencias</span>
+        </a>
+        <a href="ipad-ayuda.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">❓</span>
+          <span>Ayuda</span>
+        </a>
+      </div>
+
+      <!-- Pie del Sidebar -->
+      <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--surface-glass-border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+        <span>UNAM • ENP 4</span>
+        <span class="orientation-pill ipad-orientation-badge" style="font-size: 10px;">⟳ Horizontal</span>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         2. ESCENARIO PRINCIPAL DE CONTENIDO
+         Aprovecha todo el ancho disponible horizontal y vertical sin espacios muertos
+         ==================================================================== -->
+    <main class="ipad-main-content-stage">
+      <!-- Cabecera exclusiva para Orientación Vertical (se oculta automáticamente en horizontal) -->
+      <header class="ipad-top-bar ipad-top-bar-portrait" role="banner">
+        <div class="ipad-brand-group">
+          <a href="ipad-index.html" class="back-btn-header" style="margin-bottom: 0; text-decoration: none;" aria-label="Volver al inicio iPad">
+            ← Inicio
+          </a>
+          <div class="ipad-brand-badge">
+            <span class="ipad-brand-subtitle">Materia Oficial</span>
+            <h1 class="ipad-brand-title">Historia Universal III</h1>
+          </div>
+        </div>
+
+        <div class="ipad-top-controls">
+          <!-- Reloj Oficial CDMX -->
+          <div class="cdmx-clock-badge" title="Hora Oficial de la Ciudad de México">
+            <span class="cdmx-indicator-dot" aria-hidden="true"></span>
+            <span class="cdmx-time-digits current-time-clock" id="ipad-cdmx-clock">--:--:-- CDMX</span>
+          </div>
+
+          <!-- Selector de Sección A / B -->
+          <div class="ipad-section-segmented" role="group" aria-label="Seleccionar sección escolar">
+            <button type="button" id="ipad-sec-a" class="ipad-section-btn active" aria-label="Sección A">Sec. A</button>
+            <button type="button" id="ipad-sec-b" class="ipad-section-btn" aria-label="Sección B">Sec. B</button>
+          </div>
+
+          <!-- Botón Campanitas Navideñas -->
+          <button type="button" class="ipad-btn-action" id="ipad-btn-jingle" aria-label="Reproducir campanitas navideñas" title="Campanitas Navideñas">
+            <span aria-hidden="true">🔔</span>
+            <span>Campanitas</span>
+          </button>
+
+          <!-- Indicador de Orientación -->
+          <span class="orientation-pill ipad-orientation-badge" id="ipad-orientation-badge">⟲ Vertical</span>
+        </div>
+      </header>
+<!-- Navegación superior -->
+    
+
+        <!-- Barra Rápida de Navegación Exclusiva para Tableta / iPad -->
+    
+    
+
+    <!-- Tarjeta Principal de la Materia -->
+    <section class="glass-card" style="border-left: 5px solid #AF52DE; margin-bottom: 16px;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🏛️</div>
+      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+        Historia Universal III
+      </h2>
+      <div style="font-size: 13.5px; font-weight: 600; color: var(--accent-gold); margin-bottom: 10px;">
+        Profesor(a): CAPPELLO SANCHEZ KARINA
+      </div>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+        Clave y programa oficial para el cuarto año de la Escuela Nacional Preparatoria Plantel 4.
+      </p>
+
+      <!-- Mensaje Oficial Requerido (Regla 19) -->
+      <div style="background: rgba(175, 82, 222, 0.14); border: 1px solid rgba(175, 82, 222, 0.35); border-radius: var(--radius-md); padding: 12px 14px;">
+        <p style="font-size: 13.5px; font-weight: 600; color: #d0b3ff; line-height: 1.45;">
+          "ShaMinKet podrá dar información importante de estas materias."
+        </p>
+      </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: TRABAJOS Y REQUISITOS NECESARIOS (Exclusivo para Historia) -->
+    <section class="required-works-card" id="required-works-container" data-subject-id="historia" aria-labelledby="works-historia-title">
+      <div class="required-works-header">
+        <h3 class="required-works-title" id="works-historia-title">
+          <span>📋</span>
+          <span>Trabajos Necesarios y Entregas</span>
+        </h3>
+        <button type="button" class="add-work-btn" id="toggle-add-work-btn">
+          <span>+ Agregar</span>
+        </button>
+      </div>
+
+      <!-- Formulario para agregar trabajo necesario -->
+      <div class="add-work-form" id="add-work-form">
+        <label for="work-title-input" class="ios-form-label">Título del trabajo obligatorio / necesario</label>
+        <input type="text" id="work-title-input" class="ios-form-control" placeholder="Ej. Línea del tiempo, Ensayo, Resumen...">
+
+        <label for="work-date-input" class="ios-form-label">Fecha límite de entrega</label>
+        <input type="date" id="work-date-input" class="ios-form-control">
+
+        <label for="work-notes-input" class="ios-form-label">Especificaciones necesarias (opcional)</label>
+        <input type="text" id="work-notes-input" class="ios-form-control" placeholder="Ej. A mano, hojas blancas, rúbrica...">
+
+        <button type="button" id="save-work-btn" class="btn-primary-ios" style="margin-top: 6px;">
+          Guardar Trabajo Necesario
+        </button>
+      </div>
+
+      <!-- Lista de trabajos guardados en LocalStorage -->
+      <div id="required-works-list">
+        <!-- Renderizado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Horarios Oficiales del Grupo 415 para Historia -->
+    <section class="glass-card" style="margin-bottom: 16px;">
+      <h3 style="font-size: 15px; font-weight: 700; color: #AF52DE; margin-bottom: 12px;">
+        Sesiones Semanales Programadas
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Jueves</span>
+            <span class="tag-badge two-hours">2 Horas continuas</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            10:20 - 12:00 • <strong>Salón B-109</strong>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Viernes</span>
+            <span class="tag-badge">50 minutos</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            07:50 - 08:40 • <strong>Salón B-117</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pie Institucional -->
+    <footer class="app-footer">
+      <p>ENCARDOMY • Sistema Académico Grupo 415</p>
+      <p><a href="terminos.html">Términos</a> • <a href="privacidad.html">Privacidad</a></p>
+    </footer>
+    </main>
+
+  </div>
+  </div>
+
+  <!-- ====================================================================
+       INTERFAZ 3: COMPUTADORA / MAC (>= 1120px) — Modo macOS
+       ==================================================================== -->
+  <div class="encardomy-interface-desktop" id="encardomy-interface-desktop" role="region" aria-label="Interfaz Computadora">
+    <div class="mac-desktop-environment">
+    <main class="mac-window-frame" role="main">
+      <!-- Barra de Título macOS -->
+      <header class="mac-titlebar">
+        <div class="mac-titlebar-left">
+          <div class="mac-traffic-lights" aria-label="Controles de ventana macOS">
+            <span class="mac-traffic-dot close" title="Cerrar"></span>
+            <span class="mac-traffic-dot minimize" title="Minimizar"></span>
+            <span class="mac-traffic-dot zoom" title="Maximizar / Pantalla completa"></span>
+          </div>
+          <div class="mac-window-title-group">
+            <a href="mac-index.html" class="mac-btn-tool" style="padding: 2px 8px; font-size: 11px;">← Inicio</a>
+            <span class="mac-window-title">Historia Universal III</span>
+            <span class="mac-window-subtitle">Mac Edition</span>
+          </div>
+        </div>
+
+        <div class="mac-titlebar-center">
+          <div class="mac-segmented-section" role="group" aria-label="Selector de Sección">
+            <button class="mac-segment-btn active" data-section="A">Sección A</button>
+            <button class="mac-segment-btn" data-section="B">Sección B</button>
+          </div>
+          <div class="mac-cdmx-clock-badge" title="Hora Oficial de la Ciudad de México">
+            <span class="mac-cdmx-dot"></span>
+            <span class="mac-cdmx-time" id="mac-titlebar-cdmx-clock">--:--:-- -- CDMX</span>
+          </div>
+        </div>
+
+        <div class="mac-titlebar-right">
+          <button class="mac-btn-tool" id="mac-btn-chime" title="Reproducir campanada navideña">🔔 Chime</button>
+          <span class="mac-window-mode-pill">Ventana Grande (3 Col)</span>
+          <a href="historia.html" class="mac-btn-tool" title="Versión Móvil">📱 Móvil</a>
+          <a href="ipad-historia.html" class="mac-btn-tool" title="Versión iPad">📱 iPad</a>
+        </div>
+      </header>
+
+      <!-- Cuerpo de la Ventana: 3 Columnas Dinámicas -->
+      <div class="mac-window-body">
+        <!-- Columna 1: Sidebar macOS -->
+        <aside class="mac-sidebar" aria-label="Barra Lateral de Navegación">
+          <div class="mac-sidebar-brand">
+            <span class="mac-sidebar-brand-name">ENCARDOMY</span>
+            <span class="mac-sidebar-brand-sub">Minweb 415 · UNAM ENP 4</span>
+          </div>
+
+          <!-- Navegación Primaria -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">General</span>
+            <a href="mac-index.html" class="mac-nav-item "><span class="nav-icon">🏠</span> Inicio & Horario</a>
+            <a href="mac-profesores.html" class="mac-nav-item "><span class="nav-icon">👨‍🏫</span> Profesores</a>
+            <a href="mac-herramientas.html" class="mac-nav-item "><span class="nav-icon">🛠️</span> Herramientas</a>
+            <a href="mac-clases-perdidas.html" class="mac-nav-item "><span class="nav-icon">📉</span> Clases Perdidas</a>
+            <a href="mac-seccion-b.html" class="mac-nav-item "><span class="nav-icon">🔀</span> Sección B & Salones</a>
+          </nav>
+
+          <!-- Seguimiento Académico -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Académico</span>
+            <a href="mac-avisos.html" class="mac-nav-item "><span class="nav-icon">📢</span> Avisos</a>
+            <a href="mac-tareas.html" class="mac-nav-item "><span class="nav-icon">📝</span> Tareas</a>
+            <a href="mac-examenes.html" class="mac-nav-item "><span class="nav-icon">📅</span> Exámenes</a>
+          </nav>
+
+          <!-- Materias Especiales -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Materias Clave</span>
+            <a href="mac-fisica.html" class="mac-nav-item "><span class="nav-icon">⚡</span> Física III</a>
+            <a href="mac-historia.html" class="mac-nav-item active"><span class="nav-icon">🏛️</span> Historia III</a>
+            <a href="mac-lengua-espanola.html" class="mac-nav-item "><span class="nav-icon">📚</span> Lengua Española</a>
+          </nav>
+
+          <!-- Institucional & Encardomy -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Encardomy Agency</span>
+            <a href="mac-interes.html" class="mac-nav-item "><span class="nav-icon">✨</span> Tal vez te pueda interesar</a>
+            <a href="mac-sugerencias.html" class="mac-nav-item "><span class="nav-icon">💬</span> Buzón de Sugerencias</a>
+            <a href="mac-ayuda.html" class="mac-nav-item "><span class="nav-icon">❓</span> Ayuda y Guía Mac</a>
+            <a href="mac-terminos.html" class="mac-nav-item "><span class="nav-icon">📄</span> Términos</a>
+            <a href="mac-privacidad.html" class="mac-nav-item "><span class="nav-icon">🔒</span> Privacidad</a>
+          </nav>
+
+          <div class="mac-sidebar-footer">
+            <div class="mac-sidebar-status-box">
+              <strong style="color: var(--mac-accent-gold); display: block; margin-bottom: 2px;">Grupo 415</strong>
+              <span id="mac-current-section-badge">Sección A</span> · ENP 4 Vidal Castañeda y Nájera
+            </div>
+          </div>
+        </aside>
+
+        <!-- Columna 2: Main Stage -->
+        <section class="mac-main-stage">
+          <!-- Barra compacta solo visible en ventana compacta (< 860px) -->
+          <nav class="mac-compact-nav-bar" aria-label="Menú Compacto">
+            <a href="mac-index.html" class="mac-compact-nav-link ">Inicio</a>
+            <a href="mac-avisos.html" class="mac-compact-nav-link ">Avisos</a>
+            <a href="mac-tareas.html" class="mac-compact-nav-link ">Tareas</a>
+            <a href="mac-examenes.html" class="mac-compact-nav-link ">Exámenes</a>
+            <a href="mac-profesores.html" class="mac-compact-nav-link ">Profesores</a>
+            <a href="mac-interes.html" class="mac-compact-nav-link ">Interés</a>
+            <a href="mac-ayuda.html" class="mac-compact-nav-link ">Ayuda</a>
+          </nav>
+
+          <div class="mac-card" style="margin-bottom: 20px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-accent-gold); letter-spacing: 1px; margin-bottom: 4px;">
+              Plataforma Minweb 415 · Mac Edition
+            </div>
+            <h1 style="font-size: 26px; font-weight: 800; color: var(--mac-text-primary); letter-spacing: -0.5px;">
+              Historia Universal III
+            </h1>
+          </div>
+
+          <!-- Cabecera exclusiva para Orientación Vertical (se oculta automáticamente en horizontal) -->
+      
+<!-- Navegación superior -->
+    
+
+        <!-- Barra Rápida de Navegación Exclusiva para Tableta / iPad -->
+    
+    
+
+    <!-- Tarjeta Principal de la Materia -->
+    <section class="mac-card" style="border-left: 5px solid #AF52DE; margin-bottom: 16px;">
+      <div style="font-size: 28px; margin-bottom: 8px;">🏛️</div>
+      <h2 style="font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
+        Historia Universal III
+      </h2>
+      <div style="font-size: 13.5px; font-weight: 600; color: var(--accent-gold); margin-bottom: 10px;">
+        Profesor(a): CAPPELLO SANCHEZ KARINA
+      </div>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+        Clave y programa oficial para el cuarto año de la Escuela Nacional Preparatoria Plantel 4.
+      </p>
+
+      <!-- Mensaje Oficial Requerido (Regla 19) -->
+      <div style="background: rgba(175, 82, 222, 0.14); border: 1px solid rgba(175, 82, 222, 0.35); border-radius: var(--radius-md); padding: 12px 14px;">
+        <p style="font-size: 13.5px; font-weight: 600; color: #d0b3ff; line-height: 1.45;">
+          "ShaMinKet podrá dar información importante de estas materias."
+        </p>
+      </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: TRABAJOS Y REQUISITOS NECESARIOS (Exclusivo para Historia) -->
+    <section class="required-works-card" id="required-works-container" data-subject-id="historia" aria-labelledby="works-historia-title">
+      <div class="required-works-header">
+        <h3 class="required-works-title" id="works-historia-title">
+          <span>📋</span>
+          <span>Trabajos Necesarios y Entregas</span>
+        </h3>
+        <button type="button" class="add-work-btn" id="toggle-add-work-btn">
+          <span>+ Agregar</span>
+        </button>
+      </div>
+
+      <!-- Formulario para agregar trabajo necesario -->
+      <div class="add-work-form" id="add-work-form">
+        <label for="work-title-input" class="ios-mac-form-label">Título del trabajo obligatorio / necesario</label>
+        <input type="text" id="work-title-input" class="ios-form-control" placeholder="Ej. Línea del tiempo, Ensayo, Resumen...">
+
+        <label for="work-date-input" class="ios-mac-form-label">Fecha límite de entrega</label>
+        <input type="date" id="work-date-input" class="ios-form-control">
+
+        <label for="work-notes-input" class="ios-mac-form-label">Especificaciones necesarias (opcional)</label>
+        <input type="text" id="work-notes-input" class="ios-form-control" placeholder="Ej. A mano, hojas blancas, rúbrica...">
+
+        <button type="button" id="save-work-btn" class="mac-btn-primary-ios" style="margin-top: 6px;">
+          Guardar Trabajo Necesario
+        </button>
+      </div>
+
+      <!-- Lista de trabajos guardados en LocalStorage -->
+      <div id="required-works-list">
+        <!-- Renderizado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Horarios Oficiales del Grupo 415 para Historia -->
+    <section class="mac-card" style="margin-bottom: 16px;">
+      <h3 style="font-size: 15px; font-weight: 700; color: #AF52DE; margin-bottom: 12px;">
+        Sesiones Semanales Programadas
+      </h3>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Jueves</span>
+            <span class="tag-badge two-hours">2 Horas continuas</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            10:20 - 12:00 • <strong>Salón B-109</strong>
+          </div>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.35); padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--surface-glass-border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Viernes</span>
+            <span class="tag-badge">50 minutos</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary);">
+            07:50 - 08:40 • <strong>Salón B-117</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pie Institucional -->
+
+          <!-- Bloque Secundario Integrado para Ventanas Medianas y Pequeñas (< 1240px) -->
+          <div class="mac-inline-secondary-block" style="display: none; margin-top: 24px;">
+            <div class="mac-ad-spot-container">
+              <span class="mac-ad-eyebrow">Espacio Encardomy Agency</span>
+              <h3 class="mac-ad-title">Tal vez te pueda interesar</h3>
+              <div class="mac-ad-empty-message">
+                <p>No hay nada disponible por ahora.</p>
+              </div>
+              <a href="mac-interes.html" class="mac-btn-ad-action">Solicitar pedido personalizado →</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Columna 3: Inspector / Barra Derecha (Solo en Ventana Grande >= 1240px) -->
+        <aside class="mac-inspector-column" aria-label="Panel Lateral de Información e Inspector">
+          <div class="mac-inspector-header">
+            <span>ℹ️</span> Resumen Grupo 415
+          </div>
+
+          <div class="mac-inspector-card">
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Plantel:</span>
+              <span class="mac-inspector-value">ENP 4 UNAM</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Turno:</span>
+              <span class="mac-inspector-value">Matutino</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Horario:</span>
+              <span class="mac-inspector-value">07:00 a 15:20 hrs</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Docente:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-gold);">10 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Alumno:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-green);">15 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Zona Horaria:</span>
+              <span class="mac-inspector-value">CDMX (America/Mexico_City)</span>
+            </div>
+          </div>
+
+          <!-- ESPACIO DE PUBLICIDAD EN INSPECTOR: Tal vez te pueda interesar -->
+          <div class="mac-ad-spot-container">
+            <span class="mac-ad-eyebrow">Encardomy Agency</span>
+            <h3 class="mac-ad-title">Tal vez te pueda interesar</h3>
+            <div class="mac-ad-empty-message">
+              <p>No hay nada disponible por ahora.</p>
+            </div>
+            <a href="mac-interes.html" class="mac-btn-ad-action">
+              <span>🛍️</span> Solicitar pedido específico
+            </a>
+          </div>
+
+          <div class="mac-inspector-card" style="margin-top: auto;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-text-tertiary); letter-spacing: 0.8px;">Atajos de Teclado macOS</span>
+            <div class="mac-inspector-row" style="margin-top: 8px;">
+              <span class="mac-inspector-label">Profesores:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">P</kbd>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Inicio:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">I</kbd>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Sección A / B:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">S</kbd>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  </div>
+
+  
+
+  <!-- Scripts Centrales del Ecosistema -->
+  <script src="js/device-detector.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/layout-engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

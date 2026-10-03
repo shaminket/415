@@ -1,0 +1,1815 @@
+/**
+ * ENCARDOMY — MINWEB 415 | Unified Academic Engine (Mobile & iPad)
+ * Motor Central Unificado de Lógica y Datos Académicos
+ * 
+ * Cumplimiento Estricto de la Especificación:
+ * - Regla 70: Separación clara entre Interfaz y Datos/Lógica compartida (NO duplicar la aplicación).
+ * - Reglas 62 y 63: Horario completo oficial SIHO grupo 415 y profesores en ambas interfaces.
+ * - Reglas 66-69: Cambio automático instantáneo de tamaño/orientación sin recarga ni pérdida de datos.
+ * - Reglas 72-73: Formularios funcionales, pedidos a WhatsApp (+52 55 7198 5641) y modal Clip.
+ * - Regla 10: Hora Oficial de la Ciudad de México (America/Mexico_City).
+ * - Luces navideñas en clase activa y audio navideño nativo Web Audio API.
+ * - Tolerancias estrictas (20 min maestro, 10 min alumno) solo al inicio de clase.
+ */
+
+(function () {
+  "use strict";
+
+  // Prevenir inicializaciones duplicadas
+  if (window.__ENCARDOMY_APP_INITIALIZED__) {
+    return;
+  }
+  window.__ENCARDOMY_APP_INITIALIZED__ = true;
+
+  // Estado global unificado de la aplicación
+  const state = {
+    section: localStorage.getItem("encardomy_section") || "A",
+    selectedDay: 1,
+    simulatedDate: null,
+    orientation: "portrait",
+    device: "mobile",
+    audioCtx: null
+  };
+
+  // ==========================================================================
+  // INICIALIZACIÓN PRINCIPAL
+  // ==========================================================================
+  document.addEventListener("DOMContentLoaded", () => {
+    initDeviceAndOrientation();
+    initSection();
+    initClockAndCountdown();
+    initScheduleTabs();
+    initSimulator();
+    initSearch();
+    initRequiredWorksModule();
+    initDynamicPagesSync();
+    initAcademicHubSync();
+    initOrderForms();
+    initFeedbackForms();
+    initChristmasSound();
+    initSnowfall();
+    highlightActiveNav();
+
+    // Suscribirse a cambios en la fuente única de datos
+    if (window.ENCARDOMY_DATA && ENCARDOMY_DATA.subscribe) {
+      ENCARDOMY_DATA.subscribe(() => {
+        renderApp();
+      });
+    }
+  });
+
+  // ==========================================================================
+  // 1. DETECCIÓN AUTOMÁTICA DE TAMAÑO Y ORIENTACIÓN (Reglas 66-69)
+  // ==========================================================================
+  function initDeviceAndOrientation() {
+    updateLayoutMetrics();
+
+    // Escuchar el evento reactivo de device-detector
+    window.addEventListener("screenSizeChanged", (e) => {
+      if (e.detail) {
+        state.device = e.detail.device || state.device;
+        state.orientation = e.detail.orientation || state.orientation;
+      }
+      handleScreenChange();
+    });
+
+    window.addEventListener("resize", handleScreenChange);
+    window.addEventListener("orientationchange", handleScreenChange);
+    if (window.screen && window.screen.orientation) {
+      window.screen.orientation.addEventListener("change", handleScreenChange);
+    }
+  }
+
+  function updateLayoutMetrics() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const isLandscape = (w > h) || (window.matchMedia && window.matchMedia("(orientation: landscape)").matches);
+    const orientationName = isLandscape ? "landscape" : "portrait";
+    const deviceName = (w >= 768) ? (w > 1366 ? "desktop" : "tablet") : "mobile";
+
+    state.orientation = orientationName;
+    state.device = deviceName;
+
+    document.documentElement.setAttribute("data-device", deviceName);
+    document.documentElement.setAttribute("data-orientation", orientationName);
+    document.documentElement.setAttribute("data-ipad-orientation", orientationName);
+
+    if (document.body) {
+      document.body.setAttribute("data-device", deviceName);
+      document.body.setAttribute("data-orientation", orientationName);
+      document.body.setAttribute("data-ipad-orientation", orientationName);
+    }
+
+    // Actualizar badges de orientación si existen
+    document.querySelectorAll(".ipad-orientation-badge, #ipad-orientation-badge").forEach(badge => {
+      badge.textContent = isLandscape ? "⟳ Horizontal" : "⟲ Vertical";
+      badge.title = `Resolución: ${w} × ${h} px (${deviceName.toUpperCase()})`;
+    });
+  }
+
+  function handleScreenChange() {
+    updateLayoutMetrics();
+    // Re-renderizar componentes activos sin recargar ni alterar formularios
+    updateClassStatus();
+    renderSchedule();
+  }
+
+  // ==========================================================================
+  // 2. HORA OFICIAL DE CIUDAD DE MÉXICO (America/Mexico_City) (Regla 10)
+  // ==========================================================================
+  function getCurrentTime() {
+    return ENCARDOMY_DATA.getMexicoCityTime(state.simulatedDate);
+  }
+
+  function timeStringToMinutes(str) {
+    if (!str) return 0;
+    const parts = str.split(":").map(Number);
+    return parts[0] * 60 + parts[1];
+  }
+
+  // ==========================================================================
+  // 3. SELECCIÓN DE SECCIÓN A / B (Reglas 6, 20 y 71)
+  // ==========================================================================
+  function initSection() {
+    // Si no hay sección elegida y existe el modal de bienvenida
+    const modal = document.getElementById("section-modal");
+    if (!localStorage.getItem("encardomy_section") && modal) {
+      modal.classList.add("show");
+    }
+
+    const btnA = document.getElementById("btn-select-a");
+    const btnB = document.getElementById("btn-select-b");
+    const pillA = document.getElementById("pill-section-a");
+    const pillB = document.getElementById("pill-section-b");
+    const ipadBtnA = document.getElementById("ipad-sec-a");
+    const ipadBtnB = document.getElementById("ipad-sec-b");
+    const sideBtnA = document.getElementById("sidebar-sec-a");
+    const sideBtnB = document.getElementById("sidebar-sec-b");
+
+    if (btnA) btnA.addEventListener("click", () => setSection("A"));
+    if (btnB) btnB.addEventListener("click", () => setSection("B"));
+    if (pillA) pillA.addEventListener("click", () => setSection("A"));
+    if (pillB) pillB.addEventListener("click", () => setSection("B"));
+    if (ipadBtnA) ipadBtnA.addEventListener("click", () => setSection("A"));
+    if (ipadBtnB) ipadBtnB.addEventListener("click", () => setSection("B"));
+    if (sideBtnA) sideBtnA.addEventListener("click", () => setSection("A"));
+    if (sideBtnB) sideBtnB.addEventListener("click", () => setSection("B"));
+
+    document.querySelectorAll(".mac-segment-btn").forEach(btn => {
+      btn.addEventListener("click", () => setSection(btn.getAttribute("data-section")));
+    });
+
+    updateSectionUI(state.section);
+  }
+
+  function setSection(sec) {
+    state.section = sec;
+    localStorage.setItem("encardomy_section", sec);
+
+    const modal = document.getElementById("section-modal");
+    if (modal) modal.classList.remove("show");
+
+    updateSectionUI(sec);
+    renderApp();
+  }
+
+  function updateSectionUI(sec) {
+    const pairs = [
+      [document.getElementById("pill-section-a"), document.getElementById("pill-section-b")],
+      [document.getElementById("ipad-sec-a"), document.getElementById("ipad-sec-b")],
+      [document.getElementById("sidebar-sec-a"), document.getElementById("sidebar-sec-b")]
+    ];
+
+    pairs.forEach(([btnA, btnB]) => {
+      if (btnA && btnB) {
+        if (sec === "A") {
+          btnA.classList.add("active");
+          btnB.classList.remove("active");
+        } else {
+          btnB.classList.add("active");
+          btnA.classList.remove("active");
+        }
+      }
+    });
+
+    document.querySelectorAll(".mac-segment-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-section") === sec);
+    });
+
+    const macSecBadge = document.getElementById("mac-current-section-badge");
+    if (macSecBadge) macSecBadge.textContent = "Sección " + sec;
+  }
+
+  // ==========================================================================
+  // 4. ASOCIACIÓN OFICIAL DE PROFESORES POR MATERIA (Regla 63)
+  // ==========================================================================
+  function getProfessorForSubject(block, sec) {
+    const currentSec = sec || state.section || "A";
+
+    // Si el bloque cuenta con personalización por sección (ej. Orientación Educativa IV)
+    if (block.customBySection && block.customBySection[currentSec] && block.customBySection[currentSec].prof) {
+      return block.customBySection[currentSec].prof;
+    }
+
+    const subj = ENCARDOMY_DATA.subjects[block.subjectId];
+    if (subj) {
+      if (subj.professorsBySection && subj.professorsBySection[currentSec]) {
+        return subj.professorsBySection[currentSec];
+      }
+      if (subj.professor) {
+        return subj.professor;
+      }
+    }
+
+    // Búsqueda en catálogo oficial de profesores SIHO
+    if (ENCARDOMY_DATA.professors) {
+      const match = ENCARDOMY_DATA.professors.find(p => 
+        p.subjectId === block.subjectId && (p.section === "ALL" || p.section === currentSec)
+      );
+      if (match) return match.name;
+    }
+
+    return "Profesor oficial";
+  }
+
+  // ==========================================================================
+  // 5. CLASE ACTUAL, TIEMPO RESTANTE, SIGUIENTE CLASE Y TOLERANCIAS (Reglas 10, 11)
+  // ==========================================================================
+  function updateClassStatus() {
+    const now = getCurrentTime();
+    const day = now.getDay();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const currentSeconds = now.getSeconds();
+
+    // Actualizar reloj CDMX en todos los encabezados y sidebars
+    const hStr = String(now.getHours()).padStart(2, "0");
+    const mStr = String(now.getMinutes()).padStart(2, "0");
+    const sStr = String(now.getSeconds()).padStart(2, "0");
+    const timeFull = `${hStr}:${mStr}:${sStr} CDMX`;
+    const timeShort = `${hStr}:${mStr}:${sStr}`;
+
+    const clockMob = document.getElementById("current-time-clock");
+    if (clockMob) clockMob.textContent = timeFull;
+
+    const clockIpad = document.getElementById("ipad-cdmx-clock");
+    if (clockIpad) clockIpad.textContent = timeFull;
+
+    const clockSidebar = document.getElementById("ipad-sidebar-cdmx-clock");
+    if (clockSidebar) clockSidebar.textContent = timeShort;
+
+    const clockMacTitle = document.getElementById("mac-titlebar-cdmx-clock");
+    if (clockMacTitle) clockMacTitle.textContent = timeFull;
+
+    const clockMacSidebar = document.getElementById("mac-sidebar-cdmx-clock");
+    if (clockMacSidebar) clockMacSidebar.textContent = timeFull;
+
+    document.querySelectorAll(".current-time-clock").forEach(el => el.textContent = timeFull);
+
+    const isSchoolDay = day >= 1 && day <= 5;
+    const daySchedule = isSchoolDay ? ENCARDOMY_DATA.schedule[day] : null;
+
+    let activeBlock = null;
+    let nextBlock = null;
+    let minutesUntilNext = null;
+
+    if (daySchedule) {
+      for (let i = 0; i < daySchedule.length; i++) {
+        const block = daySchedule[i];
+        const startMin = timeStringToMinutes(block.start);
+        const endMin = timeStringToMinutes(block.end);
+
+        if (currentMinutes >= startMin && currentMinutes < endMin) {
+          activeBlock = block;
+        } else if (currentMinutes < startMin) {
+          if (!nextBlock) {
+            nextBlock = block;
+            minutesUntilNext = startMin - currentMinutes;
+          }
+        }
+      }
+    }
+
+    // Renderizar tarjetas de Clase Actual (Móvil e iPad)
+    renderCurrentClassCard(activeBlock, isSchoolDay, currentMinutes, currentSeconds);
+
+    // Condición de Siguiente Clase (Regla 10: SOLO si faltan 10 minutos o más para iniciar)
+    const showNextClass = nextBlock && minutesUntilNext !== null && minutesUntilNext >= 10;
+    renderNextClassCards(nextBlock, minutesUntilNext, showNextClass);
+
+    // Condición de Tolerancias (20 min maestros, 10 min alumnos):
+    // SOLO aplican al comienzo de una clase (primeros 20 minutos). Oculto fuera de clase.
+    renderTolerances(activeBlock, currentMinutes, currentSeconds);
+
+    // Resaltar con luces navideñas en el horario correspondiente
+    highlightActiveScheduleBlocks(activeBlock, day);
+  }
+
+  function renderCurrentClassCard(block, isSchoolDay, currentMinutes, currentSeconds) {
+    // Referencias Móvil
+    const mCard = document.getElementById("current-class-card");
+    const mTitle = document.getElementById("current-subject-title");
+    const mMeta = document.getElementById("current-class-meta");
+    const mCountdown = document.getElementById("current-countdown-digits");
+    const mRoomAlert = document.getElementById("room-change-alert");
+    const mRoomText = document.getElementById("room-change-text");
+    const mGarland = document.getElementById("card-christmas-lights");
+
+    // Referencias iPad
+    const iCard = document.getElementById("ipad-current-class-card");
+    const iTitle = document.getElementById("ipad-current-subject");
+    const iMeta = document.getElementById("ipad-current-meta");
+    const iCountdown = document.getElementById("ipad-current-countdown");
+    const iRoomAlert = document.getElementById("ipad-room-change-alert");
+    const iRoomText = document.getElementById("ipad-room-change-text");
+    const iGarland = document.getElementById("ipad-card-christmas-lights");
+
+    const macCard = document.getElementById("mac-current-class-card");
+    const macTitle = document.getElementById("mac-current-subject");
+    const macMeta = document.getElementById("mac-current-meta");
+    const macCountdown = document.getElementById("mac-current-countdown");
+    const macGarland = document.querySelector(".mac-lights-garland");
+
+    const cards = [
+      { card: mCard, title: mTitle, meta: mMeta, cd: mCountdown, alert: mRoomAlert, alertTxt: mRoomText, garland: mGarland, isIpad: false, isMac: false },
+      { card: iCard, title: iTitle, meta: iMeta, cd: iCountdown, alert: iRoomAlert, alertTxt: iRoomText, garland: iGarland, isIpad: true, isMac: false },
+      { card: macCard, title: macTitle, meta: macMeta, cd: macCountdown, alert: null, alertTxt: null, garland: macGarland, isIpad: false, isMac: true }
+    ];
+
+    cards.forEach(c => {
+      if (!c.card || !c.title) return;
+
+      if (!isSchoolDay) {
+        c.title.textContent = "Fin de semana escolar";
+        c.meta.innerHTML = `<span class="${c.isIpad ? 'ipad-pill' : 'meta-pill meta-pill-free'}">Sin sesiones programadas</span>`;
+        if (c.cd) c.cd.textContent = "--:--";
+        if (c.alert) c.alert.style.display = "none";
+        if (c.garland) c.garland.style.display = "none";
+        c.card.style.borderLeftColor = "var(--text-tertiary)";
+        return;
+      }
+
+      if (!block) {
+        c.title.textContent = "Sin clase activa";
+        c.meta.innerHTML = `<span class="${c.isIpad ? 'ipad-pill' : 'meta-pill meta-pill-free'}">Fuera de horario de clases</span>`;
+        if (c.cd) c.cd.textContent = "--:--";
+        if (c.alert) c.alert.style.display = "none";
+        if (c.garland) c.garland.style.display = "none";
+        c.card.style.borderLeftColor = "var(--text-tertiary)";
+        return;
+      }
+
+      // Activar guirnalda de luces navideñas
+      if (c.garland) c.garland.style.display = "flex";
+
+      const sec = state.section;
+      let isFree = false;
+      let label = block.subjectName;
+      let salonText = block.salon;
+      let isRoomChange = false;
+      let roomChangeMsg = "";
+
+      if (block.customBySection && block.customBySection[sec]) {
+        const custom = block.customBySection[sec];
+        if (custom.isFree) {
+          isFree = true;
+          label = custom.label;
+          salonText = custom.salon || "—";
+        } else {
+          label = custom.label;
+          salonText = custom.salon;
+        }
+      } else if (block.salonsBySection) {
+        salonText = block.salonsBySection[sec] || block.salon;
+      }
+
+      const profName = isFree ? "Sin profesor asignado" : getProfessorForSubject(block, sec);
+
+      // Cambio de aula programado en Física III
+      if (block.roomChange && block.roomChange.hasChange) {
+        isRoomChange = true;
+        const firstStart = timeStringToMinutes(block.roomChange.firstHour.start);
+        const firstEnd = timeStringToMinutes(block.roomChange.firstHour.end);
+        const secondStart = timeStringToMinutes(block.roomChange.secondHour.start);
+        const secondEnd = timeStringToMinutes(block.roomChange.secondHour.end);
+
+        if (currentMinutes >= firstStart && currentMinutes < firstEnd) {
+          salonText = `${block.roomChange.firstHour.salon} (1ª hora)`;
+          roomChangeMsg = `En la 2ª hora (${block.roomChange.secondHour.start}) la clase cambia al salón <strong>${block.roomChange.secondHour.salon}</strong>.`;
+        } else if (currentMinutes >= secondStart && currentMinutes < secondEnd) {
+          salonText = `${block.roomChange.secondHour.salon} (2ª hora)`;
+          roomChangeMsg = `Cambio de salón realizado. Salón actual: <strong>${block.roomChange.secondHour.salon}</strong>.`;
+        }
+      }
+
+      const subjectObj = ENCARDOMY_DATA.subjects[block.subjectId];
+      const themeColor = isFree ? "#8E8E93" : (subjectObj ? subjectObj.color : "var(--accent-gold)");
+      c.card.style.borderLeftColor = themeColor;
+
+      c.title.textContent = label;
+
+      let metaHtml = "";
+      if (c.isMac) {
+        metaHtml = `
+          <span class="mac-pill ${isFree ? '' : 'mac-pill-salon'}">Salón: ${salonText}</span>
+          <span class="mac-pill mac-pill-prof">Docente: ${profName}</span>
+          <span class="mac-pill">${block.start} - ${block.end}</span>
+          ${block.isTwoHours ? '<span class="mac-pill" style="background: rgba(229,192,123,0.18); color: var(--mac-accent-gold);">2 Horas continuas</span>' : ''}
+          ${isFree ? '<span class="mac-pill" style="background: rgba(142,142,147,0.25); color: #c7c7cc;">Clase Libre</span>' : ''}
+        `;
+      } else if (c.isIpad) {
+        metaHtml = `
+          <span class="ipad-pill ${isFree ? '' : 'ipad-pill-salon'}">Salón: ${salonText}</span>
+          <span class="ipad-pill ipad-pill-prof\">Prof: ${profName}</span>
+          <span class="ipad-pill">${block.start} - ${block.end}</span>
+          ${block.isTwoHours ? '<span class="ipad-pill" style="background: rgba(229,192,123,0.2); color: var(--accent-gold);">2 Horas continuas</span>' : ''}
+          ${isFree ? '<span class="ipad-pill" style="background: rgba(142,142,147,0.25); color: #c7c7cc;">Clase Libre</span>' : ''}
+        `;
+      } else {
+        metaHtml = `
+          <span class="meta-pill ${isFree ? 'meta-pill-free' : 'meta-pill-salon'}">Salón: ${salonText}</span>
+          <span class="meta-pill meta-pill-prof">Prof: ${profName}</span>
+          <span class="meta-pill">${block.start} - ${block.end}</span>
+          ${block.isTwoHours ? '<span class="meta-pill tag-badge two-hours">2 Horas continuas</span>' : ''}
+          ${isFree ? '<span class="meta-pill meta-pill-free">Clase Libre</span>' : ''}
+        `;
+      }
+      c.meta.innerHTML = metaHtml;
+
+      if (c.alert && c.alertTxt) {
+        if (isRoomChange) {
+          c.alert.style.display = "flex";
+          c.alertTxt.innerHTML = roomChangeMsg;
+        } else {
+          c.alert.style.display = "none";
+        }
+      }
+
+      const endMinutes = timeStringToMinutes(block.end);
+      const totalRemainingSec = (endMinutes - currentMinutes) * 60 - currentSeconds;
+
+      if (c.cd) {
+        if (totalRemainingSec > 0) {
+          const remMin = Math.floor(totalRemainingSec / 60);
+          const remSec = totalRemainingSec % 60;
+          c.cd.textContent = `${String(remMin).padStart(2, "0")}:${String(remSec).padStart(2, "0")}`;
+        } else {
+          c.cd.textContent = "00:00";
+        }
+      }
+    });
+  }
+
+  function renderNextClassCards(block, minutesUntil, show) {
+    const mCard = document.getElementById("next-class-card");
+    const mTitle = document.getElementById("next-subject-name");
+    const mMeta = document.getElementById("next-subject-meta");
+
+    const iCard = document.getElementById("ipad-next-class-card");
+    const iTitle = document.getElementById("ipad-next-subject");
+    const iMeta = document.getElementById("ipad-next-meta");
+
+    [ { card: mCard, title: mTitle, meta: mMeta }, { card: iCard, title: iTitle, meta: iMeta } ].forEach(c => {
+      if (!c.card) return;
+      if (!show || !block) {
+        c.card.style.display = "none";
+        return;
+      }
+
+      c.card.style.display = "block";
+      const sec = state.section;
+      let label = block.subjectName;
+      let salon = block.salon;
+
+      if (block.customBySection && block.customBySection[sec]) {
+        label = block.customBySection[sec].label;
+        salon = block.customBySection[sec].salon;
+      } else if (block.salonsBySection) {
+        salon = block.salonsBySection[sec] || block.salon;
+      }
+
+      const prof = getProfessorForSubject(block, sec);
+      const subjectObj = ENCARDOMY_DATA.subjects[block.subjectId];
+      if (subjectObj) {
+        c.card.style.borderLeftColor = subjectObj.color;
+      }
+
+      if (c.title) c.title.textContent = label;
+      if (c.meta) c.meta.textContent = `Inicia a las ${block.start} (en ${minutesUntil} min) • Salón: ${salon} • Prof: ${prof}`;
+    });
+
+    const macNextTitle = document.getElementById("mac-next-subject");
+    const macNextMeta = document.getElementById("mac-next-meta");
+    if (macNextTitle) {
+      if (!show || !block) {
+        macNextTitle.textContent = "No hay más clases hoy";
+        if (macNextMeta) macNextMeta.textContent = "Consulta el horario del día siguiente";
+      } else {
+        const sec = state.section;
+        let label = block.subjectName;
+        let salon = block.salon;
+        if (block.customBySection && block.customBySection[sec]) {
+          label = block.customBySection[sec].label;
+          salon = block.customBySection[sec].salon;
+        } else if (block.salonsBySection) {
+          salon = block.salonsBySection[sec] || block.salon;
+        }
+        const prof = getProfessorForSubject(block, sec);
+        macNextTitle.textContent = label;
+        if (macNextMeta) macNextMeta.textContent = `${block.start} hrs · Salón ${salon} · ${prof}`;
+      }
+    }
+  }
+
+  function renderTolerances(activeBlock, currentMinutes, currentSeconds) {
+    const mTolerances = document.getElementById("tolerances-container");
+    const mTeach = document.getElementById("tolerance-teacher-digits");
+    const mStud = document.getElementById("tolerance-student-digits");
+
+    const iTolerances = document.getElementById("ipad-tolerances-container");
+    const iTeach = document.getElementById("ipad-tolerance-teacher");
+    const iStud = document.getElementById("ipad-tolerance-student");
+
+    const macTolProf = document.getElementById("mac-tol-prof");
+    const macTolStudent = document.getElementById("mac-tol-student");
+
+    const groups = [
+      { cont: mTolerances, t: mTeach, s: mStud },
+      { cont: iTolerances, t: iTeach, s: iStud }
+    ];
+
+    if (!activeBlock) {
+      groups.forEach(g => { if (g.cont) g.cont.style.display = "none"; });
+      if (macTolProf) macTolProf.textContent = "10 min";
+      if (macTolStudent) macTolStudent.textContent = "15 min";
+      return;
+    }
+
+    const startMin = timeStringToMinutes(activeBlock.start);
+    let elapsedSeconds = (currentMinutes - startMin) * 60 + currentSeconds;
+
+    if (activeBlock.roomChange && activeBlock.roomChange.hasChange) {
+      const secondStart = timeStringToMinutes(activeBlock.roomChange.secondHour.start);
+      if (currentMinutes >= secondStart) {
+        elapsedSeconds = (currentMinutes - secondStart) * 60 + currentSeconds;
+      }
+    }
+
+    // Tolerancia SOLO en los primeros 20 minutos de clase
+    const isBeginning = elapsedSeconds >= 0 && elapsedSeconds < 20 * 60;
+
+    if (!isBeginning) {
+      groups.forEach(g => { if (g.cont) g.cont.style.display = "none"; });
+      if (macTolProf) macTolProf.textContent = "10 min";
+      if (macTolStudent) macTolStudent.textContent = "15 min";
+      return;
+    }
+
+    const teacherRemSec = Math.max(0, (20 * 60) - elapsedSeconds);
+    const tM = Math.floor(teacherRemSec / 60);
+    const tS = teacherRemSec % 60;
+    const tStr = `${String(tM).padStart(2, "0")}:${String(tS).padStart(2, "0")}`;
+
+    const studentRemSec = Math.max(0, (10 * 60) - elapsedSeconds);
+    const sM = Math.floor(studentRemSec / 60);
+    const sS = studentRemSec % 60;
+    const sStr = `${String(sM).padStart(2, "0")}:${String(sS).padStart(2, "0")}`;
+
+    groups.forEach(g => {
+      if (g.cont) g.cont.style.display = "block";
+      if (g.t) g.t.textContent = tStr;
+      if (g.s) g.s.textContent = sStr;
+    });
+
+    if (macTolProf) macTolProf.textContent = tStr;
+    if (macTolStudent) macTolStudent.textContent = sStr;
+  }
+
+  function highlightActiveScheduleBlocks(activeBlock, currentDay) {
+    const isSameDay = state.selectedDay === currentDay;
+
+    // Resaltado móvil
+    document.querySelectorAll(".schedule-block-card").forEach(card => {
+      if (isSameDay && activeBlock && card.dataset.start === activeBlock.start && card.dataset.end === activeBlock.end) {
+        card.classList.add("is-active-subject");
+      } else {
+        card.classList.remove("is-active-subject");
+      }
+    });
+
+    // Resaltado iPad
+    document.querySelectorAll(".ipad-block-card").forEach(card => {
+      if (isSameDay && activeBlock && card.dataset.start === activeBlock.start && card.dataset.end === activeBlock.end) {
+        card.classList.add("is-active-subject");
+      } else {
+        card.classList.remove("is-active-subject");
+      }
+    });
+  }
+
+  function initClockAndCountdown() {
+    updateClassStatus();
+    setInterval(updateClassStatus, 1000);
+  }
+
+  // ==========================================================================
+  // 6. RENDERIZADO DEL HORARIO SEMANAL COMPLETO (Regla 62)
+  // Celular + iPad utilizan exactamente los mismos datos académicos SIHO del Grupo 415
+  // ==========================================================================
+  function initScheduleTabs() {
+    const today = getCurrentTime().getDay();
+    state.selectedDay = (today >= 1 && today <= 5) ? today : 1;
+
+    // Pestañas móviles
+    const mobileTabs = document.querySelectorAll(".day-tab-btn");
+    mobileTabs.forEach(tab => {
+      const d = parseInt(tab.dataset.day, 10);
+      if (d === state.selectedDay) tab.classList.add("active");
+      else tab.classList.remove("active");
+
+      tab.addEventListener("click", () => {
+        selectScheduleDay(d);
+      });
+    });
+
+    // Pestañas iPad
+    const ipadTabs = document.querySelectorAll(".ipad-day-btn");
+    ipadTabs.forEach(tab => {
+      const d = parseInt(tab.dataset.day, 10);
+      if (d === state.selectedDay) tab.classList.add("active");
+      else tab.classList.remove("active");
+
+      tab.addEventListener("click", () => {
+        selectScheduleDay(d);
+      });
+    });
+
+    // Pestañas Mac
+    const macTabs = document.querySelectorAll(".mac-day-btn");
+    macTabs.forEach(tab => {
+      const d = parseInt(tab.dataset.day, 10);
+      if (d === state.selectedDay) tab.classList.add("active");
+      else tab.classList.remove("active");
+
+      tab.addEventListener("click", () => {
+        selectScheduleDay(d);
+      });
+    });
+
+    renderSchedule();
+  }
+
+  function selectScheduleDay(dayNumber) {
+    state.selectedDay = dayNumber;
+
+    document.querySelectorAll(".day-tab-btn").forEach(t => {
+      t.classList.toggle("active", parseInt(t.dataset.day, 10) === dayNumber);
+    });
+
+    document.querySelectorAll(".ipad-day-btn").forEach(t => {
+      t.classList.toggle("active", parseInt(t.dataset.day, 10) === dayNumber);
+    });
+
+    document.querySelectorAll(".mac-day-btn").forEach(t => {
+      t.classList.toggle("active", parseInt(t.dataset.day, 10) === dayNumber);
+    });
+
+    renderSchedule();
+    updateClassStatus();
+  }
+
+  function renderSchedule() {
+    const day = state.selectedDay;
+    const blocks = ENCARDOMY_DATA.schedule[day] || [];
+    const sec = state.section || "A";
+
+    renderMobileScheduleList(blocks, sec);
+    renderIpadScheduleGrid(blocks, sec);
+    renderMacScheduleGrid(blocks, sec);
+  }
+
+  // Horario Formato Celular (Lista Vertical)
+  function renderMobileScheduleList(blocks, sec) {
+    const list = document.getElementById("schedule-blocks-list");
+    if (!list) return;
+
+    list.innerHTML = "";
+
+    if (blocks.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state-card">
+          <div class="empty-state-icon">☕</div>
+          <div class="empty-state-text">Sin clases en este día</div>
+          <div class="empty-state-subtext">Disfruta tu descanso.</div>
+        </div>
+      `;
+      return;
+    }
+
+    blocks.forEach(block => {
+      let isFree = false;
+      let label = block.subjectName;
+      let salonText = block.salon;
+      let roomChangeBadge = "";
+
+      if (block.customBySection && block.customBySection[sec]) {
+        const custom = block.customBySection[sec];
+        if (custom.isFree) {
+          isFree = true;
+          label = custom.label;
+          salonText = custom.salon || "—";
+        } else {
+          label = custom.label;
+          salonText = custom.salon;
+        }
+      } else if (block.salonsBySection) {
+        salonText = block.salonsBySection[sec] || block.salon;
+      }
+
+      if (block.roomChange && block.roomChange.hasChange) {
+        roomChangeBadge = `<span class="tag-badge room-change">${block.roomChange.label}</span>`;
+      }
+
+      const profName = isFree ? "Sin profesor asignado" : getProfessorForSubject(block, sec);
+      const subjectObj = ENCARDOMY_DATA.subjects[block.subjectId];
+      const blockColor = isFree ? "#8E8E93" : (subjectObj ? subjectObj.color : "#2997FF");
+
+      const card = document.createElement("div");
+      card.className = "schedule-block-card";
+      card.dataset.start = block.start;
+      card.dataset.end = block.end;
+      card.style.setProperty("--block-color", blockColor);
+
+      card.innerHTML = `
+        <div class="schedule-block-time">
+          <span class="time-start">${block.start}</span>
+          <span class="time-end">${block.end}</span>
+          <span class="time-duration">${block.durationMinutes} min</span>
+        </div>
+        <div class="schedule-block-info">
+          <div class="schedule-block-title" style="color: ${isFree ? 'var(--text-secondary)' : 'var(--text-primary)'}">
+            ${escapeHtml(label)}
+          </div>
+          <div class="schedule-block-prof">Prof: ${escapeHtml(profName)}</div>
+          <div class="schedule-block-meta">
+            <span class="tag-badge ${isFree ? 'free-class' : ''}">
+              ${isFree ? 'Libre' : 'Salón: ' + escapeHtml(salonText)}
+            </span>
+            ${block.isTwoHours ? '<span class="tag-badge two-hours">2 Horas</span>' : ''}
+            ${roomChangeBadge}
+          </div>
+        </div>
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  // Horario Formato iPad (Cuadrícula Amplia de Tarjetas con Apertura de Ficha Técnica)
+  
+  // Horario Formato Mac (Cuadrícula macOS de Escritorio)
+  function renderMacScheduleGrid(blocks, sec) {
+    const grid = document.getElementById("mac-schedule-grid");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    if (blocks.length === 0) {
+      grid.innerHTML = '<div class="mac-hub-empty" style="grid-column: 1 / -1;"><p>No hay bloques registrados para este día.</p></div>';
+      return;
+    }
+
+    blocks.forEach(block => {
+      let isFree = false;
+      let label = block.subjectName;
+      let salonText = block.salon;
+      let roomBadge = "";
+
+      if (block.customBySection && block.customBySection[sec]) {
+        const custom = block.customBySection[sec];
+        if (custom.isFree) {
+          isFree = true;
+          label = custom.label;
+          salonText = custom.salon || "—";
+        } else {
+          label = custom.label;
+          salonText = custom.salon;
+        }
+      } else if (block.salonsBySection) {
+        salonText = block.salonsBySection[sec] || block.salon;
+      }
+
+      if (block.roomChange && block.roomChange.hasChange) {
+        roomBadge = '<div class="mac-room-change-badge">⚠️ ' + escapeHtml(block.roomChange.label) + '</div>';
+      }
+
+      const profName = isFree ? "Sin profesor asignado" : getProfessorForSubject(block, sec);
+      const subjectObj = ENCARDOMY_DATA.subjects[block.subjectId];
+      const blockColor = isFree ? "#8E8E93" : (subjectObj ? subjectObj.color : "#2997FF");
+
+      const card = document.createElement("div");
+      card.className = "mac-block-card";
+      card.dataset.start = block.start;
+      card.dataset.end = block.end;
+      card.dataset.subject = label;
+      card.style.setProperty("--block-color", blockColor);
+      card.style.cursor = "pointer";
+
+      let twoHoursBadge = "";
+      if (block.isTwoHours) {
+        twoHoursBadge = '<span class="mac-block-badge">2 Horas continuas</span>';
+      }
+
+      card.innerHTML = 
+        '<div class="mac-block-time-row">' +
+          '<span class="mac-block-hours">' + block.start + ' – ' + block.end + '</span>' +
+          twoHoursBadge +
+        '</div>' +
+        '<h3 class="mac-block-subject">' + escapeHtml(label) + '</h3>' +
+        '<p class="mac-block-prof">' + escapeHtml(profName) + '</p>' +
+        roomBadge +
+        '<div class="mac-block-footer">' +
+          '<span class="mac-block-room">Salón ' + escapeHtml(salonText) + '</span>' +
+          '<span class="mac-block-tag">Duración: ' + block.durationMinutes + ' min</span>' +
+        '</div>';
+
+      card.addEventListener("click", () => {
+        openScheduleDetailModal(block, label, salonText, profName, blockColor, isFree);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  function renderIpadScheduleGrid(blocks, sec) {
+    const grid = document.getElementById("ipad-schedule-grid");
+    if (!grid) return;
+
+    grid.innerHTML = "";
+
+    if (blocks.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--surface-glass-card); border-radius: var(--radius-lg); border: 1px solid var(--surface-glass-border);">
+          <div style="font-size: 32px; margin-bottom: 10px;">☕</div>
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-primary);">Sin clases programadas en este día</div>
+          <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Fin de semana de descanso.</div>
+        </div>
+      `;
+      return;
+    }
+
+    blocks.forEach(block => {
+      let isFree = false;
+      let label = block.subjectName;
+      let salonText = block.salon;
+      let roomBadge = "";
+
+      if (block.customBySection && block.customBySection[sec]) {
+        const custom = block.customBySection[sec];
+        if (custom.isFree) {
+          isFree = true;
+          label = custom.label;
+          salonText = custom.salon || "—";
+        } else {
+          label = custom.label;
+          salonText = custom.salon;
+        }
+      } else if (block.salonsBySection) {
+        salonText = block.salonsBySection[sec] || block.salon;
+      }
+
+      if (block.roomChange && block.roomChange.hasChange) {
+        roomBadge = `<span class="ipad-pill" style="background: rgba(255,149,0,0.2); color: #ffa94d;">${block.roomChange.label}</span>`;
+      }
+
+      const profName = isFree ? "Sin profesor asignado" : getProfessorForSubject(block, sec);
+      const subjectObj = ENCARDOMY_DATA.subjects[block.subjectId];
+      const blockColor = isFree ? "#8E8E93" : (subjectObj ? subjectObj.color : "#2997FF");
+
+      const card = document.createElement("div");
+      card.className = "ipad-block-card";
+      card.dataset.start = block.start;
+      card.dataset.end = block.end;
+      card.style.setProperty("--block-color", blockColor);
+      card.style.cursor = "pointer";
+      card.title = "Toca para ver detalles de la materia y profesor";
+
+      card.innerHTML = `
+        <div class="ipad-block-time-row">
+          <span class="ipad-block-hours">${block.start} - ${block.end}</span>
+          <span class="ipad-block-duration">${block.durationMinutes} min</span>
+        </div>
+        <div class="ipad-block-subject" style="color: ${isFree ? 'var(--text-secondary)' : 'var(--text-primary)'}">
+          ${escapeHtml(label)}
+        </div>
+        <div class="ipad-block-prof">
+          Prof: ${escapeHtml(profName)}
+        </div>
+        <div class="ipad-meta-row" style="margin-bottom: 0;">
+          <span class="ipad-pill ${isFree ? '' : 'ipad-pill-salon'}">
+            ${isFree ? 'Libre' : 'Salón: ' + escapeHtml(salonText)}
+          </span>
+          ${block.isTwoHours ? '<span class="ipad-pill" style="background: rgba(229,192,123,0.18); color: var(--accent-gold);">2 Horas</span>' : ''}
+          ${roomBadge}
+        </div>
+      `;
+
+      // Al tocar una tarjeta del horario en iPad, abrir ficha académica detallada
+      card.addEventListener("click", () => {
+        openScheduleDetailModal(block, label, salonText, profName, blockColor, isFree);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  // Ficha detallada de materia y profesor al pulsar en el horario
+  function openScheduleDetailModal(block, label, salon, prof, color, isFree) {
+    const backdrop = document.getElementById("ipad-detail-modal");
+    const titleElem = document.getElementById("ipad-modal-title");
+    const bodyElem = document.getElementById("ipad-modal-body");
+    if (!backdrop || !titleElem || !bodyElem) return;
+
+    titleElem.textContent = label;
+    titleElem.style.color = color || "var(--accent-gold)";
+
+    const subj = ENCARDOMY_DATA.subjects[block.subjectId];
+    let pageLink = "";
+    if (subj && subj.hasOwnPage) {
+      pageLink = `
+        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--surface-glass-border-subtle);">
+          <a href="${subj.pageUrl}" class="btn-primary-ios" style="display: inline-block; text-decoration: none; padding: 8px 16px; font-size: 13.5px;">
+            Ir al Módulo de ${subj.name} →
+          </a>
+        </div>
+      `;
+    }
+
+    bodyElem.innerHTML = `
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14.5px; line-height: 1.5;">
+        <div><strong>Profesor Oficial:</strong> ${escapeHtml(prof)}</div>
+        <div><strong>Horario de Sesión:</strong> ${block.start} a ${block.end} (${block.durationMinutes} minutos${block.isTwoHours ? ' • 2 horas consecutivas' : ''})</div>
+        <div><strong>Salón Oficial:</strong> ${escapeHtml(salon)}</div>
+        ${block.roomChange && block.roomChange.hasChange ? `
+          <div style="background: rgba(255, 149, 0, 0.15); border-left: 4px solid #ff9500; padding: 10px; border-radius: 4px; font-size: 13.5px; color: #ffd8a8;">
+            <strong>⚠️ Cambio de Aula Oficial:</strong><br>${block.roomChange.label}
+          </div>
+        ` : ''}
+        ${pageLink}
+      </div>
+    `;
+
+    backdrop.classList.add("show");
+  }
+
+  // ==========================================================================
+  // 7. BUSCADOR INTELIGENTE DE PROFESORES (Regla 63)
+  // Celular + iPad comparten la base de datos completa de profesores del Grupo 415
+  // ==========================================================================
+  function initSearch() {
+    const input = document.getElementById("search-professors-input");
+    const container = document.getElementById("search-results-container");
+
+    const macInput = document.getElementById("mac-prof-search-input");
+    const macContainer = document.getElementById("mac-prof-results-container");
+
+    const inputs = [
+      { inp: input, cont: container },
+      { inp: macInput, cont: macContainer }
+    ];
+
+    inputs.forEach(pair => {
+      if (!pair.inp || !pair.cont) return;
+      pair.inp.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        renderSearchResults(query, pair.cont);
+      });
+      renderSearchResults("", pair.cont);
+    });
+  }
+
+  function normalize(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  function renderSearchResults(query, container) {
+    const qNorm = normalize(query);
+    const professors = ENCARDOMY_DATA.professors || [];
+    const currentSec = state.section || "A";
+
+    const matches = professors.filter(p => {
+      if (!qNorm) return true;
+      const subj = ENCARDOMY_DATA.subjects[p.subjectId];
+      const nameMatch = normalize(p.name).includes(qNorm);
+      const subjectMatch = normalize(p.subjectName).includes(qNorm);
+      const aliasMatch = subj && subj.aliases.some(alias => normalize(alias).includes(qNorm) || qNorm.includes(normalize(alias)));
+      const salonMatch = p.salons.some(s => normalize(s).includes(qNorm));
+      return nameMatch || subjectMatch || aliasMatch || salonMatch;
+    });
+
+    container.innerHTML = "";
+
+    if (matches.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state-card">
+          <div class="empty-state-icon">🔍</div>
+          <div class="empty-state-text">No se encontraron resultados</div>
+          <div class="empty-state-subtext">Prueba buscando por nombre (ej. Saúl, Gabriela, Karina), materia o salón.</div>
+        </div>
+      `;
+      return;
+    }
+
+    // Usar cuadrícula en iPad/Tableta y lista en móvil
+    const isTablet = state.device === "tablet" || state.device === "desktop" || window.innerWidth >= 768;
+    const listWrapper = document.createElement("div");
+    listWrapper.className = isTablet ? "tablet-cards-grid" : "professors-list";
+
+    matches.forEach(item => {
+      const subj = ENCARDOMY_DATA.subjects[item.subjectId];
+      const color = subj ? subj.color : "var(--accent-gold)";
+      const isSecMatch = item.section === "ALL" || item.section === currentSec;
+
+      const card = document.createElement("div");
+      card.className = "glass-card";
+      card.style.borderLeft = "5px solid " + color;
+      card.style.marginBottom = isTablet ? "0" : "12px";
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(item.subjectName)}</span>
+          ${item.section !== 'ALL' ? `<span class="tag-badge ${isSecMatch ? 'two-hours' : ''}">Sección ${item.section}</span>` : ''}
+        </div>
+        <div style="font-size: 17px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">${escapeHtml(item.name)}</div>
+        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;"><strong>Salones:</strong> ${escapeHtml(item.salons.join(" • "))}</div>
+        <div style="font-size: 12px; color: var(--text-tertiary); line-height: 1.35;">${escapeHtml(item.notes)}</div>
+      `;
+
+      listWrapper.appendChild(card);
+    });
+
+    container.appendChild(listWrapper);
+  }
+
+  // ==========================================================================
+  // 8. GESTIÓN DE TRABAJOS NECESARIOS (Historia, Español, Física)
+  // Celular + iPad comparten el almacenamiento y persistencia de entregas clave
+  // ==========================================================================
+  function initRequiredWorksModule() {
+    const container = document.getElementById("required-works-container");
+    const subjectId = container ? container.dataset.subjectId : null;
+    if (!container || !subjectId) return;
+
+    const toggleBtn = document.getElementById("toggle-add-work-btn");
+    const form = document.getElementById("add-work-form");
+    const saveBtn = document.getElementById("save-work-btn");
+    const titleInput = document.getElementById("work-title-input");
+    const dateInput = document.getElementById("work-date-input");
+    const notesInput = document.getElementById("work-notes-input");
+
+    const storageKey = "encardomy_trabajos_" + subjectId;
+
+    function getWorks() {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveWorks(works) {
+      localStorage.setItem(storageKey, JSON.stringify(works));
+      renderWorksList();
+    }
+
+    function renderWorksList() {
+      const listElem = document.getElementById("required-works-list");
+      if (!listElem) return;
+
+      const works = getWorks();
+      listElem.innerHTML = "";
+
+      if (works.length === 0) {
+        listElem.innerHTML = `
+          <div class="empty-state-card" style="padding: 24px 16px; margin: 8px 0;">
+            <div class="empty-state-icon" style="font-size: 24px;">📌</div>
+            <div class="empty-state-text" style="font-size: 14px;">No hay trabajos necesarios registrados.</div>
+            <div class="empty-state-subtext">Agrega trabajos obligatorios o entregas clave usando el botón de arriba.</div>
+          </div>
+        `;
+        return;
+      }
+
+      works.forEach((w, index) => {
+        const item = document.createElement("div");
+        item.className = "work-item-card " + (w.completed ? "completed" : "");
+
+        item.innerHTML = `
+          <input type="checkbox" class="work-checkbox" ${w.completed ? "checked" : ""} aria-label="Marcar como entregado">
+          <div class="work-details">
+            <div class="work-title">${escapeHtml(w.title)}</div>
+            <div class="work-meta">
+              <span class="work-meta-badge">Entrega: ${escapeHtml(w.date || 'Sin fecha')}</span>
+              ${w.notes ? `<span>${escapeHtml(w.notes)}</span>` : ''}
+            </div>
+          </div>
+          <button type="button" class="delete-work-btn" title="Eliminar trabajo" aria-label="Eliminar trabajo">✕</button>
+        `;
+
+        const chk = item.querySelector(".work-checkbox");
+        chk.addEventListener("change", () => {
+          works[index].completed = chk.checked;
+          saveWorks(works);
+        });
+
+        const delBtn = item.querySelector(".delete-work-btn");
+        delBtn.addEventListener("click", () => {
+          works.splice(index, 1);
+          saveWorks(works);
+        });
+
+        listElem.appendChild(item);
+      });
+    }
+
+    if (toggleBtn && form) {
+      toggleBtn.addEventListener("click", () => {
+        form.classList.toggle("show");
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        const title = titleInput.value.trim();
+        const date = dateInput.value;
+        const notes = notesInput.value.trim();
+
+        if (!title) {
+          alert("Por favor escribe el título del trabajo.");
+          return;
+        }
+
+        const works = getWorks();
+        works.unshift({
+          id: Date.now(),
+          title: title,
+          date: date,
+          notes: notes,
+          completed: false,
+          createdAt: new Date().toISOString()
+        });
+
+        saveWorks(works);
+
+        titleInput.value = "";
+        dateInput.value = "";
+        notesInput.value = "";
+        form.classList.remove("show");
+      });
+    }
+
+    renderWorksList();
+  }
+
+  // ==========================================================================
+  // 9. SINCRONIZACIÓN CENTRALIZADA DE PÁGINAS ACADÉMICAS (Avisos, Tareas, Exámenes)
+  // Celular + iPad conectados a la Fuente Central de Datos (Single Source of Truth)
+  // ==========================================================================
+  function initDynamicPagesSync() {
+    renderAvisosView();
+    renderTareasView();
+    renderExamenesView();
+  }
+
+  function renderAvisosView() {
+    const emptyState = document.getElementById("avisos-empty-state");
+    if (!emptyState) return;
+    const parent = emptyState.parentElement;
+    if (!parent) return;
+
+    const avisos = ENCARDOMY_DATA.getAvisos("all", "all", false);
+    if (avisos.length > 0) {
+      let html = '<div class="schedule-list tablet-cards-grid">';
+      avisos.forEach(a => {
+        const subj = ENCARDOMY_DATA.subjects[a.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        html += `
+          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+              ${escapeHtml(a.subjectName || '')}
+            </div>
+            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+              ${escapeHtml(a.title)}
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+              ${escapeHtml(a.content || '')}
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+              Fecha: ${escapeHtml(a.date || 'Sin fecha')}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      parent.innerHTML = html;
+    }
+  }
+
+  function renderTareasView() {
+    const emptyState = document.getElementById("tareas-empty-state");
+    if (!emptyState) return;
+    const parent = emptyState.parentElement;
+    if (!parent) return;
+
+    const tareas = ENCARDOMY_DATA.getTareas("all", false);
+    if (tareas.length > 0) {
+      let html = '<div class="schedule-list tablet-cards-grid">';
+      tareas.forEach(t => {
+        const subj = ENCARDOMY_DATA.subjects[t.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        html += `
+          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+              ${escapeHtml(t.subjectName || '')}
+            </div>
+            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+              ${escapeHtml(t.title)}
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+              ${escapeHtml(t.description || '')}
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+              Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      parent.innerHTML = html;
+    }
+  }
+
+  function renderExamenesView() {
+    const emptyState = document.getElementById("examenes-empty-state");
+    if (!emptyState) return;
+    const parent = emptyState.parentElement;
+    if (!parent) return;
+
+    const examenes = ENCARDOMY_DATA.getExamenes("all", false);
+    if (examenes.length > 0) {
+      let html = '<div class="schedule-list tablet-cards-grid">';
+      examenes.forEach(ex => {
+        const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
+        const color = subj ? subj.color : "var(--accent-gold)";
+        html += `
+          <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 12px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
+              ${escapeHtml(ex.subjectName || '')}
+            </div>
+            <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
+              ${escapeHtml(ex.title)}
+            </div>
+            <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
+              Temario: ${escapeHtml(ex.topics || 'Por confirmar')}
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
+              Fecha: ${escapeHtml(ex.date || 'Por confirmar')}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      parent.innerHTML = html;
+    }
+  }
+
+  // ==========================================================================
+  // 10. ACADEMIC HUB SINCRONIZADO EN IPAD (Avisos, Tareas y Exámenes)
+  // ==========================================================================
+  function initAcademicHubSync() {
+    renderAvisosHub();
+    renderTareasHub();
+    renderExamenesHub();
+  }
+
+  function renderAvisosHub() {
+    const list = document.getElementById("ipad-avisos-list");
+    if (!list) return;
+
+    const avisos = ENCARDOMY_DATA.getAvisos("all", "all", false);
+    list.innerHTML = "";
+
+    if (avisos.length === 0) {
+      list.innerHTML = `
+        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div style="font-size: 26px; margin-bottom: 6px;">📢</div>
+          <strong style="color: var(--text-secondary);">No hay avisos por ahora.</strong>
+        </div>
+      `;
+      return;
+    }
+
+    avisos.forEach(a => {
+      const subj = ENCARDOMY_DATA.subjects[a.subjectId];
+      const color = subj ? subj.color : "var(--accent-gold)";
+      const item = document.createElement("div");
+      item.className = "ipad-academic-card";
+      item.style.setProperty("--item-color", color);
+      item.innerHTML = `
+        <div class="ipad-card-title">${escapeHtml(a.title)}</div>
+        <div class="ipad-card-snippet">${escapeHtml(a.content || '')}</div>
+        <div class="ipad-card-meta-row">
+          <span>${escapeHtml(a.subjectName || '')}</span>
+          <span>${escapeHtml(a.date || '')}</span>
+        </div>
+      `;
+      item.addEventListener("click", () => openDetailModal("Aviso", a, color));
+      list.appendChild(item);
+    });
+  }
+
+  function renderTareasHub() {
+    const list = document.getElementById("ipad-tareas-list");
+    if (!list) return;
+
+    const tareas = ENCARDOMY_DATA.getTareas("all", false);
+    list.innerHTML = "";
+
+    if (tareas.length === 0) {
+      list.innerHTML = `
+        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div style="font-size: 26px; margin-bottom: 6px;">📝</div>
+          <strong style="color: var(--text-secondary);">No hay tareas por ahora.</strong>
+        </div>
+      `;
+      return;
+    }
+
+    tareas.forEach(t => {
+      const subj = ENCARDOMY_DATA.subjects[t.subjectId];
+      const color = subj ? subj.color : "var(--accent-gold)";
+      const item = document.createElement("div");
+      item.className = "ipad-academic-card";
+      item.style.setProperty("--item-color", color);
+      item.innerHTML = `
+        <div class="ipad-card-title">${escapeHtml(t.title)}</div>
+        <div class="ipad-card-snippet">${escapeHtml(t.description || '')}</div>
+        <div class="ipad-card-meta-row">
+          <span>${escapeHtml(t.subjectName || '')}</span>
+          <span>Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
+        </div>
+      `;
+      item.addEventListener("click", () => openDetailModal("Tarea", t, color));
+      list.appendChild(item);
+    });
+  }
+
+  function renderExamenesHub() {
+    const list = document.getElementById("ipad-examenes-list");
+    if (!list) return;
+
+    const examenes = ENCARDOMY_DATA.getExamenes("all", false);
+    list.innerHTML = "";
+
+    if (examenes.length === 0) {
+      list.innerHTML = `
+        <div style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div style="font-size: 26px; margin-bottom: 6px;">📋</div>
+          <strong style="color: var(--text-secondary);">No hay exámenes por ahora.</strong>
+        </div>
+      `;
+      return;
+    }
+
+    examenes.forEach(ex => {
+      const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
+      const color = subj ? subj.color : "var(--accent-gold)";
+      const item = document.createElement("div");
+      item.className = "ipad-academic-card";
+      item.style.setProperty("--item-color", color);
+      item.innerHTML = `
+        <div class="ipad-card-title">${escapeHtml(ex.title)}</div>
+        <div class="ipad-card-snippet">Temario: ${escapeHtml(ex.topics || 'Por confirmar')}</div>
+        <div class="ipad-card-meta-row">
+          <span>${escapeHtml(ex.subjectName || '')}</span>
+          <span>Fecha: ${escapeHtml(ex.date || 'Por confirmar')}</span>
+        </div>
+      `;
+      item.addEventListener("click", () => openDetailModal("Examen", ex, color));
+      list.appendChild(item);
+    });
+  }
+
+  function openDetailModal(type, data, color) {
+    const backdrop = document.getElementById("ipad-detail-modal");
+    const title = document.getElementById("ipad-modal-title");
+    const body = document.getElementById("ipad-modal-body");
+    if (!backdrop || !title || !body) return;
+
+    title.textContent = `${type}: ${data.title}`;
+    title.style.color = color || "var(--accent-gold)";
+
+    let detailsHtml = `
+      <div style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">
+        <strong>Materia:</strong> ${escapeHtml(data.subjectName || 'General')}
+      </div>
+      <div style="margin-bottom: 16px; font-size: 14.5px; color: var(--text-primary); line-height: 1.5;">
+        ${escapeHtml(data.content || data.description || data.topics || 'Sin descripción adicional')}
+      </div>
+      <div style="font-size: 13px; color: var(--text-tertiary);">
+        <strong>Fecha:</strong> ${escapeHtml(data.date || data.dueDate || 'Sin fecha')}
+      </div>
+    `;
+
+    body.innerHTML = detailsHtml;
+    backdrop.classList.add("show");
+  }
+
+  // Cerrar modal iPadOS
+  const closeBtn = document.getElementById("ipad-modal-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      const backdrop = document.getElementById("ipad-detail-modal");
+      if (backdrop) backdrop.classList.remove("show");
+    });
+  }
+
+  // ==========================================================================
+  // 11. FORMULARIO DE PEDIDOS Y WHATSAPP (Reglas 72, 73)
+  // Teléfono oficial obligatorio: +52 55 7198 5641
+  // ==========================================================================
+  function initOrderForms() {
+    // Vincular funciones a window para soporte inline
+    window.handleOrderSubmit = handleOrderSubmit;
+    window.handleIpadOrderSubmit = handleOrderSubmit;
+    window.openClipModal = openClipModal;
+    window.closeClipModal = closeClipModal;
+    window.updateMessagePreview = updateMessagePreview;
+
+    const orderForm = document.getElementById("order-form");
+    if (orderForm) {
+      orderForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleOrderSubmit("whatsapp");
+      });
+    }
+
+    const ipadOrderForm = document.getElementById("ipad-order-form");
+    if (ipadOrderForm) {
+      ipadOrderForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleOrderSubmit("whatsapp");
+      });
+    }
+
+    const macOrderForm = document.getElementById("mac-order-form");
+    if (macOrderForm) {
+      macOrderForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleOrderSubmit("whatsapp");
+      });
+    }
+  }
+
+  function updateMessagePreview() {
+    const item = (document.getElementById("ipad-order-item")?.value.trim()) || 
+                 (document.getElementById("order-item")?.value.trim()) || "[Artículo o solicitud]";
+    const name = (document.getElementById("ipad-order-name")?.value.trim()) || 
+                 (document.getElementById("order-name")?.value.trim()) || "[Tu nombre]";
+    const desc = (document.getElementById("ipad-order-desc")?.value.trim()) || 
+                 (document.getElementById("order-desc")?.value.trim()) || "[Descripción / Especificaciones]";
+    const qty = (document.getElementById("ipad-order-qty")?.value.trim()) || 
+                (document.getElementById("order-qty")?.value.trim()) || "1";
+    const notes = (document.getElementById("ipad-order-notes")?.value.trim()) || 
+                  (document.getElementById("order-notes")?.value.trim()) || "Ninguna";
+
+    const previewText = 
+      "¡Hola! Me comunico desde ENCARDOMY Minweb 415 (Tal vez te pueda interesar).\n" +
+      "Me gustaría realizar la siguiente solicitud de pedido específico:\n\n" +
+      "• Solicitud: " + item + "\n" +
+      "• Solicitante: " + name + "\n" +
+      "• Descripción / Especificaciones: " + desc + "\n" +
+      "• Cantidad: " + qty + "\n" +
+      "• Información adicional / Fecha: " + notes + "\n\n" +
+      "¿Podrían confirmarme los detalles y disponibilidad? ¡Muchas gracias!";
+
+    const elem = document.getElementById("ipad-msg-preview");
+    if (elem) elem.textContent = previewText;
+  }
+
+  function handleOrderSubmit(channel) {
+    const itemElem = document.getElementById("ipad-order-item") || document.getElementById("order-item");
+    const nameElem = document.getElementById("ipad-order-name") || document.getElementById("order-name");
+    const descElem = document.getElementById("ipad-order-desc") || document.getElementById("order-desc");
+    const qtyElem = document.getElementById("ipad-order-qty") || document.getElementById("order-qty");
+    const notesElem = document.getElementById("ipad-order-notes") || document.getElementById("order-notes");
+
+    const item = itemElem ? itemElem.value.trim() : "";
+    const name = nameElem ? nameElem.value.trim() : "";
+    const desc = descElem ? descElem.value.trim() : "";
+    const qty = qtyElem ? (qtyElem.value.trim() || "1") : "1";
+    const notes = notesElem ? (notesElem.value.trim() || "Sin notas adicionales") : "Sin notas adicionales";
+
+    if (!item) {
+      alert("Por favor indica qué deseas solicitar en el pedido.");
+      if (itemElem) itemElem.focus();
+      return;
+    }
+
+    if (!name) {
+      alert("Por favor escribe tu nombre o cómo dirigirnos a ti.");
+      if (nameElem) nameElem.focus();
+      return;
+    }
+
+    if (!desc) {
+      alert("Por favor describe brevemente las especificaciones de tu pedido.");
+      if (descElem) descElem.focus();
+      return;
+    }
+
+    if (channel === "whatsapp") {
+      // Número oficial estricto: +52 55 7198 5641 (Regla 73)
+      const phoneNumber = "525571985641";
+      const messageText = 
+        "¡Hola! Me comunico desde ENCARDOMY Minweb 415 (Tal vez te pueda interesar).\n" +
+        "Me gustaría realizar la siguiente solicitud de pedido específico:\n\n" +
+        "• Solicitud: " + item + "\n" +
+        "• Solicitante: " + name + "\n" +
+        "• Descripción / Especificaciones: " + desc + "\n" +
+        "• Cantidad: " + qty + "\n" +
+        "• Información adicional / Fecha: " + notes + "\n\n" +
+        "¿Podrían confirmarme los detalles y disponibilidad? ¡Muchas gracias!";
+
+      const waUrl = "https://wa.me/" + phoneNumber + "?text=" + encodeURIComponent(messageText);
+      window.open(waUrl, "_blank");
+    } else if (channel === "clip") {
+      openClipModal();
+    }
+  }
+
+  function openClipModal() {
+    const modal = document.getElementById("clip-info-modal") || document.getElementById("ipad-clip-modal") || document.getElementById("mac-clip-modal");
+    if (modal) modal.classList.add("show");
+  }
+
+  function closeClipModal() {
+    document.querySelectorAll("#clip-info-modal, #ipad-clip-modal, #mac-clip-modal").forEach(m => {
+      m.classList.remove("show");
+    });
+  }
+
+  // ==========================================================================
+  // 12. OTROS FORMULARIOS (Sugerencias y Sección B)
+  // ==========================================================================
+  function initFeedbackForms() {
+    const sugForm = document.getElementById("sugerencias-form");
+    if (sugForm) {
+      sugForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("¡Muchas gracias por tu sugerencia! Ha sido registrada con éxito para mejorar la Minweb 415.");
+        sugForm.reset();
+      });
+    }
+
+    const secBForm = document.getElementById("seccion-b-form");
+    if (secBForm) {
+      secBForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert("¡Muchas gracias! Tu reporte ha sido recibido para actualizar los salones y particularidades de la Sección B.");
+        secBForm.reset();
+      });
+    }
+  }
+
+  // ==========================================================================
+  // 13. SIMULADOR DE HORARIO ESCOLAR CDMX
+  // ==========================================================================
+  function initSimulator() {
+    // Simulador Celular
+    const mToggle = document.getElementById("toggle-simulator-btn");
+    const mControls = document.getElementById("simulator-controls");
+    const mDay = document.getElementById("sim-day-select");
+    const mTime = document.getElementById("sim-time-input");
+    const mReset = document.getElementById("sim-reset-btn");
+
+    // Simulador iPad
+    const iToggle = document.getElementById("ipad-toggle-sim");
+    const iControls = document.getElementById("ipad-sim-controls");
+    const iDay = document.getElementById("ipad-sim-day");
+    const iTime = document.getElementById("ipad-sim-time");
+    const iReset = document.getElementById("ipad-sim-reset");
+
+    if (mToggle && mControls) {
+      mToggle.addEventListener("click", () => mControls.classList.toggle("show"));
+    }
+    if (iToggle && iControls) {
+      iToggle.addEventListener("click", () => {
+        iControls.style.display = iControls.style.display === "flex" ? "none" : "flex";
+      });
+    }
+
+    function apply(dayVal, timeVal) {
+      if (!timeVal) return;
+      const [hours, minutes] = timeVal.split(":").map(Number);
+      const d = getCurrentTime();
+      const currentDay = d.getDay();
+      const distance = dayVal - currentDay;
+      d.setDate(d.getDate() + distance);
+      d.setHours(hours, minutes, 0, 0);
+
+      state.simulatedDate = d;
+      updateClassStatus();
+    }
+
+    if (mDay && mTime) {
+      mDay.addEventListener("change", () => apply(parseInt(mDay.value, 10), mTime.value));
+      mTime.addEventListener("input", () => apply(parseInt(mDay.value, 10), mTime.value));
+    }
+    if (iDay && iTime) {
+      iDay.addEventListener("change", () => apply(parseInt(iDay.value, 10), iTime.value));
+      iTime.addEventListener("input", () => apply(parseInt(iDay.value, 10), iTime.value));
+    }
+
+    const resetAction = () => {
+      state.simulatedDate = null;
+      updateClassStatus();
+    };
+    if (mReset) mReset.addEventListener("click", resetAction);
+    if (iReset) iReset.addEventListener("click", resetAction);
+  }
+
+  // ==========================================================================
+  // 14. AUDIO NAVIDEÑO NATIVO (Web Audio API)
+  // ==========================================================================
+  function initChristmasSound() {
+    const btns = [
+      document.getElementById("btn-play-jingle"),
+      document.getElementById("ipad-btn-jingle"),
+      document.getElementById("ipad-sidebar-jingle"),
+      document.getElementById("mac-btn-chime")
+    ].filter(Boolean);
+
+    btns.forEach(btn => btn.addEventListener("click", playChristmasChime));
+  }
+
+  function playChristmasChime() {
+    try {
+      const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtxClass) return;
+
+      if (!state.audioCtx) state.audioCtx = new AudioCtxClass();
+      if (state.audioCtx.state === "suspended") state.audioCtx.resume();
+
+      const ctx = state.audioCtx;
+      const now = ctx.currentTime;
+
+      const notes = [
+        { f: 659.25, d: 0.18, pause: 0.05 },
+        { f: 659.25, d: 0.18, pause: 0.05 },
+        { f: 659.25, d: 0.35, pause: 0.15 },
+        { f: 659.25, d: 0.18, pause: 0.05 },
+        { f: 659.25, d: 0.18, pause: 0.05 },
+        { f: 659.25, d: 0.35, pause: 0.15 },
+        { f: 659.25, d: 0.18, pause: 0.05 },
+        { f: 783.99, d: 0.22, pause: 0.05 },
+        { f: 523.25, d: 0.22, pause: 0.05 },
+        { f: 587.33, d: 0.22, pause: 0.05 },
+        { f: 659.25, d: 0.50, pause: 0.20 }
+      ];
+
+      let startTime = now + 0.05;
+
+      notes.forEach(note => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const harmonic = ctx.createOscillator();
+        const harmGain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(note.f, startTime);
+
+        harmonic.type = "triangle";
+        harmonic.frequency.setValueAtTime(note.f * 2.76, startTime);
+
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.28, startTime + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + note.d + 0.35);
+
+        harmGain.gain.setValueAtTime(0, startTime);
+        harmGain.gain.linearRampToValueAtTime(0.08, startTime + 0.015);
+        harmGain.gain.exponentialRampToValueAtTime(0.0001, startTime + note.d + 0.15);
+
+        osc.connect(gain);
+        harmonic.connect(harmGain);
+        gain.connect(ctx.destination);
+        harmGain.connect(ctx.destination);
+
+        osc.start(startTime);
+        harmonic.start(startTime);
+        osc.stop(startTime + note.d + 0.4);
+        harmonic.stop(startTime + note.d + 0.2);
+
+        startTime += note.d + note.pause;
+      });
+
+      const soundBtns = [
+        document.getElementById("btn-play-jingle"),
+        document.getElementById("ipad-btn-jingle"),
+        document.getElementById("ipad-sidebar-jingle")
+      ].filter(Boolean);
+
+      soundBtns.forEach(b => {
+        b.style.background = "var(--accent-gold)";
+        b.style.color = "#04140b";
+      });
+
+      setTimeout(() => {
+        soundBtns.forEach(b => {
+          b.style.background = "";
+          b.style.color = "";
+        });
+      }, 3200);
+    } catch (e) {
+      console.warn("Audio Context aún no iniciado por interacción de usuario.");
+    }
+  }
+
+  // ==========================================================================
+  // 15. NIEVE SUTIL NAVIDEÑA
+  // ==========================================================================
+  function initSnowfall() {
+    const container = document.querySelector(".snowfall-container");
+    if (!container) return;
+
+    for (let i = 0; i < 18; i++) {
+      const flake = document.createElement("div");
+      flake.className = "snowflake";
+      flake.style.left = `${Math.random() * 100}%`;
+      flake.style.animationDuration = `${7 + Math.random() * 8}s`;
+      flake.style.animationDelay = `${Math.random() * 5}s`;
+      flake.style.opacity = `${0.35 + Math.random() * 0.45}`;
+      const size = 3 + Math.random() * 3.5;
+      flake.style.width = `${size}px`;
+      flake.style.height = `${size}px`;
+      container.appendChild(flake);
+    }
+  }
+
+  // ==========================================================================
+  // 16. RESALTADO DE NAVEGACIÓN ACTIVA
+  // ==========================================================================
+  function highlightActiveNav() {
+    const currentPath = window.location.pathname.split("/").pop() || "index.html";
+
+    // Navegación móvil y dock iPad
+    document.querySelectorAll(".bottom-nav-bar .nav-item").forEach(item => {
+      const href = item.getAttribute("href");
+      if (href === currentPath || (currentPath === "" && (href === "index.html" || href === "ipad-index.html"))) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+
+    // Sidebar lateral iPad
+    document.querySelectorAll(".ipad-sidebar-nav-link").forEach(item => {
+      const href = item.getAttribute("href");
+      if (href === currentPath || (currentPath === "" && (href === "index.html" || href === "ipad-index.html"))) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+  }
+
+  // ==========================================================================
+  // UTILIDADES
+  // ==========================================================================
+  function escapeHtml(text) {
+    if (!text) return "";
+    return String(text).replace(/[&<>"']/g, m => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    })[m]);
+  }
+
+  function renderApp() {
+    updateClassStatus();
+    renderSchedule();
+    initDynamicPagesSync();
+    initAcademicHubSync();
+  }
+
+  // Exportar API para interoperabilidad
+  window.EncardomyApp = {
+    state,
+    setSection,
+    renderApp,
+    updateClassStatus,
+    renderSchedule
+  };
+
+})();

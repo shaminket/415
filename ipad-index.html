@@ -2,261 +2,1078 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Grupo 415 — Reinvención en Proceso | iPad</title>
-  <meta name="theme-color" content="#0B0C10">
-  <style>
-
-    :root {
-      --bg-base: #0B0C10;
-      --bg-panel: rgba(24, 26, 34, 0.75);
-      --bg-panel-border: rgba(229, 169, 60, 0.25);
-      --c-cempasuchil: #FF7A00;
-      --c-cempasuchil-glow: rgba(255, 122, 0, 0.35);
-      --c-oro: #E5A93C;
-      --c-oro-soft: rgba(229, 169, 60, 0.15);
-      --c-hueso: #F4EDE2;
-      --c-hueso-muted: #A3AAB8;
-      --c-obsidiana: #050608;
-      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: var(--bg-base);
-      color: var(--c-hueso);
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Ambient background glow */
-    .ambient-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      background: 
-        radial-gradient(circle at 20% 25%, rgba(62, 28, 107, 0.45) 0%, transparent 50%),
-        radial-gradient(circle at 80% 75%, rgba(255, 122, 0, 0.18) 0%, transparent 45%),
-        radial-gradient(circle at 50% 50%, rgba(229, 169, 60, 0.08) 0%, transparent 60%);
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 32px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 80vh;
-      text-align: center;
-    }
-
-    .badge-bar {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(229, 169, 60, 0.12);
-      border: 1px solid var(--c-oro);
-      padding: 8px 18px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--c-oro);
-      margin-bottom: 24px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(229, 169, 60, 0.15);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--c-cempasuchil);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--c-cempasuchil);
-      animation: pulse 2s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.4); opacity: 0.6; }
-    }
-
-    .main-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--bg-panel-border);
-      border-radius: 24px;
-      padding: clamp(28px, 5vw, 56px);
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 122, 0, 0.1);
-      backdrop-filter: blur(20px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .main-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--c-cempasuchil), var(--c-oro), transparent);
-    }
-
-    .brand-title {
-      font-size: clamp(1.6rem, 4vw, 2.6rem);
-      font-weight: 900;
-      letter-spacing: -0.02em;
-      line-height: 1.25;
-      color: var(--c-hueso);
-      text-wrap: balance;
-    }
-
-    .brand-title span.shamin {
-      background: linear-gradient(135deg, #FF7A00 0%, #E5A93C 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .service-banner {
-      background: rgba(229, 169, 60, 0.08);
-      border: 1px solid rgba(229, 169, 60, 0.3);
-      border-radius: 16px;
-      padding: 16px 24px;
-      font-size: clamp(0.95rem, 2vw, 1.15rem);
-      color: var(--c-oro);
-      font-weight: 700;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-
-    .subtext {
-      color: var(--c-hueso-muted);
-      font-size: clamp(0.85rem, 1.8vw, 0.95rem);
-      line-height: 1.6;
-      max-width: 650px;
-    }
-
-    .switcher-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 12px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      width: 100%;
-    }
-
-    .switcher-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-decoration: none;
-      color: var(--c-hueso-muted);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.2s ease;
-    }
-
-    .switcher-link:hover {
-      color: var(--c-hueso);
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--c-oro);
-    }
-
-    .switcher-link.active {
-      background: var(--c-oro-soft);
-      border-color: var(--c-oro);
-      color: var(--c-oro);
-    }
-
-    footer {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 24px 20px;
-      font-size: 0.75rem;
-      color: var(--c-hueso-muted);
-      letter-spacing: 0.04em;
-    }
-
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>ENCARDOMY MINWEB 415 — Sistema Académico Oficial</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ipad.css">
+  <link rel="stylesheet" href="css/mac.css">
+  <meta name="description" content="Plataforma académica interactiva oficial del Grupo 415 de la ENP 4 UNAM con adaptación continua y automática a Celular, Tableta y Computadora en tiempo real.">
 </head>
 <body>
-  <div class="ambient-bg"></div>
+  <!-- Video de Fondo en Bucle Común -->
+  <div class="bg-video-container mac-video-background" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto" src="gemini_generated_video_cdb14bc2.mp4"></video>
+    <div class="bg-video-overlay mac-video-overlay"></div>
+  </div>
 
-  <main class="container">
-    <div class="badge-bar">
-      <span class="status-dot"></span>
-      <span>Grupo 415 · Prepa 4 UNAM · Experiencia Tablet iPad</span>
-    </div>
+  <!-- Decoraciones Navideñas Minimalistas -->
+  <div class="christmas-ambient-tree" aria-hidden="true"></div>
+  <div class="christmas-star-accent ipad-christmas-star" aria-hidden="true"></div>
+  <div class="snowfall-container mac-snow-layer" aria-hidden="true"></div>
 
-    <section class="main-card">
-      
-      
-      <div style="font-size:1.8rem; margin-bottom:-10px;">✨</div>
-      
-      <h1 class="brand-title">
-        “Todo el equipo de <span class="shamin">ShaMinKet</span> esta reinventando la MInweb del 415 para el 415”
-      </h1>
+  <div class="encardomy-interface-mobile" id="encardomy-interface-mobile" role="region" aria-label="Interfaz para Teléfono Celular">
+    <main class="mobile-app-shell">
 
-      <div class="service-banner">
-        <span style="font-size:1.4rem;">⚡</span>
-        <span>Encardomy esta implementando nuevos servios para ti</span>
+    <!-- Encabezado de la App -->
+    <header class="app-header">
+      <div class="brand-badge">
+        <span class="brand-subtitle">Encardomy • Grupo 415</span>
+        <h1 class="brand-title">Minweb 415</h1>
       </div>
 
-      <p class="subtext">
-        Estamos transformando radicalmente la experiencia escolar de la Escuela Nacional Preparatoria Plantel 4 “Vidal Castañeda y Nájera”. Espéralo muy pronto con tecnología de vanguardia, diseño de alta fidelidad e innovaciones diseñadas a la medida de nuestra comunidad.
-      </p>
+      <div class="header-actions">
+        <!-- Botón de Sonido Navideño -->
+        <button type="button" class="sound-toggle-btn" id="btn-play-jingle" aria-label="Reproducir campanitas navideñas" title="Campanitas Navideñas">
+          <span aria-hidden="true">🔔</span>
+          <span>Navidad</span>
+        </button>
 
+        <!-- Selector Rápido de Sección A / B -->
+        <div class="section-selector-pill" role="group" aria-label="Seleccionar sección escolar">
+          <button type="button" id="pill-section-a" class="section-btn" aria-label="Sección A">Sec. A</button>
+          <button type="button" id="pill-section-b" class="section-btn" aria-label="Sección B">Sec. B</button>
+        </div>
+
+        <!-- Acceso directo a versión iPad / Tableta -->
+        <a href="ipad-index.html" class="sound-toggle-btn" style="text-decoration: none; padding: 6px 10px;" title="Abrir versión exclusiva para iPad">
+          <span aria-hidden="true">📟</span>
+          <span>iPad</span>
+        </a>
+        <!-- Acceso directo a versión Mac -->
+        <a href="mac-index.html" class="sound-toggle-btn" style="text-decoration: none; padding: 6px 10px;" title="Abrir versión exclusiva para Mac">
+          <span aria-hidden="true">💻</span>
+          <span>Mac</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- 1. CLASE ACTUAL Y TIEMPO RESTANTE (Con Luces Navideñas Animadas) -->
+    <section class="glass-card current-class-card" id="current-class-card" aria-labelledby="current-class-heading">
       
+      <!-- Guirnalda de Luces Navideñas en Vivo -->
+      <div class="christmas-lights-garland" id="card-christmas-lights" aria-hidden="true">
+        <span class="christmas-bulb red"></span>
+        <span class="christmas-bulb gold"></span>
+        <span class="christmas-bulb green"></span>
+        <span class="christmas-bulb blue"></span>
+        <span class="christmas-bulb purple"></span>
+        <span class="christmas-bulb gold"></span>
+        <span class="christmas-bulb red"></span>
+        <span class="christmas-bulb green"></span>
+        <span class="christmas-bulb blue"></span>
+      </div>
 
-      <nav class="switcher-bar" aria-label="Selector de Experiencia de Dispositivo">
-        <span style="width:100%; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--c-hueso-muted); margin-bottom:4px;">Versiones Disponibles:</span>
-        <a href="index.html" class="switcher-link ">📲 Celular</a>
-        <a href="mac-index.html" class="switcher-link ">💻 Mac</a>
-        <a href="ipad-index.html" class="switcher-link active">📱 iPad</a>
-        <a href="imac-index.html" class="switcher-link ">🖥️ iMac</a>
-        <a href="duo-index.html" class="switcher-link ">📖 iPhone Duo</a>
-      </nav>
+      <div class="card-eyebrow">
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span id="current-class-heading">Clase en Curso</span>
+        </div>
+        <div class="current-time-badge" id="current-time-clock" aria-label="Hora actual">--:--:--</div>
+      </div>
+
+      <h2 class="current-subject-title" id="current-subject-title">Cargando...</h2>
+
+      <div class="class-meta-row" id="current-class-meta">
+        <!-- Metadatos inyectados dinámicamente -->
+      </div>
+
+      <!-- Alerta de cambio de salón (Física III) -->
+      <div class="room-change-alert" id="room-change-alert" style="display: none;">
+        <span class="room-change-icon" aria-hidden="true">⚠️</span>
+        <div class="room-change-content">
+          <div class="room-change-title">Atención: Cambio de Salón</div>
+          <div id="room-change-text">Esta materia cuenta con cambio de aula programado.</div>
+        </div>
+      </div>
+
+      <!-- Contador del tiempo restante -->
+      <div class="countdown-box">
+        <span class="countdown-label">Tiempo Restante de Clase</span>
+        <span class="countdown-digits" id="current-countdown-digits" aria-live="polite">--:--</span>
+      </div>
     </section>
-  </main>
 
-  <footer>
-    <p>Encardomy by ShaMinKet · Escuela Nacional Preparatoria Plantel 4 · Ciclo 2026-2027</p>
-  </footer>
+    <!-- 2. CONDICIÓN: SIGUIENTE CLASE (Sólo si faltan 10 minutos o más) -->
+    <section class="glass-card next-class-card" id="next-class-card" style="display: none;" aria-labelledby="next-class-label">
+      <div class="next-class-badge" id="next-class-label">Siguiente Clase</div>
+      <h3 class="next-subject-name" id="next-subject-name">--</h3>
+      <p class="next-subject-meta" id="next-subject-meta">--</p>
+    </section>
+
+    <!-- 3. CONDICIÓN: TOLERANCIAS (Cuando falten menos de 10 min o no haya siguiente clase en regla 10) -->
+    <section class="tolerances-wrapper" id="tolerances-container" style="display: none;" aria-label="Tolerancias escolares">
+      <div class="tolerances-grid">
+        <div class="tolerance-card teacher">
+          <div class="tolerance-title">Tolerancia Maestro</div>
+          <div class="tolerance-digits" id="tolerance-teacher-digits">20:00</div>
+          <div class="tolerance-note">Límite oficial de espera</div>
+        </div>
+        <div class="tolerance-card student">
+          <div class="tolerance-title">Tolerancia Alumno</div>
+          <div class="tolerance-digits" id="tolerance-student-digits">10:00</div>
+          <div class="tolerance-note">Entrada con retraso</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Herramienta de Comprobación y Simulación Escolar (Discreta) -->
+    <div class="schedule-simulator-toggle">
+      <span>⚙️ Modo prueba de horario escolar</span>
+      <button type="button" id="toggle-simulator-btn" class="filter-pill" style="padding: 4px 10px; font-size: 11px;">Simular Hora</button>
+    </div>
+    <div class="simulator-controls" id="simulator-controls">
+      <div class="sim-input-row">
+        <select id="sim-day-select" class="sim-select" aria-label="Día de la semana para simulación">
+          <option value="1">Lunes</option>
+          <option value="2">Martes</option>
+          <option value="3">Miércoles</option>
+          <option value="4">Jueves</option>
+          <option value="5">Viernes</option>
+        </select>
+        <input type="time" id="sim-time-input" class="sim-input" value="08:00" aria-label="Hora para simulación">
+      </div>
+      <button type="button" id="sim-reset-btn" class="filter-pill" style="width: 100%; text-align: center;">Restablecer a Tiempo Real</button>
+    </div>
+
+    <!-- 4. SECCIÓN EXCLUSIVA: MATERIAS CON PÁGINA PROPIA Y TRABAJOS NECESARIOS -->
+    <section class="special-subjects-section" aria-labelledby="special-subjects-heading">
+      <div class="section-header">
+        <h2 class="section-title" id="special-subjects-heading">Materias Principales y Trabajos</h2>
+        <span style="font-size: 11px; color: var(--accent-gold); font-weight: 600;">Entregas Clave</span>
+      </div>
+      <div class="special-cards-grid">
+        <a href="historia.html" class="special-subject-link historia" aria-label="Ir a página de Historia Universal III">
+          <span class="special-icon" aria-hidden="true">🏛️</span>
+          <span class="special-subject-name">Historia</span>
+        </a>
+        <a href="lengua-espanola.html" class="special-subject-link espanol" aria-label="Ir a página de Lengua Española">
+          <span class="special-icon" aria-hidden="true">📖</span>
+          <span class="special-subject-name">Lengua Española</span>
+        </a>
+        <a href="fisica.html" class="special-subject-link fisica" aria-label="Ir a página de Física III">
+          <span class="special-icon" aria-hidden="true">⚡</span>
+          <span class="special-subject-name">Física III</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 5. HORARIO COMPLETO (Con Luces Navideñas en la Materia en Curso) -->
+    <section class="schedule-section" aria-labelledby="schedule-heading">
+      <div class="section-header">
+        <h2 class="section-title" id="schedule-heading">Horario Semanal</h2>
+        <span style="font-size: 12px; color: var(--text-tertiary);">Oficial SIHO</span>
+      </div>
+
+      <!-- Navegación por Días -->
+      <nav class="days-tab-nav" aria-label="Días del horario">
+        <button type="button" class="day-tab-btn active" data-day="1">Lun</button>
+        <button type="button" class="day-tab-btn" data-day="2">Mar</button>
+        <button type="button" class="day-tab-btn" data-day="3">Mié</button>
+        <button type="button" class="day-tab-btn" data-day="4">Jue</button>
+        <button type="button" class="day-tab-btn" data-day="5">Vie</button>
+      </nav>
+
+      <!-- Lista de Bloques (Con Luces Navideñas en clase activa) -->
+      <div class="schedule-list" id="schedule-blocks-list" role="list">
+        <!-- Bloques renderizados dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Espacio publicitario de Encardomy (Oculto temporalmente según Regla 29) -->
+    <div class="encardomy-ad-slot" aria-hidden="true">
+      Publicidad Encardomy — Espacio reservado
+    </div>
+
+    <!-- Pie Institucional -->
+    <footer class="app-footer">
+      <p>ENCARDOMY • Sistema Académico Escolar Grupo 415</p>
+      <p>Escuela Nacional Preparatoria Plantel 4 "Vidal Castañeda y Nájera"</p>
+      <p style="margin-top: 6px;">
+        <a href="terminos.html">Términos</a> • 
+        <a href="privacidad.html">Privacidad</a> • 
+        <a href="ayuda.html">Ayuda</a>
+      </p>
+    </footer>
+
+  </main>
+    
+  <nav class="bottom-nav-bar" aria-label="Menú de navegación principal">
+    <div class="nav-track">
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="avisos.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📢</span>
+        <span>Avisos</span>
+      </a>
+      <a href="tareas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📝</span>
+        <span>Tareas</span>
+      </a>
+      <a href="examenes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📋</span>
+        <span>Exámenes</span>
+      </a>
+      <a href="interes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🎁</span>
+        <span>Interés</span>
+      </a>
+      <a href="clases-perdidas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🗓️</span>
+        <span>Inasistencias</span>
+      </a>
+      <a href="profesores.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🔍</span>
+        <span>Profesores</span>
+      </a>
+      <a href="herramientas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🛠️</span>
+        <span>Herramientas</span>
+      </a>
+      <a href="seccion-b.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">👥</span>
+        <span>Sección B</span>
+      </a>
+      <a href="sugerencias.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">💡</span>
+        <span>Sugerencias</span>
+      </a>
+      <a href="ayuda.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">❓</span>
+        <span>Ayuda</span>
+      </a>
+    </div>
+  </nav>
+
+  </div>
+
+
+  <div class="encardomy-interface-tablet" id="encardomy-interface-tablet" role="region" aria-label="Interfaz para Tableta e iPad">
+    <div class="ipad-app-layout-wrapper">
+
+    <!-- ====================================================================
+         1. PANEL LATERAL IZQUIERDO: CONTROLES Y NAVEGACIÓN (ORIENTACIÓN HORIZONTAL)
+         Regla 50: En orientación horizontal, los controles se ubican en el lateral izquierdo
+         Regla 58: En vertical se oculta por completo
+         ==================================================================== -->
+    <aside class="ipad-lateral-nav-panel" aria-label="Controles y navegación lateral">
+      <div class="ipad-sidebar-header">
+        <div class="ipad-sidebar-brand">
+          <span class="ipad-sidebar-brand-subtitle">Encardomy • Grupo 415</span>
+          <h2 class="ipad-sidebar-brand-title">Minweb 415 <span style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">iPad Edition</span></h2>
+        </div>
+
+        <div class="ipad-sidebar-controls-row">
+          <!-- Reloj Oficial CDMX -->
+          <div class="ipad-sidebar-clock" title="Hora Oficial de la Ciudad de México">
+            <span class="cdmx-indicator-dot" aria-hidden="true"></span>
+            <span class="current-time-clock" id="ipad-sidebar-cdmx-clock">--:--:--</span>
+          </div>
+
+          <a href="mac-index.html" class="ipad-btn-action" style="text-decoration: none;" title="Versión Mac"><span>💻 Mac</span></a>
+          <!-- Botón Campanitas Navideñas -->
+          <button type="button" class="sound-toggle-btn" id="ipad-sidebar-jingle" style="padding: 4px 8px; font-size: 11px;" title="Campanitas Navideñas">
+            <span aria-hidden="true">🔔</span>
+            <span>Navidad</span>
+          </button>
+        </div>
+
+        <!-- Selector de Sección A / B -->
+        <div class="ipad-section-segmented" role="group" aria-label="Seleccionar sección escolar" style="width: 100%;">
+          <button type="button" id="sidebar-sec-a" class="ipad-section-btn active" style="flex: 1;" aria-label="Sección A">Sec. A</button>
+          <button type="button" id="sidebar-sec-b" class="ipad-section-btn" style="flex: 1;" aria-label="Sección B">Sec. B</button>
+        </div>
+      </div>
+
+      <!-- Grupos de Navegación Vertical en Sidebar -->
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Principal</div>
+        <a href="ipad-index.html" class="ipad-sidebar-nav-link active">
+          <span class="nav-icon" aria-hidden="true">🏠</span>
+          <span>Inicio</span>
+        </a>
+        <a href="ipad-avisos.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📢</span>
+          <span>Avisos</span>
+        </a>
+        <a href="ipad-tareas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📝</span>
+          <span>Tareas</span>
+        </a>
+        <a href="ipad-examenes.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📋</span>
+          <span>Exámenes</span>
+        </a>
+        <a href="ipad-interes.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🎁</span>
+          <span>Te Puede Interesar</span>
+        </a>
+      </div>
+
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Materias Destacadas</div>
+        <a href="ipad-historia.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🏛️</span>
+          <span>Historia Universal III</span>
+        </a>
+        <a href="ipad-lengua-espanola.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">📖</span>
+          <span>Lengua Española</span>
+        </a>
+        <a href="ipad-fisica.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">⚡</span>
+          <span>Física III (Cambio aula)</span>
+        </a>
+      </div>
+
+      <div class="ipad-sidebar-nav-group">
+        <div class="ipad-sidebar-nav-heading">Comunidad & Herramientas</div>
+        <a href="ipad-profesores.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🔍</span>
+          <span>Profesores</span>
+        </a>
+        <a href="ipad-clases-perdidas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🗓️</span>
+          <span>Inasistencias</span>
+        </a>
+        <a href="ipad-seccion-b.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">👥</span>
+          <span>Espacio Sección B</span>
+        </a>
+        <a href="ipad-herramientas.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">🛠️</span>
+          <span>Herramientas</span>
+        </a>
+        <a href="ipad-sugerencias.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">💡</span>
+          <span>Sugerencias</span>
+        </a>
+        <a href="ipad-ayuda.html" class="ipad-sidebar-nav-link">
+          <span class="nav-icon" aria-hidden="true">❓</span>
+          <span>Ayuda</span>
+        </a>
+      </div>
+
+      <!-- Pie del Sidebar -->
+      <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--surface-glass-border-subtle); display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+        <span>UNAM • ENP 4</span>
+        <span class="orientation-pill ipad-orientation-badge" style="font-size: 10px;">⟳ Horizontal</span>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         2. ESCENARIO PRINCIPAL DE CONTENIDO
+         Aprovecha todo el ancho disponible horizontal y vertical sin espacios muertos
+         ==================================================================== -->
+    <main class="ipad-main-content-stage">
+
+      <!-- Cabecera exclusiva para Orientación Vertical (se oculta automáticamente en horizontal) -->
+      <header class="ipad-top-bar ipad-top-bar-portrait" role="banner">
+        <div class="ipad-brand-group">
+          <div class="ipad-brand-badge">
+            <span class="ipad-brand-subtitle">Encardomy • Grupo 415</span>
+            <h1 class="ipad-brand-title">Minweb 415 <span style="font-size: 14px; font-weight: 600; color: var(--accent-gold); opacity: 0.9;">iPad Edition</span></h1>
+          </div>
+          <span class="orientation-pill ipad-orientation-badge" id="ipad-orientation-badge">⟲ Vertical</span>
+        </div>
+
+        <div class="ipad-top-controls">
+          <!-- Reloj Oficial CDMX -->
+          <div class="cdmx-clock-badge" title="Hora Oficial de la Ciudad de México">
+            <span class="cdmx-indicator-dot" aria-hidden="true"></span>
+            <span class="cdmx-time-digits current-time-clock" id="ipad-cdmx-clock">--:--:-- CDMX</span>
+          </div>
+
+          <!-- Selector de Sección A / B -->
+          <div class="ipad-section-segmented" role="group" aria-label="Seleccionar sección escolar">
+            <button type="button" id="ipad-sec-a" class="ipad-section-btn active" aria-label="Sección A">Sec. A</button>
+            <button type="button" id="ipad-sec-b" class="ipad-section-btn" aria-label="Sección B">Sec. B</button>
+          </div>
+
+          <a href="mac-index.html" class="ipad-btn-action" style="text-decoration: none;" title="Versión Mac"><span>💻 Mac</span></a>
+          <!-- Botón Campanitas Navideñas -->
+          <button type="button" class="ipad-btn-action" id="ipad-btn-jingle" aria-label="Reproducir campanitas navideñas" title="Campanitas Navideñas">
+            <span aria-hidden="true">🔔</span>
+            <span>Campanitas</span>
+          </button>
+
+          <!-- Enlace a Versión Celular -->
+          <a href="index.html" class="ipad-btn-action" style="background: rgba(255,255,255,0.08); color: var(--text-primary); text-decoration: none;" title="Cambiar a la versión móvil estándar">
+            <span>📱</span>
+            <span>Celular</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Fila Hero Superior: Monitoreo en Vivo + Tolerancias / Siguiente Clase (2 Columnas) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+        
+        <!-- Tarjeta de Clase Actual (Con Luces Navideñas) -->
+        <section class="ipad-glass-card current-class-ipad-card" id="ipad-current-class-card" aria-labelledby="ipad-current-heading">
+          <!-- Guirnalda de Luces Navideñas -->
+          <div class="christmas-lights-garland" id="ipad-card-christmas-lights" aria-hidden="true">
+            <span class="christmas-bulb red"></span>
+            <span class="christmas-bulb gold"></span>
+            <span class="christmas-bulb green"></span>
+            <span class="christmas-bulb blue"></span>
+            <span class="christmas-bulb purple"></span>
+            <span class="christmas-bulb gold"></span>
+            <span class="christmas-bulb red"></span>
+            <span class="christmas-bulb green"></span>
+          </div>
+
+          <div class="ipad-card-eyebrow">
+            <div class="ipad-status-indicator">
+              <span class="pulse-dot"></span>
+              <span id="ipad-current-heading">Clase en Curso</span>
+            </div>
+          </div>
+
+          <h2 class="ipad-current-title" id="ipad-current-subject">Cargando horario...</h2>
+
+          <div class="ipad-meta-row" id="ipad-current-meta">
+            <!-- Inyectado dinámicamente -->
+          </div>
+
+          <!-- Alerta de Cambio de Salón para Física III -->
+          <div class="ipad-room-change-alert" id="ipad-room-change-alert" style="display: none;">
+            <span style="font-size: 20px;" aria-hidden="true">⚠️</span>
+            <div style="font-size: 13.5px; color: #ffd8a8; line-height: 1.4;">
+              <strong style="color: #ffa94d;">Cambio de Salón:</strong>
+              <div id="ipad-room-change-text">Información de aula.</div>
+            </div>
+          </div>
+
+          <!-- Contador de Tiempo Restante -->
+          <div class="ipad-countdown-box">
+            <span class="ipad-countdown-label">Tiempo Restante de Clase</span>
+            <span class="ipad-countdown-digits" id="ipad-current-countdown" aria-live="polite">--:--</span>
+          </div>
+        </section>
+
+        <!-- Columna Derecha Hero: Siguiente Clase, Tolerancias o Simulador -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <!-- Siguiente Clase (Solo si faltan 10 minutos o más) -->
+          <section class="ipad-glass-card ipad-next-class-card" id="ipad-next-class-card" style="display: none;" aria-labelledby="ipad-next-label">
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--accent-blue); margin-bottom: 6px;" id="ipad-next-label">
+              Siguiente Clase
+            </div>
+            <h3 style="font-size: 19px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;" id="ipad-next-subject">--</h3>
+            <p style="font-size: 13.5px; color: var(--text-secondary);" id="ipad-next-meta">--</p>
+          </section>
+
+          <!-- Tolerancias Escolares (SOLO al inicio de clase; oculto si no hay clase) -->
+          <section class="ipad-tolerances-grid" id="ipad-tolerances-container" style="display: none;" aria-label="Tolerancias oficiales al inicio de clase">
+            <div class="ipad-tolerance-card teacher">
+              <div class="ipad-tolerance-title">Tolerancia Maestro</div>
+              <div class="ipad-tolerance-digits" id="ipad-tolerance-teacher">20:00</div>
+              <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Máximo de espera oficial</div>
+            </div>
+            <div class="ipad-tolerance-card student">
+              <div class="ipad-tolerance-title">Tolerancia Alumno</div>
+              <div class="ipad-tolerance-digits" id="ipad-tolerance-student">10:00</div>
+              <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Entrada permitida con retardo</div>
+            </div>
+          </section>
+
+          <!-- Herramienta de Prueba de Horario CDMX -->
+          <div class="ipad-glass-card" style="padding: 16px 20px; margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--text-secondary);">⚙️ Simulador de Hora Escolar CDMX</span>
+              <button type="button" class="ipad-btn-action" id="ipad-toggle-sim" style="padding: 4px 10px; font-size: 11px;">Probar</button>
+            </div>
+            <div id="ipad-sim-controls" style="display: none; margin-top: 12px; gap: 8px; flex-direction: column;">
+              <div style="display: flex; gap: 8px;">
+                <select id="ipad-sim-day" class="ipad-section-btn active" style="flex: 1; background: rgba(0,0,0,0.5); color: #fff; padding: 8px;">
+                  <option value="1">Lunes</option>
+                  <option value="2">Martes</option>
+                  <option value="3">Miércoles</option>
+                  <option value="4">Jueves</option>
+                  <option value="5">Viernes</option>
+                </select>
+                <input type="time" id="ipad-sim-time" value="08:00" style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--surface-glass-border); color: #fff; border-radius: var(--radius-sm); padding: 8px;">
+              </div>
+              <button type="button" id="ipad-sim-reset" class="ipad-btn-action" style="width: 100%; justify-content: center;">Restablecer a CDMX en Vivo</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Barra de 3 Materias Destacadas (Historia, Lengua Española, Física) -->
+      <div class="ipad-special-subjects-grid">
+        <a href="ipad-historia.html" class="ipad-special-link historia" aria-label="Abrir módulo de Historia Universal III">
+          <span class="ipad-special-icon" aria-hidden="true">🏛️</span>
+          <div class="ipad-special-meta">
+            <h4>Historia Universal III</h4>
+            <p>Profra. Karina Cappello Sánchez • Entregas</p>
+          </div>
+        </a>
+
+        <a href="ipad-lengua-espanola.html" class="ipad-special-link espanol" aria-label="Abrir módulo de Lengua Española">
+          <span class="ipad-special-icon" aria-hidden="true">📖</span>
+          <div class="ipad-special-meta">
+            <h4>Lengua Española</h4>
+            <p>Profra. Ma. Guadalupe Vázquez • Entregas</p>
+          </div>
+        </a>
+
+        <a href="ipad-fisica.html" class="ipad-special-link fisica" aria-label="Abrir módulo de Física III">
+          <span class="ipad-special-icon" aria-hidden="true">⚡</span>
+          <div class="ipad-special-meta">
+            <h4>Física III</h4>
+            <p>Profra. Gabriela Reyna • Cambio de aula</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Horario Semanal Completo para iPad -->
+      <section class="ipad-glass-card ipad-schedule-section" aria-labelledby="ipad-sched-heading">
+        <div class="ipad-section-header">
+          <h2 class="ipad-section-title" id="ipad-sched-heading">
+            <span>📅</span>
+            <span>Horario Semanal Oficial SIHO</span>
+          </h2>
+          <span style="font-size: 13px; color: var(--text-tertiary);">Grupo 415 • ENP 4</span>
+        </div>
+
+        <!-- Selector de Días iPad -->
+        <nav class="ipad-days-nav" aria-label="Seleccionar día de la semana">
+          <button type="button" class="ipad-day-btn active" data-day="1">Lunes</button>
+          <button type="button" class="ipad-day-btn" data-day="2">Martes</button>
+          <button type="button" class="ipad-day-btn" data-day="3">Miércoles</button>
+          <button type="button" class="ipad-day-btn" data-day="4">Jueves</button>
+          <button type="button" class="ipad-day-btn" data-day="5">Viernes</button>
+        </nav>
+
+        <!-- Cuadrícula Interactiva de Bloques de Clase iPad -->
+        <div class="ipad-schedule-grid" id="ipad-schedule-grid" role="region" aria-label="Bloques de clase del día">
+          <!-- Renderizado dinámico desde data.js -->
+        </div>
+      </section>
+
+      <!-- 3 Materias Especiales de Encardomy -->
+      <section aria-labelledby="ipad-special-heading">
+        <h3 id="ipad-special-heading" style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 14px;">
+          ⚡ Materias con Módulo Especial
+        </h3>
+        <div class="ipad-special-subjects-grid">
+          <a href="ipad-fisica.html" class="ipad-special-link fisica">
+            <span class="ipad-special-icon" aria-hidden="true">⚡</span>
+            <div class="ipad-special-meta">
+              <h4>Física III</h4>
+              <p>Prof. Saúl Quintana · Aulas B-116 y B-109</p>
+            </div>
+          </a>
+          <a href="ipad-historia.html" class="ipad-special-link historia">
+            <span class="ipad-special-icon" aria-hidden="true">🏛️</span>
+            <div class="ipad-special-meta">
+              <h4>Historia Universal III</h4>
+              <p>Prof. Gabriela Reyna · Aula B-205</p>
+            </div>
+          </a>
+          <a href="ipad-lengua-espanola.html" class="ipad-special-link espanol">
+            <span class="ipad-special-icon" aria-hidden="true">📚</span>
+            <div class="ipad-special-meta">
+              <h4>Lengua Española</h4>
+              <p>Prof. Karina Cappello · Aula B-205</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ACADEMIC HUB: Avisos, Tareas y Exámenes Sincronizados -->
+      <section aria-labelledby="ipad-hub-heading">
+        <h3 id="ipad-hub-heading" style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 14px;">
+          📌 Centro Académico Oficial
+        </h3>
+        <div class="ipad-academic-hub">
+          <!-- Panel de Avisos -->
+          <div class="ipad-hub-panel">
+            <div class="ipad-hub-header">
+              <h4 class="ipad-hub-title"><span aria-hidden="true">📢</span> Avisos</h4>
+              <a href="ipad-avisos.html" style="font-size: 12px; color: var(--accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+            </div>
+            <div class="ipad-hub-content-list" id="ipad-avisos-list">
+              <div class="empty-state-card" style="padding: 20px 10px; margin: 0; background: rgba(0,0,0,0.25);">
+                <div class="empty-state-icon" style="font-size: 22px;">📢</div>
+                <div class="empty-state-text" style="font-size: 13px;">No hay avisos por ahora.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel de Tareas -->
+          <div class="ipad-hub-panel">
+            <div class="ipad-hub-header">
+              <h4 class="ipad-hub-title"><span aria-hidden="true">📝</span> Tareas</h4>
+              <a href="ipad-tareas.html" style="font-size: 12px; color: var(--accent-gold); text-decoration: none; font-weight: 700;">Ver todas →</a>
+            </div>
+            <div class="ipad-hub-content-list" id="ipad-tareas-list">
+              <div class="empty-state-card" style="padding: 20px 10px; margin: 0; background: rgba(0,0,0,0.25);">
+                <div class="empty-state-icon" style="font-size: 22px;">📝</div>
+                <div class="empty-state-text" style="font-size: 13px;">No hay tareas por ahora.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel de Exámenes -->
+          <div class="ipad-hub-panel">
+            <div class="ipad-hub-header">
+              <h4 class="ipad-hub-title"><span aria-hidden="true">📋</span> Exámenes</h4>
+              <a href="ipad-examenes.html" style="font-size: 12px; color: var(--accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+            </div>
+            <div class="ipad-hub-content-list" id="ipad-examenes-list">
+              <div class="empty-state-card" style="padding: 20px 10px; margin: 0; background: rgba(0,0,0,0.25);">
+                <div class="empty-state-icon" style="font-size: 22px;">📋</div>
+                <div class="empty-state-text" style="font-size: 13px;">No hay exámenes por ahora.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pie Institucional iPad -->
+      <footer class="app-footer" style="margin-top: 30px; text-align: center; padding: 20px 0; border-top: 1px solid var(--surface-glass-border-subtle); color: var(--text-tertiary); font-size: 12px;">
+        <p>ENCARDOMY • Sistema Académico Escolar Grupo 415 — Versión iPad</p>
+        <p style="margin-top: 6px;">
+          <a href="ipad-terminos.html" style="color: var(--text-secondary); text-decoration: none;">Términos y Condiciones</a> • 
+          <a href="ipad-privacidad.html" style="color: var(--text-secondary); text-decoration: none;">Aviso de Privacidad</a> • 
+          <a href="index.html" style="color: var(--accent-gold); text-decoration: none;">Versión Móvil</a> • 
+          <a href="mac-index.html" style="color: var(--accent-gold); text-decoration: none;">Versión Mac</a>
+        </p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Dock Inferior Tableta (Vertical) -->
+  <nav class="bottom-nav-bar ipad-bottom-dock" aria-label="Menú iPad">
+    <div class="nav-track">
+      <a href="ipad-index.html" class="nav-item active">
+        <span class="nav-icon" aria-hidden="true">🏠</span>
+        <span>Inicio</span>
+      </a>
+      <a href="ipad-avisos.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📢</span>
+        <span>Avisos</span>
+      </a>
+      <a href="ipad-tareas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📝</span>
+        <span>Tareas</span>
+      </a>
+      <a href="ipad-examenes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">📋</span>
+        <span>Exámenes</span>
+      </a>
+      <a href="ipad-interes.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🎁</span>
+        <span>Interés</span>
+      </a>
+      <a href="ipad-clases-perdidas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🗓️</span>
+        <span>Inasistencias</span>
+      </a>
+      <a href="ipad-profesores.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🔍</span>
+        <span>Profesores</span>
+      </a>
+      <a href="ipad-herramientas.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">🛠️</span>
+        <span>Herramientas</span>
+      </a>
+      <a href="ipad-seccion-b.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">👥</span>
+        <span>Sección B</span>
+      </a>
+      <a href="ipad-sugerencias.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">💡</span>
+        <span>Sugerencias</span>
+      </a>
+      <a href="ipad-ayuda.html" class="nav-item">
+        <span class="nav-icon" aria-hidden="true">❓</span>
+        <span>Ayuda</span>
+      </a>
+    </div>
+  </nav>
+</div>
+
+
+       INTERFAZ 3: COMPUTADORA / MAC (>= 1120px) — Modo macOS
+       ==================================================================== -->
+  <div class="encardomy-interface-desktop" id="encardomy-interface-desktop" role="region" aria-label="Interfaz para Computadora Mac">
+    <div class="mac-desktop-environment">
+    <main class="mac-window-frame" role="main">
+      <!-- Barra de Título macOS -->
+      <header class="mac-titlebar">
+        <div class="mac-titlebar-left">
+          <div class="mac-traffic-lights" aria-label="Controles de ventana macOS">
+            <span class="mac-traffic-dot close" title="Cerrar"></span>
+            <span class="mac-traffic-dot minimize" title="Minimizar"></span>
+            <span class="mac-traffic-dot zoom" title="Maximizar / Pantalla completa"></span>
+          </div>
+          <div class="mac-window-title-group">
+            <span class="mac-window-icon">✦</span>
+            <span class="mac-window-title">ENCARDOMY — Minweb 415</span>
+            <span class="mac-window-subtitle">Mac Edition</span>
+          </div>
+        </div>
+
+        <div class="mac-titlebar-center">
+          <div class="mac-segmented-section" role="group" aria-label="Selector de Sección">
+            <button class="mac-segment-btn active" data-section="A">Sección A</button>
+            <button class="mac-segment-btn" data-section="B">Sección B</button>
+          </div>
+          <div class="mac-cdmx-clock-badge" title="Hora Oficial de la Ciudad de México">
+            <span class="mac-cdmx-dot"></span>
+            <span class="mac-cdmx-time" id="mac-titlebar-cdmx-clock">--:--:-- -- CDMX</span>
+          </div>
+        </div>
+
+        <div class="mac-titlebar-right">
+          <button class="mac-btn-tool" id="mac-btn-chime" title="Reproducir campanada navideña">🔔 Chime</button>
+          <span class="mac-window-mode-pill">Ventana Grande (3 Col)</span>
+          <a href="index.html" class="mac-btn-tool" title="Cambiar a Versión Celular">📱 Móvil</a>
+          <a href="ipad-index.html" class="mac-btn-tool" title="Cambiar a Versión iPad">📱 iPad</a>
+        </div>
+      </header>
+
+      <!-- Cuerpo de la Ventana: 3 Columnas Dinámicas -->
+      <div class="mac-window-body">
+        <!-- Columna 1: Sidebar macOS -->
+        <aside class="mac-sidebar" aria-label="Barra Lateral de Navegación">
+          <div class="mac-sidebar-brand">
+            <span class="mac-sidebar-brand-name">ENCARDOMY</span>
+            <span class="mac-sidebar-brand-sub">Minweb 415 · UNAM ENP 4</span>
+          </div>
+
+          <!-- Navegación Primaria -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">General</span>
+            <a href="mac-index.html" class="mac-nav-item active"><span class="nav-icon">🏠</span> Inicio & Horario</a>
+            <a href="mac-profesores.html" class="mac-nav-item"><span class="nav-icon">👨‍🏫</span> Profesores</a>
+            <a href="mac-herramientas.html" class="mac-nav-item"><span class="nav-icon">🛠️</span> Herramientas</a>
+            <a href="mac-clases-perdidas.html" class="mac-nav-item"><span class="nav-icon">📉</span> Clases Perdidas</a>
+            <a href="mac-seccion-b.html" class="mac-nav-item"><span class="nav-icon">🔀</span> Sección B & Salones</a>
+          </nav>
+
+          <!-- Seguimiento Académico -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Académico</span>
+            <a href="mac-avisos.html" class="mac-nav-item"><span class="nav-icon">📢</span> Avisos</a>
+            <a href="mac-tareas.html" class="mac-nav-item"><span class="nav-icon">📝</span> Tareas</a>
+            <a href="mac-examenes.html" class="mac-nav-item"><span class="nav-icon">📅</span> Exámenes</a>
+          </nav>
+
+          <!-- Materias Especiales -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Materias Clave</span>
+            <a href="mac-fisica.html" class="mac-nav-item"><span class="nav-icon">⚡</span> Física III</a>
+            <a href="mac-historia.html" class="mac-nav-item"><span class="nav-icon">🏛️</span> Historia III</a>
+            <a href="mac-lengua-espanola.html" class="mac-nav-item"><span class="nav-icon">📚</span> Lengua Española</a>
+          </nav>
+
+          <!-- Institucional & Encardomy -->
+          <nav class="mac-sidebar-group">
+            <span class="mac-sidebar-header-label">Encardomy Agency</span>
+            <a href="mac-interes.html" class="mac-nav-item"><span class="nav-icon">✨</span> Tal vez te pueda interesar</a>
+            <a href="mac-sugerencias.html" class="mac-nav-item"><span class="nav-icon">💬</span> Buzón de Sugerencias</a>
+            <a href="mac-ayuda.html" class="mac-nav-item"><span class="nav-icon">❓</span> Ayuda y Guía Mac</a>
+            <a href="mac-terminos.html" class="mac-nav-item"><span class="nav-icon">📄</span> Términos</a>
+            <a href="mac-privacidad.html" class="mac-nav-item"><span class="nav-icon">🔒</span> Privacidad</a>
+          </nav>
+
+          <div class="mac-sidebar-footer">
+            <div class="mac-sidebar-status-box">
+              <strong style="color: var(--mac-accent-gold); display: block; margin-bottom: 2px;">Grupo 415</strong>
+              <span id="mac-current-section-badge">Sección A</span> · ENP 4 Vidal Castañeda y Nájera
+            </div>
+          </div>
+        </aside>
+
+        <!-- Columna 2: Main Stage (Escenario Central) -->
+        <section class="mac-main-stage">
+          <!-- Barra compacta solo visible en ventana compacta (< 860px) -->
+          <nav class="mac-compact-nav-bar" aria-label="Menú Compacto">
+            <a href="mac-index.html" class="mac-compact-nav-link active">Inicio</a>
+            <a href="mac-avisos.html" class="mac-compact-nav-link">Avisos</a>
+            <a href="mac-tareas.html" class="mac-compact-nav-link">Tareas</a>
+            <a href="mac-examenes.html" class="mac-compact-nav-link">Exámenes</a>
+            <a href="mac-profesores.html" class="mac-compact-nav-link">Profesores</a>
+            <a href="mac-interes.html" class="mac-compact-nav-link">Interés</a>
+            <a href="mac-ayuda.html" class="mac-compact-nav-link">Ayuda</a>
+          </nav>
+
+          <!-- Fila Hero: Clase Actual en Vivo + Próxima Clase -->
+          <div class="mac-hero-dashboard">
+            <!-- Tarjeta de Clase Actual -->
+            <article class="mac-card mac-current-class-card" id="mac-current-class-card">
+              <!-- Guirnalda de luces navideñas -->
+              <div class="mac-lights-garland">
+                <span class="mac-light-bulb red"></span>
+                <span class="mac-light-bulb green"></span>
+                <span class="mac-light-bulb gold"></span>
+                <span class="mac-light-bulb blue"></span>
+                <span class="mac-light-bulb purple"></span>
+                <span class="mac-light-bulb red"></span>
+                <span class="mac-light-bulb green"></span>
+                <span class="mac-light-bulb gold"></span>
+              </div>
+
+              <div>
+                <div class="mac-card-eyebrow">
+                  <div class="mac-status-live">
+                    <span class="mac-live-dot"></span>
+                    <span>Clase en Curso (En Vivo)</span>
+                  </div>
+                  <span class="mac-pill" style="font-size: 11px;">Oficial SIHO</span>
+                </div>
+
+                <h1 class="mac-subject-title" id="mac-current-subject">Cargando horario escolar...</h1>
+                <div class="mac-meta-pills-row" id="mac-current-meta">
+                  <span class="mac-pill">Calculando horario...</span>
+                </div>
+              </div>
+
+              <div class="mac-countdown-container">
+                <span class="mac-countdown-label">Tiempo Restante de Clase</span>
+                <span class="mac-countdown-digits" id="mac-current-countdown">--:--</span>
+              </div>
+            </article>
+
+            <!-- Tarjeta de Próxima Clase y Tolerancias Rápidas -->
+            <article class="mac-card mac-next-class-card">
+              <div>
+                <span class="mac-next-eyebrow">Siguiente en el Horario</span>
+                <h2 class="mac-next-title" id="mac-next-subject">--</h2>
+                <p style="font-size: 13px; color: var(--mac-text-secondary); line-height: 1.4;" id="mac-next-meta">Calculando...</p>
+              </div>
+
+              <div>
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-text-tertiary); letter-spacing: 0.8px;">Tolerancias Escolares en Curso</span>
+                <div class="mac-tolerances-inline">
+                  <div class="mac-tolerance-item prof">
+                    <div class="mac-tolerance-tag">Docente</div>
+                    <div class="mac-tolerance-val" id="mac-tol-prof">10 min</div>
+                  </div>
+                  <div class="mac-tolerance-item student">
+                    <div class="mac-tolerance-tag">Alumno</div>
+                    <div class="mac-tolerance-val" id="mac-tol-student">15 min</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Horario Interactivo de Clases para Mac -->
+          <section class="mac-schedule-panel" id="horario">
+            <div class="mac-schedule-header">
+              <h2 class="mac-section-heading">📅 Horario Semanal — Grupo 415</h2>
+              <div class="mac-days-tabs" role="tablist">
+                <button class="mac-day-btn active" data-day="1" role="tab">Lunes</button>
+                <button class="mac-day-btn" data-day="2" role="tab">Martes</button>
+                <button class="mac-day-btn" data-day="3" role="tab">Miércoles</button>
+                <button class="mac-day-btn" data-day="4" role="tab">Jueves</button>
+                <button class="mac-day-btn" data-day="5" role="tab">Viernes</button>
+              </div>
+            </div>
+
+            <!-- Grid de Bloques del Día -->
+            <div class="mac-blocks-grid" id="mac-schedule-grid">
+              <!-- Renderizado por mac-app.js -->
+            </div>
+          </section>
+
+          <!-- 3 Materias Especiales de Encardomy -->
+          <section>
+            <h3 class="mac-section-heading" style="font-size: 17px; margin-bottom: 14px;">⚡ Materias con Módulo Especial</h3>
+            <div class="mac-special-subjects-grid">
+              <a href="mac-fisica.html" class="mac-special-link fisica">
+                <span class="mac-special-icon">⚡</span>
+                <div class="mac-special-meta">
+                  <h4>Física III</h4>
+                  <p>Prof. Saúl Quintana · Aulas B-116 y B-109</p>
+                </div>
+              </a>
+              <a href="mac-historia.html" class="mac-special-link historia">
+                <span class="mac-special-icon">🏛️</span>
+                <div class="mac-special-meta">
+                  <h4>Historia Universal III</h4>
+                  <p>Prof. Gabriela Reyna · Aula B-205</p>
+                </div>
+              </a>
+              <a href="mac-lengua-espanola.html" class="mac-special-link espanol">
+                <span class="mac-special-icon">📚</span>
+                <div class="mac-special-meta">
+                  <h4>Lengua Española</h4>
+                  <p>Prof. Karina Cappello · Aula B-205</p>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <!-- Academic Hub: Avisos, Tareas y Exámenes Sincronizados -->
+          <section>
+            <h3 class="mac-section-heading" style="font-size: 17px; margin-bottom: 14px;">📌 Centro de Actividad Escolar</h3>
+            <div class="mac-academic-hub-grid">
+              <div class="mac-hub-panel">
+                <div class="mac-hub-header">
+                  <h4 class="mac-hub-title"><span>📢</span> Avisos</h4>
+                  <a href="mac-avisos.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+                </div>
+                <div class="mac-hub-list" id="mac-avisos-list">
+                  <div class="mac-hub-empty">
+                    <p>No hay avisos por ahora.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mac-hub-panel">
+                <div class="mac-hub-header">
+                  <h4 class="mac-hub-title"><span>📝</span> Tareas</h4>
+                  <a href="mac-tareas.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todas →</a>
+                </div>
+                <div class="mac-hub-list" id="mac-tareas-list">
+                  <div class="mac-hub-empty">
+                    <p>No hay tareas por ahora.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mac-hub-panel">
+                <div class="mac-hub-header">
+                  <h4 class="mac-hub-title"><span>📅</span> Exámenes</h4>
+                  <a href="mac-examenes.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+                </div>
+                <div class="mac-hub-list" id="mac-examenes-list">
+                  <div class="mac-hub-empty">
+                    <p>No hay exámenes por ahora.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Bloque Secundario Integrado para Ventanas Medianas y Pequeñas (< 1240px) -->
+          <div class="mac-inline-secondary-block" style="display: none;">
+            <div class="mac-ad-spot-container">
+              <span class="mac-ad-eyebrow">Espacio Encardomy Agency</span>
+              <h3 class="mac-ad-title">Tal vez te pueda interesar</h3>
+              <div class="mac-ad-empty-message">
+                <p>No hay nada disponible por ahora.</p>
+              </div>
+              <a href="mac-interes.html" class="mac-btn-ad-action">Solicitar pedido personalizado →</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Columna 3: Inspector / Barra Derecha (Solo en Ventana Grande >= 1240px) -->
+        <aside class="mac-inspector-column" aria-label="Panel Lateral de Información e Inspector">
+          <div class="mac-inspector-header">
+            <span>ℹ️</span> Resumen Grupo 415
+          </div>
+
+          <div class="mac-inspector-card">
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Plantel:</span>
+              <span class="mac-inspector-value">ENP 4 UNAM</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Turno:</span>
+              <span class="mac-inspector-value">Matutino</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Horario:</span>
+              <span class="mac-inspector-value">07:00 a 15:20 hrs</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Docente:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-gold);">10 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Tolerancia Alumno:</span>
+              <span class="mac-inspector-value" style="color: var(--mac-accent-green);">15 minutos</span>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Zona Horaria:</span>
+              <span class="mac-inspector-value">CDMX (America/Mexico_City)</span>
+            </div>
+          </div>
+
+          <!-- ESPACIO DE PUBLICIDAD EN INSPECTOR: Tal vez te pueda interesar -->
+          <div class="mac-ad-spot-container" id="mac-ad-spot">
+            <span class="mac-ad-eyebrow">Encardomy Agency</span>
+            <h3 class="mac-ad-title">Tal vez te pueda interesar</h3>
+            <div class="mac-ad-empty-message">
+              <p>No hay nada disponible por ahora.</p>
+            </div>
+            <a href="mac-interes.html" class="mac-btn-ad-action">
+              <span>🛍️</span> Solicitar pedido específico
+            </a>
+          </div>
+
+          <div class="mac-inspector-card" style="margin-top: auto;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--mac-text-tertiary); letter-spacing: 0.8px;">Atajos de Teclado macOS</span>
+            <div class="mac-inspector-row" style="margin-top: 8px;">
+              <span class="mac-inspector-label">Profesores:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">P</kbd>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Inicio:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">I</kbd>
+            </div>
+            <div class="mac-inspector-row">
+              <span class="mac-inspector-label">Sección A / B:</span>
+              <kbd style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">S</kbd>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  </div>
+
+
+  
+  <!-- Modal Detalle Académico Compartido -->
+
+
+  <!-- Modal Detalle Académico Compartido -->
+  <div class="ipad-modal-backdrop" id="ipad-detail-modal" role="dialog" aria-modal="true" aria-labelledby="ipad-modal-title" aria-hidden="true">
+    <div class="ipad-modal-sheet">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 id="ipad-modal-title" style="font-size: 19px; font-weight: 800; color: var(--accent-gold);">Detalle Académico</h3>
+        <button type="button" id="ipad-modal-close" class="ipad-btn-action" style="padding: 4px 10px; font-size: 13px;" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="ipad-modal-body"></div>
+    </div>
+  </div>
+
+  <div class="mac-modal-backdrop" id="mac-detail-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="mac-modal-window">
+      <div class="mac-modal-header">
+        <h3 class="mac-modal-title" id="mac-modal-title">Detalle de la Materia</h3>
+        <button class="mac-modal-close-btn" onclick="window.MacApp ? window.MacApp.closeDetailModal() : (document.getElementById('mac-detail-modal').classList.remove('show'))" aria-label="Cerrar ventana modal">✕</button>
+      </div>
+      <div class="mac-modal-content" id="mac-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Scripts Centrales del Ecosistema -->
+  <script src="js/device-detector.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/layout-engine.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>

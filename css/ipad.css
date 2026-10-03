@@ -1,0 +1,1376 @@
+/* ==========================================================================
+   ENCARDOMY — MINWEB 415 (iPad & Tablet Edition)
+   Diseño Exclusivo para Tabletas e iPad (Portrait & Landscape)
+   Inspirado en Apple iPadOS + Temática Navideña + Encardomy Agency
+   ========================================================================== */
+
+:root {
+  /* Paleta Base Apple iPadOS */
+  --bg-main: #06140e;
+  --surface-glass: rgba(255, 255, 255, 0.08);
+  --surface-glass-card: rgba(255, 255, 255, 0.07);
+  --surface-glass-elevated: rgba(255, 255, 255, 0.12);
+  --surface-glass-active: rgba(255, 255, 255, 0.18);
+  --surface-glass-border: rgba(255, 255, 255, 0.14);
+  --surface-glass-border-subtle: rgba(255, 255, 255, 0.09);
+
+  /* Tipografía y Textos */
+  --text-primary: #F5F5F7;
+  --text-secondary: rgba(235, 235, 245, 0.75);
+  --text-tertiary: rgba(235, 235, 245, 0.48);
+  --text-muted: rgba(235, 235, 245, 0.3);
+
+  /* Acentos Navideños Elegantes */
+  --accent-gold: #E5C07B;
+  --accent-gold-glow: rgba(229, 192, 123, 0.38);
+  --accent-gold-soft: rgba(229, 192, 123, 0.14);
+  --accent-red: #FF453A;
+  --accent-green: #30D158;
+  --accent-blue: #2997FF;
+
+  /* Dimensiones Tablet */
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-full: 9999px;
+
+  /* Sombras y Luces */
+  --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 28px rgba(229, 192, 123, 0.25);
+
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Reset Global */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* VIDEO DE FONDO EN BUCLE PARA IPAD */
+.ipad-video-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ipad-video-bg-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.48;
+  filter: brightness(0.68) saturate(1.2);
+}
+
+.ipad-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, rgba(6, 20, 14, 0.4) 0%, rgba(3, 10, 6, 0.88) 100%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Decoraciones Navideñas Minimalistas */
+.ipad-christmas-star {
+  position: fixed;
+  top: 20px;
+  right: 32px;
+  width: 14px;
+  height: 14px;
+  background: var(--accent-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 24px 6px rgba(229, 192, 123, 0.8), 0 0 48px 14px rgba(229, 192, 123, 0.4);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+}
+
+.snowfall-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.snowflake {
+  position: absolute;
+  top: -10px;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  animation: fall linear infinite;
+  filter: blur(0.5px);
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10px) translateX(0); opacity: 0; }
+  15% { opacity: 0.8; }
+  85% { opacity: 0.8; }
+  100% { transform: translateY(105vh) translateX(30px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snowflake { display: none; animation: none; }
+}
+
+/* ==========================================================================
+   LUCES NAVIDEÑAS ANIMADAS (Materia Actual en Curso)
+   ========================================================================== */
+.christmas-lights-garland {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 8px 16px 12px 16px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 14px;
+}
+
+.christmas-bulb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: relative;
+  animation: bulb-twinkle 1.6s infinite alternate ease-in-out;
+}
+
+.christmas-bulb::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 3px;
+  width: 4px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 2px 2px 0 0;
+}
+
+.christmas-bulb.red {
+  background: #ff453a;
+  box-shadow: 0 0 12px 3px rgba(255, 69, 58, 0.9);
+  animation-delay: 0s;
+}
+
+.christmas-bulb.green {
+  background: #30d158;
+  box-shadow: 0 0 12px 3px rgba(48, 209, 88, 0.9);
+  animation-delay: 0.35s;
+}
+
+.christmas-bulb.gold {
+  background: #ffd60a;
+  box-shadow: 0 0 12px 3px rgba(255, 214, 10, 0.9);
+  animation-delay: 0.7s;
+}
+
+.christmas-bulb.blue {
+  background: #0a84ff;
+  box-shadow: 0 0 12px 3px rgba(10, 132, 255, 0.9);
+  animation-delay: 1.05s;
+}
+
+.christmas-bulb.purple {
+  background: #bf5af2;
+  box-shadow: 0 0 12px 3px rgba(191, 90, 242, 0.9);
+  animation-delay: 1.4s;
+}
+
+@keyframes bulb-twinkle {
+  0% { opacity: 0.35; transform: scale(0.85); filter: brightness(0.65); }
+  100% { opacity: 1; transform: scale(1.28); filter: brightness(1.5); }
+}
+
+/* Tarjeta Vidrio iPad (iPadOS Glass Card) */
+.ipad-glass-card {
+  background: var(--surface-glass-card);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ipad-glass-card-elevated {
+  background: var(--surface-glass-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   ESTRUCTURA Y CONTENEDOR GENERAL PARA TABLETAS
+   ========================================================================== */
+.ipad-app-shell {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 20px 28px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra Superior iPad (iPad Top Bar) */
+.ipad-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--surface-glass-border-subtle);
+}
+
+.ipad-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ipad-brand-badge {
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-brand-subtitle {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ipad-brand-subtitle::before {
+  content: "✦";
+  font-size: 11px;
+}
+
+.ipad-brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: var(--text-primary);
+}
+
+.ipad-top-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Reloj Oficial CDMX */
+.cdmx-clock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--surface-glass-border);
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.cdmx-indicator-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-green);
+}
+
+.cdmx-time-digits {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+/* Selector de Sección iPad (Segmented Control iOS) */
+.ipad-section-segmented {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--surface-glass-border);
+}
+
+.ipad-section-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 50px;
+}
+
+.ipad-section-btn.active {
+  background: var(--text-primary);
+  color: #04140b;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.ipad-btn-action {
+  border: 1px solid var(--surface-glass-border);
+  background: rgba(229, 192, 123, 0.12);
+  color: var(--accent-gold);
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.ipad-btn-action:active {
+  transform: scale(0.95);
+  background: var(--accent-gold);
+  color: #04140b;
+}
+
+/* Indicador de Orientación */
+.orientation-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   DISEÑO HORIZONTAL (LANDSCAPE — Multi-Panel Split View)
+   ========================================================================== */
+[data-ipad-orientation="landscape"] .ipad-layout-container {
+  display: grid;
+  grid-template-columns: 410px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Panel Izquierdo / Barra Lateral de Control */
+.ipad-sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 20px;
+}
+
+/* Panel Derecho / Escenario Principal */
+.ipad-main-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   DISEÑO VERTICAL (PORTRAIT — 2 Columnas / Structured Tablet)
+   ========================================================================== */
+[data-ipad-orientation="portrait"] .ipad-layout-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+[data-ipad-orientation="portrait"] .ipad-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Tarjeta Principal: Clase en Curso */
+.current-class-ipad-card {
+  border-left: 6px solid var(--accent-gold);
+  background: linear-gradient(135deg, rgba(229, 192, 123, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+}
+
+.ipad-card-eyebrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ipad-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent-gold);
+}
+
+.pulse-dot {
+  width: 9px;
+  height: 9px;
+  background-color: var(--accent-gold);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-gold);
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--accent-gold); }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+.ipad-current-title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  color: var(--text-primary);
+}
+
+.ipad-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.ipad-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 1px solid var(--surface-glass-border-subtle);
+}
+
+.ipad-pill-salon {
+  background: rgba(41, 151, 255, 0.2);
+  border-color: rgba(41, 151, 255, 0.4);
+  color: #70baff;
+}
+
+.ipad-pill-prof {
+  background: rgba(229, 192, 123, 0.18);
+  border-color: rgba(229, 192, 123, 0.4);
+  color: var(--accent-gold);
+}
+
+.ipad-countdown-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  border: 1px solid var(--surface-glass-border-subtle);
+}
+
+.ipad-countdown-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+}
+
+.ipad-countdown-digits {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 0.5px;
+}
+
+/* Alerta de Cambio de Salón */
+.ipad-room-change-alert {
+  background: linear-gradient(90deg, rgba(255, 149, 0, 0.2), rgba(255, 69, 58, 0.18));
+  border: 1px solid rgba(255, 149, 0, 0.45);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Tolerancias Tablet */
+.ipad-tolerances-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.ipad-tolerance-card {
+  background: var(--surface-glass-card);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ipad-tolerance-card.teacher::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent-gold);
+}
+
+.ipad-tolerance-card.student::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--accent-green);
+}
+
+.ipad-tolerance-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.ipad-tolerance-digits {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.ipad-tolerance-card.teacher .ipad-tolerance-digits { color: var(--accent-gold); }
+.ipad-tolerance-card.student .ipad-tolerance-digits { color: var(--accent-green); }
+
+/* Siguiente Clase Tablet */
+.ipad-next-class-card {
+  border-left: 6px solid var(--accent-blue);
+  background: linear-gradient(135deg, rgba(41, 151, 255, 0.1) 0%, rgba(255, 255, 255, 0.04) 100%);
+}
+
+/* ==========================================================================
+   HORARIO SEMANAL INTERACTIVO IPAD
+   ========================================================================== */
+.ipad-schedule-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ipad-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipad-days-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ipad-day-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid var(--surface-glass-border-subtle);
+  transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.ipad-day-btn.active {
+  background: var(--accent-gold);
+  color: #04140b;
+  border-color: var(--accent-gold);
+  box-shadow: 0 4px 16px var(--accent-gold-glow);
+}
+
+/* Grid de Bloques del Horario */
+.ipad-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.ipad-block-card {
+  background: var(--surface-glass-card);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ipad-block-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 6px;
+  background-color: var(--block-color, var(--accent-blue));
+}
+
+.ipad-block-card.is-active-subject {
+  border: 2px solid var(--accent-gold) !important;
+  background: linear-gradient(135deg, rgba(229, 192, 123, 0.18) 0%, rgba(48, 209, 88, 0.14) 100%) !important;
+  box-shadow: 0 0 28px rgba(229, 192, 123, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+.ipad-block-card.is-active-subject::after {
+  content: "✨ CLASE ACTUAL EN VIVO";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+.ipad-block-time-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ipad-block-hours {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ipad-block-duration {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+}
+
+.ipad-block-subject {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.ipad-block-prof {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   ACADEMIC HUB (Avisos, Tareas, Exámenes Sincronizados)
+   ========================================================================== */
+.ipad-academic-hub {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+[data-ipad-orientation="portrait"] .ipad-academic-hub {
+  grid-template-columns: 1fr;
+}
+
+.ipad-hub-panel {
+  background: var(--surface-glass-card);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-glass-border-subtle);
+}
+
+.ipad-hub-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ipad-hub-content-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 140px;
+}
+
+/* Tarjetas de Avisos/Tareas/Exámenes */
+.ipad-academic-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--surface-glass-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.ipad-academic-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background-color: var(--item-color, var(--accent-gold));
+}
+
+.ipad-academic-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+.ipad-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.ipad-card-snippet {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.ipad-card-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  color: var(--text-tertiary);
+}
+
+/* 3 Materias Principales en iPad */
+.ipad-special-subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ipad-special-link {
+  text-decoration: none;
+  background: var(--surface-glass-card);
+  backdrop-filter: blur(28px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.ipad-special-link:hover {
+  background: var(--surface-glass-elevated);
+  transform: translateY(-2px);
+}
+
+.ipad-special-link.historia { border-left: 6px solid #AF52DE; }
+.ipad-special-link.espanol { border-left: 6px solid #FF9500; }
+.ipad-special-link.fisica { border-left: 6px solid #00C7BE; }
+
+.ipad-special-icon {
+  font-size: 30px;
+}
+
+.ipad-special-meta h4 {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.ipad-special-meta p {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Barra de Navegación Rápida iPad */
+.ipad-nav-pills-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ipad-nav-pill-btn {
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--surface-glass-border);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.ipad-nav-pill-btn:hover, .ipad-nav-pill-btn.active {
+  background: var(--accent-gold);
+  color: #04140b;
+  font-weight: 800;
+}
+
+/* Modal Detalle Estilo iPadOS */
+.ipad-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.ipad-modal-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ipad-modal-sheet {
+  background: #0d2618;
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  transform: scale(0.94);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ipad-modal-backdrop.show .ipad-modal-sheet {
+  transform: scale(1);
+}
+
+
+/* ==========================================================================
+   ADAPTACIÓN UNIVERSAL PARA TABLETAS E IPAD EN TODOS LOS HTML
+   Se activa automáticamente al detectar resolución >= 768px o data-device="tablet"/"desktop"
+   ========================================================================== */
+
+@media (min-width: 768px), [data-device="tablet"], [data-device="desktop"] {
+  /* Contenedor Principal Adaptativo en Tablet */
+  .mobile-app-shell {
+    max-width: 1060px !important;
+    padding: 24px 32px calc(var(--nav-height) + 40px) 32px !important;
+    transition: max-width 0.3s ease, padding 0.3s ease;
+  }
+
+  [data-ipad-orientation="landscape"] .mobile-app-shell,
+  [data-orientation="landscape"] .mobile-app-shell {
+    max-width: 1260px !important;
+    padding: 28px 40px calc(var(--nav-height) + 48px) 40px !important;
+  }
+
+  /* Encabezado Tablet Superior */
+  .app-header {
+    margin-bottom: 24px !important;
+    padding: 10px 0 18px 0 !important;
+    border-bottom: 1px solid var(--surface-glass-border-subtle) !important;
+  }
+
+  .brand-title {
+    font-size: 28px !important;
+    letter-spacing: -0.6px !important;
+  }
+
+  .brand-subtitle {
+    font-size: 13px !important;
+    letter-spacing: 1.4px !important;
+  }
+
+  /* Barra de Navegación Rápida Superior Tablet */
+  .tablet-quick-links-bar {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  /* Barra de Filtros Tablet */
+  .filter-bar {
+    gap: 10px !important;
+    padding: 6px 0 20px 0 !important;
+  }
+
+  .filter-pill {
+    font-size: 13.5px !important;
+    padding: 8px 18px !important;
+  }
+
+  /* Grid Multicolumna para Avisos, Tareas y Exámenes */
+  .tablet-cards-grid,
+  #avisos-active-list,
+  #tareas-active-list,
+  #examenes-active-list,
+  #search-results-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  [data-ipad-orientation="landscape"] .tablet-cards-grid,
+  [data-ipad-orientation="landscape"] #avisos-active-list,
+  [data-ipad-orientation="landscape"] #tareas-active-list,
+  [data-ipad-orientation="landscape"] #examenes-active-list,
+  [data-ipad-orientation="landscape"] #search-results-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* Páginas Especiales de Materia (Física, Historia, Lengua Española) en Vista Dividida */
+  .subject-split-view {
+    display: grid !important;
+    grid-template-columns: 380px 1fr !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+
+  [data-ipad-orientation="portrait"] .subject-split-view,
+  [data-orientation="portrait"] .subject-split-view {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Páginas de Información y Ayuda (Dual Column) */
+  .info-split-view {
+    display: grid !important;
+    grid-template-columns: 300px 1fr !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+
+  [data-ipad-orientation="portrait"] .info-split-view,
+  [data-orientation="portrait"] .info-split-view {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Métricas en Fila de Clases Perdidas */
+  .metrics-row-tablet {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* Sección B Matriz Comparativa */
+  .comparison-grid-tablet {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* Menú Inferior Flotante Estilo Dock iPadOS */
+  .bottom-nav-bar {
+    max-width: 860px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: 16px !important;
+    border-radius: var(--radius-full) !important;
+    border: 1px solid var(--surface-glass-border) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65) !important;
+    height: 64px !important;
+    padding: 0 16px !important;
+  }
+
+  .nav-item {
+    padding: 8px 18px !important;
+    min-width: 74px !important;
+  }
+
+  .nav-item .nav-icon {
+    font-size: 21px !important;
+  }
+
+  .nav-item span:not(.nav-icon) {
+    font-size: 11.5px !important;
+  }
+
+  /* Conmutación Dinámica en index.html entre Móvil y Tablet */
+  .index-mobile-view {
+    display: none !important;
+  }
+
+  .index-tablet-view {
+    display: flex !important;
+  }
+}
+
+/* En pantallas móviles (< 768px) */
+@media (max-width: 767.98px) {
+  .tablet-quick-links-bar {
+    display: none !important;
+  }
+
+  .index-mobile-view {
+    display: flex !important;
+  }
+
+  .index-tablet-view {
+    display: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   SISTEMA INTELIGENTE DE ORIENTACIÓN PARA IPAD (Reglas 49 a 60)
+   Detección y conmutación automática entre Lateral (Horizontal) e Inferior (Vertical)
+   ========================================================================== */
+
+/* Envoltorio principal para la interfaz iPad */
+.ipad-app-layout-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+  transition: all 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   ORIENTACIÓN HORIZONTAL (LANDSCAPE)
+   Panel lateral izquierdo (Sidebar) + Escenario principal a la derecha
+   Navegación inferior estrictamente OCULTA
+   -------------------------------------------------------------------------- */
+[data-ipad-orientation="landscape"] .ipad-app-layout-wrapper {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 24px !important;
+  max-width: 1420px !important;
+  margin: 0 auto !important;
+  padding: 20px 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* Panel lateral izquierdo exclusivo de orientación horizontal */
+.ipad-lateral-nav-panel {
+  display: none; /* Por defecto oculto en vertical y móvil */
+}
+
+[data-ipad-orientation="landscape"] .ipad-lateral-nav-panel {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 285px !important;
+  min-width: 285px !important;
+  max-width: 285px !important;
+  position: sticky !important;
+  top: 20px !important;
+  height: calc(100vh - 40px) !important;
+  max-height: calc(100vh - 40px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+  background: rgba(10, 26, 17, 0.88) !important;
+  backdrop-filter: blur(36px) !important;
+  -webkit-backdrop-filter: blur(36px) !important;
+  border: 1px solid var(--surface-glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 18px 14px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+  z-index: 100 !important;
+  gap: 14px !important;
+}
+
+[data-ipad-orientation="landscape"] .ipad-lateral-nav-panel::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Elementos internos del Panel Lateral Izquierdo */
+.ipad-sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--surface-glass-border-subtle);
+}
+
+.ipad-sidebar-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-sidebar-brand-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+}
+
+.ipad-sidebar-brand-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  letter-spacing: 1px;
+}
+
+.ipad-sidebar-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ipad-sidebar-clock {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--surface-glass-border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ipad-sidebar-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ipad-sidebar-nav-heading {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+  color: var(--text-tertiary);
+  padding: 6px 10px 3px 10px;
+}
+
+.ipad-sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+}
+
+.ipad-sidebar-nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.ipad-sidebar-nav-link.active {
+  background: var(--accent-gold-soft);
+  color: var(--accent-gold);
+  font-weight: 700;
+  border-color: rgba(229, 192, 123, 0.35);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.ipad-sidebar-nav-link .nav-icon {
+  font-size: 17px;
+  line-height: 1;
+  min-width: 22px;
+  text-align: center;
+}
+
+/* Escenario principal de contenido en horizontal */
+[data-ipad-orientation="landscape"] .ipad-main-content-stage {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+}
+
+/* EN HORIZONTAL: OCULTAR COMPLETAMENTE NAVEGACIÓN INFERIOR Y CABECERA DUPLICADA */
+[data-ipad-orientation="landscape"] .bottom-nav-bar,
+[data-ipad-orientation="landscape"] .ipad-bottom-dock,
+[data-ipad-orientation="landscape"] .ipad-top-bar-portrait,
+[data-ipad-orientation="landscape"] .tablet-quick-links-bar {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   ORIENTACIÓN VERTICAL (PORTRAIT)
+   Contenido a todo el ancho + Navegación trasladada a la parte INFERIOR
+   Panel lateral izquierdo estrictamente OCULTO
+   -------------------------------------------------------------------------- */
+[data-ipad-orientation="portrait"] .ipad-app-layout-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  max-width: 1040px !important;
+  margin: 0 auto !important;
+  padding: 16px 20px calc(var(--nav-height) + 40px) 20px !important;
+  box-sizing: border-box !important;
+}
+
+/* EN VERTICAL: OCULTAR COMPLETAMENTE EL PANEL LATERAL IZQUIERDO */
+[data-ipad-orientation="portrait"] .ipad-lateral-nav-panel {
+  display: none !important;
+}
+
+/* EN VERTICAL: MOSTRAR CABECERA SUPERIOR Y NAVEGACIÓN INFERIOR */
+[data-ipad-orientation="portrait"] .ipad-top-bar-portrait {
+  display: flex !important;
+}
+
+[data-ipad-orientation="portrait"] .bottom-nav-bar,
+[data-ipad-orientation="portrait"] .ipad-bottom-dock {
+  display: flex !important;
+  max-width: 900px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 16px !important;
+  border-radius: var(--radius-full) !important;
+  height: 66px !important;
+}
+
+[data-ipad-orientation="portrait"] .ipad-main-content-stage {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+}
+
+
+/* Respaldo Nítido por Media Queries Nativas de Navegador (Reglas 66-69) */
+@media (min-width: 768px) and (orientation: landscape) {
+  .ipad-app-layout-wrapper {
+    display: flex !important;
+    flex-direction: row !important;
+  }
+  .ipad-lateral-nav-panel {
+    display: flex !important;
+  }
+  .bottom-nav-bar, .ipad-bottom-dock, .ipad-top-bar-portrait, .tablet-quick-links-bar {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (orientation: portrait) {
+  .ipad-app-layout-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ipad-lateral-nav-panel {
+    display: none !important;
+  }
+  .ipad-top-bar-portrait {
+    display: flex !important;
+  }
+  .bottom-nav-bar, .ipad-bottom-dock {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .ipad-lateral-nav-panel {
+    display: none !important;
+  }
+  .bottom-nav-bar, .ipad-bottom-dock, .ipad-top-bar-portrait {
+    display: flex !important;
+  }
+  .tablet-quick-links-bar {
+    display: none !important;
+  }
+}
