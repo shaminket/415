@@ -44,6 +44,7 @@
     initRequiredWorksModule();
     initDynamicPagesSync();
     initAcademicHubSync();
+    renderSubjectAcademicModules();
     initOrderForms();
     initFeedbackForms();
     initChristmasSound();
@@ -64,7 +65,7 @@
   function initDeviceAndOrientation() {
     updateLayoutMetrics();
 
-    // Escuchar el evento reactivo de device-detector
+    // Escuchar el evento reactivo de device-detector y layout-engine
     window.addEventListener("screenSizeChanged", (e) => {
       if (e.detail) {
         state.device = e.detail.device || state.device;
@@ -73,29 +74,47 @@
       handleScreenChange();
     });
 
-    window.addEventListener("resize", handleScreenChange);
-    window.addEventListener("orientationchange", handleScreenChange);
+    window.addEventListener("interfaceChanged", (e) => {
+      if (e.detail) {
+        state.device = e.detail.interface || state.device;
+        state.orientation = e.detail.orientation || state.orientation;
+      }
+      handleScreenChange();
+    });
+
+    window.addEventListener("resize", handleScreenChange, { passive: true });
+    window.addEventListener("orientationchange", handleScreenChange, { passive: true });
     if (window.screen && window.screen.orientation) {
       window.screen.orientation.addEventListener("change", handleScreenChange);
     }
   }
 
   function updateLayoutMetrics() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+    const h = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
     const isLandscape = (w > h) || (window.matchMedia && window.matchMedia("(orientation: landscape)").matches);
     const orientationName = isLandscape ? "landscape" : "portrait";
-    const deviceName = (w >= 768) ? (w > 1366 ? "desktop" : "tablet") : "mobile";
+    
+    let deviceName = "mobile";
+    if (window.LayoutEngine && window.LayoutEngine.currentInterface) {
+      deviceName = window.LayoutEngine.currentInterface;
+    } else if (w >= 1200) {
+      deviceName = "desktop";
+    } else if (w >= 768) {
+      deviceName = "tablet";
+    }
 
     state.orientation = orientationName;
     state.device = deviceName;
 
     document.documentElement.setAttribute("data-device", deviceName);
+    document.documentElement.setAttribute("data-current-interface", deviceName);
     document.documentElement.setAttribute("data-orientation", orientationName);
     document.documentElement.setAttribute("data-ipad-orientation", orientationName);
 
     if (document.body) {
       document.body.setAttribute("data-device", deviceName);
+      document.body.setAttribute("data-current-interface", deviceName);
       document.body.setAttribute("data-orientation", orientationName);
       document.body.setAttribute("data-ipad-orientation", orientationName);
     }
@@ -1169,10 +1188,57 @@
 
     function getWorks() {
       try {
-        return JSON.parse(localStorage.getItem(storageKey)) || [];
-      } catch (e) {
-        return [];
+        const stored = JSON.parse(localStorage.getItem(storageKey));
+        if (Array.isArray(stored) && stored.length > 0) return stored;
+      } catch (e) {}
+
+      // Entregas y trabajos oficiales por defecto para cada materia
+      if (subjectId === "historia") {
+        return [
+          {
+            id: 1,
+            title: "Actividad: Cuarta Revolución Industrial",
+            date: "2026-10-03",
+            notes: "Investigación y reflexión sobre video oficial. Nomenclatura en PDF obligatoria.",
+            completed: false
+          },
+          {
+            id: 2,
+            title: "Presentación Electrónica por Equipos",
+            date: "2026-10-04",
+            notes: "Equipos de 4 a 5. Opción Classroom o Metodología 1+3=1. Formatos .pptx, .ppt o .pdf.",
+            completed: false
+          },
+          {
+            id: 3,
+            title: "2 Epístola Histórica",
+            date: "2026-10-05",
+            notes: "Cierre de Classroom el lunes 5 de oct. Entrega física de cartas el jueves 8 de oct.",
+            completed: false
+          }
+        ];
+      } else if (subjectId === "fisica") {
+        return [
+          {
+            id: 101,
+            title: "Investigación: Suma de Vectores por el Método del Polígono",
+            date: "2026-10-05",
+            notes: "Investigar todo sobre la suma de vectores por el método del polígono.",
+            completed: false
+          }
+        ];
+      } else if (subjectId === "espanol") {
+        return [
+          {
+            id: 201,
+            title: "Descarga o Adquisición de Copias para Clase",
+            date: "2026-10-05",
+            notes: "Descargar de Google Drive o comprar en la gomita / Encardomy.",
+            completed: false
+          }
+        ];
       }
+      return [];
     }
 
     function saveWorks(works) {
@@ -1291,6 +1357,19 @@
     renderExamenesView();
   }
 
+    function getItemDetailUrl(item, deviceOverride) {
+    if (!item) return "index.html";
+    const currentInterface = deviceOverride || document.documentElement.getAttribute("data-current-interface") || state.device;
+    if (currentInterface === "desktop" || state.device === "desktop") {
+      return item.urlMac || `mac-${item.id}.html`;
+    }
+    if (currentInterface === "tablet" || state.device === "tablet") {
+      return item.urlIpad || `ipad-${item.id}.html`;
+    }
+    return item.urlMobile || `${item.id}.html`;
+  }
+  window.getItemDetailUrl = getItemDetailUrl;
+
   function renderAvisosView() {
     const targets = document.querySelectorAll("#avisos-empty-state, #ipad-avisos-empty-state, #mac-avisos-empty-state");
     if (targets.length === 0) return;
@@ -1300,23 +1379,41 @@
       targets.forEach(emptyState => {
         const parent = emptyState.parentElement;
         if (!parent) return;
-        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        const isMac = emptyState.id.includes("mac");
+        const isIpad = emptyState.id.includes("ipad");
+        const dev = isMac ? "desktop" : (isIpad ? "tablet" : "mobile");
+
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">';
         avisos.forEach(a => {
           const subj = ENCARDOMY_DATA.subjects[a.subjectId];
           const color = subj ? subj.color : "var(--accent-gold)";
+          const detailUrl = getItemDetailUrl(a, dev);
+
           html += `
-            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
-              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-                ${escapeHtml(a.subjectName || '')}
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: ${color}; letter-spacing: 0.5px;">
+                    ${escapeHtml(a.subjectName || '')}
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    ${escapeHtml(a.date || '')}
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(a.title)}</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  ${escapeHtml(a.summary || a.content || '')}
+                </p>
+                ${a.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 ${escapeHtml(a.location)}</div>` : ''}
               </div>
-              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-                ${escapeHtml(a.title)}
-              </div>
-              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-                ${escapeHtml(a.content || '')}
-              </div>
-              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-                Fecha: ${escapeHtml(a.date || 'Sin fecha')}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                ${a.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); cursor: pointer;" onclick='window.addCalendarEvent(${JSON.stringify(a.calendarEvent)})'>📅 Calendario</button>` : ''}
+                ${a.locationUrl ? `<a href="${a.locationUrl}" target="_blank" rel="noopener noreferrer" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; text-decoration: none; color: #64D2FF;">📍 Mapa</a>` : ''}
               </div>
             </div>
           `;
@@ -1336,23 +1433,38 @@
       targets.forEach(emptyState => {
         const parent = emptyState.parentElement;
         if (!parent) return;
-        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        const isMac = emptyState.id.includes("mac");
+        const isIpad = emptyState.id.includes("ipad");
+        const dev = isMac ? "desktop" : (isIpad ? "tablet" : "mobile");
+
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">';
         tareas.forEach(t => {
           const subj = ENCARDOMY_DATA.subjects[t.subjectId];
           const color = subj ? subj.color : "var(--accent-gold)";
+          const detailUrl = getItemDetailUrl(t, dev);
+
           html += `
-            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
-              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-                ${escapeHtml(t.subjectName || '')}
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: ${color}; letter-spacing: 0.5px;">
+                    ${escapeHtml(t.subjectName || '')}
+                  </span>
+                  <span style="font-size: 11px; color: var(--accent-red, #ff453a); font-weight: 700;">
+                    Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(t.title)}</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  ${escapeHtml(t.summary || t.description || '')}
+                </p>
               </div>
-              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-                ${escapeHtml(t.title)}
-              </div>
-              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-                ${escapeHtml(t.description || '')}
-              </div>
-              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-                Fecha límite: ${escapeHtml(t.dueDate || 'Sin fecha')}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
               </div>
             </div>
           `;
@@ -1372,23 +1484,40 @@
       targets.forEach(emptyState => {
         const parent = emptyState.parentElement;
         if (!parent) return;
-        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">';
+        const isMac = emptyState.id.includes("mac");
+        const isIpad = emptyState.id.includes("ipad");
+        const dev = isMac ? "desktop" : (isIpad ? "tablet" : "mobile");
+
+        let html = '<div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">';
         examenes.forEach(ex => {
           const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
           const color = subj ? subj.color : "var(--accent-gold)";
+          const detailUrl = getItemDetailUrl(ex, dev);
+
           html += `
-            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0;">
-              <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color}; margin-bottom: 4px;">
-                ${escapeHtml(ex.subjectName || '')}
+            <div class="glass-card" style="border-left: 5px solid ${color}; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: ${color}; letter-spacing: 0.5px;">
+                    ${escapeHtml(ex.subjectName || '')}
+                  </span>
+                  <span style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">
+                    ${escapeHtml(ex.date || 'Por confirmar')}
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(ex.title)}</a>
+                </h3>
+                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+                  <strong>Temario:</strong> ${escapeHtml(ex.topics || 'Por confirmar')}
+                </div>
+                ${ex.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 ${escapeHtml(ex.location)}</div>` : ''}
               </div>
-              <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">
-                ${escapeHtml(ex.title)}
-              </div>
-              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45;">
-                Temario: ${escapeHtml(ex.topics || 'Por confirmar')}
-              </div>
-              <div style="font-size: 11.5px; color: var(--text-tertiary); margin-top: 8px;">
-                Fecha: ${escapeHtml(ex.date || 'Por confirmar')}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                ${ex.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); cursor: pointer;" onclick='window.addCalendarEvent(${JSON.stringify(ex.calendarEvent)})'>📅 Calendario</button>` : ''}
               </div>
             </div>
           `;
@@ -1406,12 +1535,14 @@
     renderAvisosHub();
     renderTareasHub();
     renderExamenesHub();
+    renderSubjectAcademicModules();
   }
 
   function renderAvisosHub() {
+    const mobList = document.getElementById("mobile-avisos-list");
     const ipadList = document.getElementById("ipad-avisos-list");
     const macList = document.getElementById("mac-avisos-list");
-    const lists = [ipadList, macList].filter(Boolean);
+    const lists = [mobList, ipadList, macList].filter(Boolean);
     if (lists.length === 0) return;
 
     const avisos = ENCARDOMY_DATA.getAvisos("all", "all", false);
@@ -1420,7 +1551,7 @@
       list.innerHTML = "";
       if (avisos.length === 0) {
         list.innerHTML = `
-          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div class="empty-state-card" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
             <div style="font-size: 26px; margin-bottom: 6px;">📢</div>
             <strong style="color: var(--text-secondary);">No hay avisos por ahora.</strong>
           </div>
@@ -1428,35 +1559,57 @@
         return;
       }
 
+      const dev = (list === macList) ? "desktop" : ((list === ipadList) ? "tablet" : "mobile");
+
       avisos.forEach(a => {
         const subj = ENCARDOMY_DATA.subjects[a.subjectId];
         const color = subj ? subj.color : "var(--accent-gold)";
+        const targetUrl = getItemDetailUrl(a, dev);
+
         const item = document.createElement("div");
-        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.className = (dev === "desktop") ? "mac-hub-card" : ((dev === "tablet") ? "ipad-academic-card" : "glass-card");
         item.style.setProperty("--item-color", color);
-        item.style.borderLeft = "4px solid " + color;
-        item.style.padding = "10px 12px";
+        item.style.borderLeft = "5px solid " + color;
+        item.style.padding = (dev === "mobile") ? "14px 16px" : "12px 14px";
         item.style.borderRadius = "8px";
         item.style.background = "rgba(255,255,255,0.04)";
+        item.style.marginBottom = "10px";
         item.style.cursor = "pointer";
         item.innerHTML = `
-          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(a.title)}</div>
-          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">${escapeHtml(a.content || '')}</div>
-          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
-            <span>${escapeHtml(a.subjectName || '')}</span>
-            <span>${escapeHtml(a.date || '')}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(a.subjectName || '')}</span>
+            <span style="font-size: 11px; color: var(--text-tertiary);">${escapeHtml(a.date || '')}</span>
+          </div>
+          <div style="font-weight: 800; color: var(--text-primary); font-size: 15px; margin-bottom: 4px; line-height: 1.3;">
+            <a href="${targetUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(a.title)}</a>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+            ${escapeHtml(a.summary || a.content || '')}
+          </div>
+          ${a.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 8px;">📍 ${escapeHtml(a.location)}</div>` : ''}
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <a href="${targetUrl}" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 6px;">
+              <span>Más información →</span>
+            </a>
+            ${a.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); border: none; cursor: pointer; border-radius: 6px;" onclick='event.stopPropagation(); window.addCalendarEvent(${JSON.stringify(a.calendarEvent)})'>📅 Calendario</button>` : ''}
+            ${a.locationUrl ? `<a href="${a.locationUrl}" target="_blank" rel="noopener noreferrer" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; text-decoration: none; color: #64D2FF; border-radius: 6px;" onclick="event.stopPropagation();">📍 Mapa</a>` : ''}
           </div>
         `;
-        item.addEventListener("click", () => openDetailModal("Aviso", a, color));
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON" && !e.target.closest("button") && !e.target.closest("a")) {
+            window.location.href = targetUrl;
+          }
+        });
         list.appendChild(item);
       });
     });
   }
 
   function renderTareasHub() {
+    const mobList = document.getElementById("mobile-tareas-list");
     const ipadList = document.getElementById("ipad-tareas-list");
     const macList = document.getElementById("mac-tareas-list");
-    const lists = [ipadList, macList].filter(Boolean);
+    const lists = [mobList, ipadList, macList].filter(Boolean);
     if (lists.length === 0) return;
 
     const tareas = ENCARDOMY_DATA.getTareas("all", false);
@@ -1465,7 +1618,7 @@
       list.innerHTML = "";
       if (tareas.length === 0) {
         list.innerHTML = `
-          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div class="empty-state-card" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
             <div style="font-size: 26px; margin-bottom: 6px;">📝</div>
             <strong style="color: var(--text-secondary);">No hay tareas por ahora.</strong>
           </div>
@@ -1473,35 +1626,54 @@
         return;
       }
 
+      const dev = (list === macList) ? "desktop" : ((list === ipadList) ? "tablet" : "mobile");
+
       tareas.forEach(t => {
         const subj = ENCARDOMY_DATA.subjects[t.subjectId];
         const color = subj ? subj.color : "var(--accent-gold)";
+        const targetUrl = getItemDetailUrl(t, dev);
+
         const item = document.createElement("div");
-        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.className = (dev === "desktop") ? "mac-hub-card" : ((dev === "tablet") ? "ipad-academic-card" : "glass-card");
         item.style.setProperty("--item-color", color);
-        item.style.borderLeft = "4px solid " + color;
-        item.style.padding = "10px 12px";
+        item.style.borderLeft = "5px solid " + color;
+        item.style.padding = (dev === "mobile") ? "14px 16px" : "12px 14px";
         item.style.borderRadius = "8px";
         item.style.background = "rgba(255,255,255,0.04)";
+        item.style.marginBottom = "10px";
         item.style.cursor = "pointer";
         item.innerHTML = `
-          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(t.title)}</div>
-          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">${escapeHtml(t.description || '')}</div>
-          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
-            <span>${escapeHtml(t.subjectName || '')}</span>
-            <span>Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(t.subjectName || '')}</span>
+            <span style="font-size: 11px; color: #ff453a; font-weight: 700;">Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
+          </div>
+          <div style="font-weight: 800; color: var(--text-primary); font-size: 15px; margin-bottom: 4px; line-height: 1.3;">
+            <a href="${targetUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(t.title)}</a>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+            ${escapeHtml(t.summary || t.description || '')}
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <a href="${targetUrl}" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 6px;">
+              <span>Más información →</span>
+            </a>
           </div>
         `;
-        item.addEventListener("click", () => openDetailModal("Tarea", t, color));
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON" && !e.target.closest("button") && !e.target.closest("a")) {
+            window.location.href = targetUrl;
+          }
+        });
         list.appendChild(item);
       });
     });
   }
 
   function renderExamenesHub() {
+    const mobList = document.getElementById("mobile-examenes-list");
     const ipadList = document.getElementById("ipad-examenes-list");
     const macList = document.getElementById("mac-examenes-list");
-    const lists = [ipadList, macList].filter(Boolean);
+    const lists = [mobList, ipadList, macList].filter(Boolean);
     if (lists.length === 0) return;
 
     const examenes = ENCARDOMY_DATA.getExamenes("all", false);
@@ -1510,7 +1682,7 @@
       list.innerHTML = "";
       if (examenes.length === 0) {
         list.innerHTML = `
-          <div class="mac-hub-empty" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
+          <div class="empty-state-card" style="text-align: center; padding: 24px 10px; color: var(--text-tertiary); font-size: 13.5px;">
             <div style="font-size: 26px; margin-bottom: 6px;">📋</div>
             <strong style="color: var(--text-secondary);">No hay exámenes por ahora.</strong>
           </div>
@@ -1518,52 +1690,357 @@
         return;
       }
 
+      const dev = (list === macList) ? "desktop" : ((list === ipadList) ? "tablet" : "mobile");
+
       examenes.forEach(ex => {
         const subj = ENCARDOMY_DATA.subjects[ex.subjectId];
         const color = subj ? subj.color : "var(--accent-gold)";
+        const targetUrl = getItemDetailUrl(ex, dev);
+
         const item = document.createElement("div");
-        item.className = (list === macList) ? "mac-hub-card" : "ipad-academic-card";
+        item.className = (dev === "desktop") ? "mac-hub-card" : ((dev === "tablet") ? "ipad-academic-card" : "glass-card");
         item.style.setProperty("--item-color", color);
-        item.style.borderLeft = "4px solid " + color;
-        item.style.padding = "10px 12px";
+        item.style.borderLeft = "5px solid " + color;
+        item.style.padding = (dev === "mobile") ? "14px 16px" : "12px 14px";
         item.style.borderRadius = "8px";
         item.style.background = "rgba(255,255,255,0.04)";
+        item.style.marginBottom = "10px";
         item.style.cursor = "pointer";
         item.innerHTML = `
-          <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">${escapeHtml(ex.title)}</div>
-          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 6px;">Temario: ${escapeHtml(ex.topics || 'Por confirmar')}</div>
-          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary);">
-            <span>${escapeHtml(ex.subjectName || '')}</span>
-            <span>Fecha: ${escapeHtml(ex.date || 'Por confirmar')}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(ex.subjectName || '')}</span>
+            <span style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">${escapeHtml(ex.date || 'Por confirmar')}</span>
+          </div>
+          <div style="font-weight: 800; color: var(--text-primary); font-size: 15px; margin-bottom: 4px; line-height: 1.3;">
+            <a href="${targetUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(ex.title)}</a>
+          </div>
+          <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 8px;">
+            <strong>Temario:</strong> ${escapeHtml(ex.topics || 'Por confirmar')}
+          </div>
+          ${ex.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 8px;">📍 ${escapeHtml(ex.location)}</div>` : ''}
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <a href="${targetUrl}" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 6px;">
+              <span>Más información →</span>
+            </a>
+            ${ex.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); border: none; cursor: pointer; border-radius: 6px;" onclick='event.stopPropagation(); window.addCalendarEvent(${JSON.stringify(ex.calendarEvent)})'>📅 Calendario</button>` : ''}
           </div>
         `;
-        item.addEventListener("click", () => openDetailModal("Examen", ex, color));
+        item.addEventListener("click", (e) => {
+          if (e.target.tagName !== "A" && e.target.tagName !== "BUTTON" && !e.target.closest("button") && !e.target.closest("a")) {
+            window.location.href = targetUrl;
+          }
+        });
         list.appendChild(item);
       });
     });
   }
 
+  // ==========================================================================
+  // SINCRONIZACIÓN DINÁMICA DE PÁGINAS INDIVIDUALES DE MATERIAS
+  // Cada materia muestra única y exclusivamente sus propios avisos, tareas y exámenes
+  // ==========================================================================
+  function renderSubjectAcademicModules() {
+    const subjectContainers = document.querySelectorAll("[data-subject-id]");
+    if (subjectContainers.length === 0) return;
+
+    const currentInterface = document.documentElement.getAttribute("data-current-interface") || state.device;
+
+    subjectContainers.forEach(container => {
+      const subjectId = container.dataset.subjectId;
+      if (!subjectId) return;
+
+      const subj = ENCARDOMY_DATA.subjects[subjectId];
+      const color = subj ? subj.color : "var(--accent-gold)";
+
+      // 1. Avisos de esta materia
+      const avisosContainer = container.querySelector(".subject-avisos-list");
+      if (avisosContainer) {
+        const avisos = ENCARDOMY_DATA.getAvisos(subjectId, "all", false);
+        avisosContainer.innerHTML = "";
+        if (avisos.length === 0) {
+          avisosContainer.innerHTML = `
+            <div class="empty-state-card" style="padding: 16px 12px; margin: 4px 0; background: rgba(0,0,0,0.25);">
+              <div class="empty-state-text" style="font-size: 13px; color: var(--text-tertiary);">Sin avisos activos para esta materia.</div>
+            </div>
+          `;
+        } else {
+          avisos.forEach(a => {
+            const detailUrl = getItemDetailUrl(a, currentInterface);
+            const card = document.createElement("div");
+            card.className = "glass-card";
+            card.style.borderLeft = "5px solid " + color;
+            card.style.marginBottom = "14px";
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(a.subjectName || '')}</span>
+                <span style="font-size: 11px; color: var(--text-tertiary);">${escapeHtml(a.date || '')}</span>
+              </div>
+              <h4 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">
+                <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(a.title)}</a>
+              </h4>
+              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+                ${escapeHtml(a.summary || a.content || '')}
+              </p>
+              ${a.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 ${escapeHtml(a.location)}</div>` : ''}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px;">
+                  <span>Más información →</span>
+                </a>
+                ${a.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); cursor: pointer;" onclick='window.addCalendarEvent(${JSON.stringify(a.calendarEvent)})'>📅 Calendario</button>` : ''}
+                ${a.locationUrl ? `<a href="${a.locationUrl}" target="_blank" rel="noopener noreferrer" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; text-decoration: none; color: #64D2FF;">📍 Mapa</a>` : ''}
+              </div>
+            `;
+            avisosContainer.appendChild(card);
+          });
+        }
+      }
+
+      // 2. Tareas de esta materia
+      const tareasContainer = container.querySelector(".subject-tareas-list");
+      if (tareasContainer) {
+        const tareas = ENCARDOMY_DATA.getTareas(subjectId, false);
+        tareasContainer.innerHTML = "";
+        if (tareas.length === 0) {
+          tareasContainer.innerHTML = `
+            <div class="empty-state-card" style="padding: 16px 12px; margin: 4px 0; background: rgba(0,0,0,0.25);">
+              <div class="empty-state-text" style="font-size: 13px; color: var(--text-tertiary);">Sin tareas pendientes para esta materia.</div>
+            </div>
+          `;
+        } else {
+          tareas.forEach(t => {
+            const detailUrl = getItemDetailUrl(t, currentInterface);
+            const card = document.createElement("div");
+            card.className = "glass-card";
+            card.style.borderLeft = "5px solid " + color;
+            card.style.marginBottom = "14px";
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(t.subjectName || '')}</span>
+                <span style="font-size: 11px; color: #ff453a; font-weight: 700;">Entrega: ${escapeHtml(t.dueDate || 'Sin fecha')}</span>
+              </div>
+              <h4 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">
+                <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(t.title)}</a>
+              </h4>
+              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 10px;">
+                ${escapeHtml(t.summary || t.description || '')}
+              </p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px;">
+                  <span>Más información →</span>
+                </a>
+              </div>
+            `;
+            tareasContainer.appendChild(card);
+          });
+        }
+      }
+
+      // 3. Exámenes de esta materia
+      const examenesContainer = container.querySelector(".subject-examenes-list");
+      if (examenesContainer) {
+        const examenes = ENCARDOMY_DATA.getExamenes(subjectId, false);
+        examenesContainer.innerHTML = "";
+        if (examenes.length === 0) {
+          examenesContainer.innerHTML = `
+            <div class="empty-state-card" style="padding: 16px 12px; margin: 4px 0; background: rgba(0,0,0,0.25);">
+              <div class="empty-state-text" style="font-size: 13px; color: var(--text-tertiary);">Sin exámenes programados para esta materia.</div>
+            </div>
+          `;
+        } else {
+          examenes.forEach(ex => {
+            const detailUrl = getItemDetailUrl(ex, currentInterface);
+            const card = document.createElement("div");
+            card.className = "glass-card";
+            card.style.borderLeft = "5px solid " + color;
+            card.style.marginBottom = "14px";
+            card.innerHTML = `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: ${color};">${escapeHtml(ex.subjectName || '')}</span>
+                <span style="font-size: 11px; color: var(--accent-gold); font-weight: 700;">${escapeHtml(ex.date || 'Por confirmar')}</span>
+              </div>
+              <h4 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">
+                <a href="${detailUrl}" style="color: inherit; text-decoration: none;">${escapeHtml(ex.title)}</a>
+              </h4>
+              <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 8px;">
+                <strong>Temario:</strong> ${escapeHtml(ex.topics || 'Por confirmar')}
+              </div>
+              ${ex.location ? `<div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 ${escapeHtml(ex.location)}</div>` : ''}
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <a href="${detailUrl}" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px;">
+                  <span>Más información →</span>
+                </a>
+                ${ex.calendarEvent ? `<button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); cursor: pointer;" onclick='window.addCalendarEvent(${JSON.stringify(ex.calendarEvent)})'>📅 Calendario</button>` : ''}
+              </div>
+            `;
+            examenesContainer.appendChild(card);
+          });
+        }
+      }
+    });
+  }
+
+  // ==========================================================================
+  // FUNCIÓN UNIVERSAL: AGREGAR EVENTO AL CALENDARIO (.ICS + GOOGLE CALENDAR)
+  // Soporta iOS, iPadOS, macOS, Android y Windows sin dependencias externas
+  // ==========================================================================
+  function addCalendarEvent(eventData) {
+    if (!eventData) return;
+    const title = eventData.title || "Evento Escolar ENP 4";
+    const location = eventData.location || "ENP 4 Vidal Castañeda y Nájera - UNAM";
+    const description = eventData.description || "";
+    
+    // Parse dates
+    const dStart = new Date(eventData.startISO || eventData.date);
+    const dEnd = new Date(eventData.endISO || (dStart.getTime() + 60 * 60 * 1000));
+    
+    const toUtcIcs = d => {
+      if (isNaN(d.getTime())) return "20261015T170000Z";
+      return d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+    };
+
+    const cleanIcs = str => (str || "").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
+
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//ENCARDOMY MINWEB 415//ES",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      `SUMMARY:${cleanIcs(title)}`,
+      `DTSTART:${toUtcIcs(dStart)}`,
+      `DTEND:${toUtcIcs(dEnd)}`,
+      `LOCATION:${cleanIcs(location)}`,
+      `DESCRIPTION:${cleanIcs(description)}`,
+      "STATUS:CONFIRMED",
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+
+    // 1. Descarga del archivo .ics estándar para Apple Calendar / Outlook
+    try {
+      const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${title.replace(/[^a-zA-Z0-9_-]/g, "_")}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error("Error al generar .ics:", e);
+    }
+
+    // 2. Abrir también en Google Calendar en nueva pestaña para usuarios de Google
+    try {
+      const gcalParams = new URLSearchParams({
+        action: "TEMPLATE",
+        text: title,
+        dates: `${toUtcIcs(dStart)}/${toUtcIcs(dEnd)}`,
+        details: description,
+        location: location
+      });
+      window.open(`https://calendar.google.com/calendar/render?${gcalParams.toString()}`, "_blank");
+    } catch (e) {}
+  }
+  window.addCalendarEvent = addCalendarEvent;
+
   function openDetailModal(type, data, color) {
+    if (!data) return;
     const currentInterface = document.documentElement.getAttribute("data-current-interface") || state.device;
     const macBackdrop = document.getElementById("mac-detail-modal");
     const ipadBackdrop = document.getElementById("ipad-detail-modal");
+    const itemColor = color || "var(--accent-gold)";
+
+    let linksHtml = "";
+    if (Array.isArray(data.links) && data.links.length > 0) {
+      linksHtml = `
+        <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+          <strong style="font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Enlaces y Recursos:</strong>
+          ${data.links.map(l => `
+            <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="display: inline-flex; align-items: center; justify-content: space-between; padding: 10px 14px; text-decoration: none; border-radius: 8px; background: rgba(255,255,255,0.08); color: var(--text-primary); font-size: 13.5px; font-weight: 600;">
+              <span>🔗 ${escapeHtml(l.label)}</span>
+              <span style="font-size: 12px; opacity: 0.7;">Abrir ↗</span>
+            </a>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    let calendarBtnHtml = "";
+    if (data.calendarEvent) {
+      calendarBtnHtml = `
+        <div style="margin-top: 16px;">
+          <button type="button" class="btn-primary-ios" style="background: var(--accent-gold, #E5C07B); color: #04140b; font-weight: 700; width: 100%; height: 46px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px;" onclick='window.addCalendarEvent(${JSON.stringify(data.calendarEvent)})'>
+            <span>📅</span>
+            <span>Agregar al Calendario (.ics / Google)</span>
+          </button>
+        </div>
+      `;
+    }
+
+    let locationHtml = "";
+    if (data.location) {
+      locationHtml = `
+        <div style="margin-top: 12px; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--surface-glass-border-subtle, rgba(255,255,255,0.1)); border-radius: 8px; font-size: 13px;">
+          <strong style="color: var(--text-primary);">📍 Ubicación:</strong> ${escapeHtml(data.location)}
+          ${data.locationUrl ? `<div style="margin-top: 6px;"><a href="${data.locationUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-blue, #2997FF); text-decoration: underline; font-size: 12.5px;">Ver en Google Maps ↗</a></div>` : ''}
+        </div>
+      `;
+    }
+
+    let whatsappHtml = "";
+    if (data.whatsapp) {
+      const waMsg = encodeURIComponent(data.whatsappMessage || `Hola, me comunico respecto a: ${data.title}`);
+      whatsappHtml = `
+        <div style="margin-top: 14px;">
+          <a href="https://wa.me/${data.whatsapp.replace(/[^0-9]/g, '')}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #25D366; color: #04140b; font-weight: 700; width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 8px;">
+            <span>💬</span>
+            <span>Solicitar / Confirmar por WhatsApp (${escapeHtml(data.whatsapp)})</span>
+          </a>
+        </div>
+      `;
+    }
+
+    let clipHtml = "";
+    if (data.clipUrl) {
+      clipHtml = `
+        <div style="margin-top: 10px;">
+          <a href="${data.clipUrl}" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #ffa94d; color: #04140b; font-weight: 700; width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 8px;">
+            <span>💳</span>
+            <span>Pagar en Línea con Clip ↗</span>
+          </a>
+        </div>
+      `;
+    }
 
     let detailsHtml = `
-      <div style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">
-        <strong>Materia:</strong> ${escapeHtml(data.subjectName || 'General')}
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+        <span class="ipad-pill" style="font-size: 12px; background: rgba(255,255,255,0.1); color: ${itemColor}; border-color: ${itemColor};">
+          ${escapeHtml(data.subjectName || 'Aviso General')}
+        </span>
+        <span style="font-size: 12.5px; color: var(--text-tertiary);">
+          📅 ${escapeHtml(data.date || data.dueDate || '')}
+        </span>
       </div>
-      <div style="margin-bottom: 16px; font-size: 14.5px; color: var(--text-primary); line-height: 1.5;">
-        ${escapeHtml(data.content || data.description || data.topics || 'Sin descripción adicional')}
+
+      <div style="font-size: 14.5px; color: var(--text-primary); line-height: 1.6; white-space: pre-wrap; margin-bottom: 14px;">
+        ${escapeHtml(data.content || data.description || data.topics || '')}
       </div>
-      <div style="font-size: 13px; color: var(--text-tertiary);">
-        <strong>Fecha:</strong> ${escapeHtml(data.date || data.dueDate || 'Sin fecha')}
-      </div>
+
+      ${locationHtml}
+      ${linksHtml}
+      ${calendarBtnHtml}
+      ${whatsappHtml}
+      ${clipHtml}
     `;
 
     if (currentInterface === "desktop" && macBackdrop) {
       const macTitle = document.getElementById("mac-modal-title");
       const macBody = document.getElementById("mac-modal-body");
-      if (macTitle) macTitle.textContent = `${type}: ${data.title}`;
+      if (macTitle) {
+        macTitle.textContent = `${type}: ${data.title}`;
+        macTitle.style.color = itemColor;
+      }
       if (macBody) macBody.innerHTML = detailsHtml;
       macBackdrop.classList.add("show");
       return;
@@ -1574,7 +2051,7 @@
       const body = document.getElementById("ipad-modal-body");
       if (title) {
         title.textContent = `${type}: ${data.title}`;
-        title.style.color = color || "var(--accent-gold)";
+        title.style.color = itemColor;
       }
       if (body) body.innerHTML = detailsHtml;
       ipadBackdrop.classList.add("show");
@@ -1590,7 +2067,14 @@
     });
   }
 
-  // ==========================================================================
+  const closeBtnMac = document.getElementById("mac-modal-close");
+  if (closeBtnMac) {
+    closeBtnMac.addEventListener("click", () => {
+      const backdrop = document.getElementById("mac-detail-modal");
+      if (backdrop) backdrop.classList.remove("show");
+    });
+  }
+// ==========================================================================
   // 11. FORMULARIO DE PEDIDOS Y WHATSAPP (Reglas 72, 73)
   // Teléfono oficial obligatorio: +52 55 7198 5641
   // ==========================================================================
@@ -1962,10 +2446,88 @@
     })[m]);
   }
 
+  
+  // ==========================================================================
+  // RENDERIZADO DEL FEED DE PUBLICIDAD (TAL VEZ TE PUEDA INTERESAR)
+  // Celular + iPad + Mac
+  // ==========================================================================
+  function renderPublicidadFeed() {
+    const feeds = document.querySelectorAll("#publicidad-feed, #ipad-publicidad-feed, #mac-publicidad-feed");
+    if (feeds.length === 0) return;
+
+    const items = ENCARDOMY_DATA.getPublicidad();
+    feeds.forEach(container => {
+      container.innerHTML = "";
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state-card" style="padding: 32px 16px; margin: 10px 0; background: rgba(0,0,0,0.35);">
+            <div class="empty-state-icon" style="font-size: 36px; margin-bottom: 8px;">🎁</div>
+            <div class="empty-state-text" style="font-size: 16px; font-weight: 700;">No hay nada disponible por ahora.</div>
+            <div class="empty-state-subtext" style="font-size: 13px; line-height: 1.45; margin-top: 6px;">
+              Este espacio mostrará oportunidades, productos y servicios de interés para la comunidad escolar del Grupo 415 cuando estén listos.
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const gridWrapper = document.createElement("div");
+      gridWrapper.style.display = "flex";
+      gridWrapper.style.flexDirection = "column";
+      gridWrapper.style.gap = "16px";
+
+      items.forEach(ad => {
+        const card = document.createElement("article");
+        card.className = "mac-card";
+        card.style.borderLeft = "5px solid var(--accent-gold, #E5C07B)";
+        card.style.background = "linear-gradient(135deg, rgba(229, 192, 123, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%)";
+        card.style.padding = "18px 20px";
+        card.style.marginBottom = "0";
+
+        const waMsg = encodeURIComponent(ad.whatsappMessage || `Hola, me interesa el servicio: ${ad.title}`);
+        const waUrl = ad.whatsapp ? `https://wa.me/${ad.whatsapp.replace(/[^0-9]/g, '')}?text=${waMsg}` : null;
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent-gold); letter-spacing: 0.8px;">
+              ${escapeHtml(ad.badge || 'Oportunidad')}
+            </span>
+            <span style="font-size: 13px; font-weight: 800; color: #25D366; background: rgba(37, 211, 102, 0.12); padding: 3px 8px; border-radius: 6px;">
+              ${escapeHtml(ad.price || '')}
+            </span>
+          </div>
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">
+            ${escapeHtml(ad.title)}
+          </h3>
+          <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px;">
+            ${escapeHtml(ad.description)}
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            ${ad.clipUrl ? `
+              <a href="${ad.clipUrl}" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #ffa94d; color: #04140b; font-weight: 700; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                <span>💳</span>
+                <span>Pagar con Clip ↗</span>
+              </a>
+            ` : ''}
+            ${waUrl ? `
+              <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #25D366; color: #04140b; font-weight: 700; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+                <span>💬</span>
+                <span>Pedir por WhatsApp ↗</span>
+              </a>
+            ` : ''}
+          </div>
+        `;
+        gridWrapper.appendChild(card);
+      });
+      container.appendChild(gridWrapper);
+    });
+  }
+
   function renderApp() {
     updateClassStatus();
     renderSchedule();
     initDynamicPagesSync();
+    renderPublicidadFeed();
     initAcademicHubSync();
     if (typeof updateAllProfessorContainers === "function") {
       updateAllProfessorContainers(activeProfessorQuery || "");
@@ -1976,6 +2538,8 @@
   window.EncardomyApp = {
     state,
     setSection,
+    openDetailModal: openDetailModal,
+    renderPublicidadFeed: renderPublicidadFeed,
     renderApp,
     updateClassStatus,
     renderSchedule

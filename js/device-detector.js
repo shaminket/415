@@ -6,16 +6,21 @@
  * 1. Detecta automáticamente las dimensiones de la pantalla y la orientación.
  * 2. Asigna en tiempo real los atributos data-device ("mobile", "tablet", "desktop")
  *    y data-orientation / data-ipad-orientation ("portrait", "landscape") en <html> y <body>.
- * 3. Escucha continuamente cambios de tamaño (resize), orientación (orientationchange),
- *    y división de pantalla (iPad Split View 1/3, 1/2, 2/3) adaptando la interfaz
- *    instantáneamente sin recargar la página.
+ * 3. Sincronizado 100% con LayoutEngine para evitar discrepancias o bucles.
+ * 4. Escucha continuamente cambios de tamaño (resize), orientación (orientationchange),
+ *    y división de pantalla (iPad Split View) adaptando la interfaz instantáneamente.
  */
 (function () {
   "use strict";
 
   function detectScreen() {
-    const width = window.innerWidth || document.documentElement.clientWidth || (document.body ? document.body.clientWidth : 0);
-    const height = window.innerHeight || document.documentElement.clientHeight || (document.body ? document.body.clientHeight : 0);
+    if (window.LayoutEngine && typeof window.LayoutEngine.evaluateViewport === "function") {
+      window.LayoutEngine.evaluateViewport(false);
+      return;
+    }
+
+    const width = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0);
+    const height = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
 
     if (!width || !height) return;
 
@@ -23,25 +28,29 @@
     const isLandscape = (width > height) || (window.matchMedia && window.matchMedia("(orientation: landscape)").matches);
     const orientation = isLandscape ? "landscape" : "portrait";
 
-    // Clasificación de dispositivo
+    // Clasificación de dispositivo calibrada:
     // Móvil: < 768px
-    // Tableta / iPad: 768px a 1366px (incluye iPad Mini 768px, iPad Estándar 810/820px, iPad Air 820px, iPad Pro 11" 834px, iPad Pro 12.9" 1024/1366px)
-    // Desktop: > 1366px
+    // Tableta / iPad: 768px a 1199px (incluye iPad Mini 768px, iPad Estándar 810/820px, iPad Air 820px, iPad Pro 11" 834px, iPad Pro 12.9" 1024px)
+    // Desktop: >= 1200px (MacBook, iMac, Monitores externos)
+    const maxTouch = (typeof navigator !== "undefined" && navigator.maxTouchPoints) ? navigator.maxTouchPoints : 0;
+    const isTouch = maxTouch > 0 || (typeof window !== "undefined" && "ontouchstart" in window);
+    const ua = (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "";
+    const isIPad = isTouch && (/iPad/i.test(ua) || (ua.includes("Macintosh") && maxTouch > 1));
+
     let device = "mobile";
-    if (width >= 768 && width <= 1366) {
-      device = "tablet";
-    } else if (width > 1366) {
+    if (isIPad) {
+      device = width < 680 ? "mobile" : "tablet";
+    } else if (width >= 1200 && (!isTouch || width >= 1400)) {
       device = "desktop";
+    } else if (width >= 768) {
+      device = "tablet";
+    } else {
+      device = "mobile";
     }
 
-    // Detección complementaria de iPad por User Agent y pantalla táctil
-    const isMac = (navigator.userAgent.includes("Macintosh") || (navigator.platform && navigator.platform.toUpperCase().indexOf("MAC") >= 0)) && (!navigator.maxTouchPoints || navigator.maxTouchPoints === 0);
-    const isIPadOS = (navigator.userAgent.includes("Macintosh") && navigator.maxTouchPoints > 1) || /iPad/i.test(navigator.userAgent);
+    const isMac = (ua.includes("Macintosh") || (navigator.platform && navigator.platform.toUpperCase().indexOf("MAC") >= 0)) && (maxTouch === 0);
     if (isMac) {
       document.documentElement.setAttribute("data-is-mac", "true");
-    }
-    if (isIPadOS && width >= 600) {
-      device = "tablet";
     }
 
     // Atributos en <html> y <body>
@@ -49,6 +58,7 @@
     const body = document.body;
 
     root.setAttribute("data-device", device);
+    root.setAttribute("data-current-interface", device);
     root.setAttribute("data-orientation", orientation);
     root.setAttribute("data-ipad-orientation", orientation);
     root.setAttribute("data-screen-width", String(width));
@@ -56,6 +66,7 @@
 
     if (body) {
       body.setAttribute("data-device", device);
+      body.setAttribute("data-current-interface", device);
       body.setAttribute("data-orientation", orientation);
       body.setAttribute("data-ipad-orientation", orientation);
     }
@@ -68,7 +79,7 @@
     const orientationBadges = document.querySelectorAll(".ipad-orientation-badge, #ipad-orientation-badge");
     orientationBadges.forEach(badge => {
       badge.textContent = isLandscape ? "⟳ Horizontal" : "⟲ Vertical";
-      badge.title = `Resolución detectada: ${width} × ${height} px (${device.toUpperCase()})`;
+      badge.title = `Resolución: ${width} × ${height} px (${device.toUpperCase()})`;
     });
 
     // Notificar a toda la aplicación
@@ -99,23 +110,17 @@
   window.addEventListener("resize", function () {
     detectScreen();
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(detectScreen, 80);
-  });
+    resizeTimer = setTimeout(detectScreen, 60);
+  }, { passive: true });
 
   // Giro de pantalla en tabletas y móviles
   window.addEventListener("orientationchange", function () {
     detectScreen();
-    setTimeout(detectScreen, 120);
-  });
+    setTimeout(detectScreen, 80);
+  }, { passive: true });
 
   if (window.screen && window.screen.orientation) {
     window.screen.orientation.addEventListener("change", detectScreen);
-  }
-
-  if (window.matchMedia) {
-    window.matchMedia("(orientation: landscape)").addEventListener("change", detectScreen);
-    window.matchMedia("(min-width: 768px)").addEventListener("change", detectScreen);
-    window.matchMedia("(min-width: 1024px)").addEventListener("change", detectScreen);
   }
 
   window.EncardomyDetector = {

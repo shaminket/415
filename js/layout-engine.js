@@ -2,19 +2,21 @@
  * ENCARDOMY — MINWEB 415
  * Central Real-Time Viewport & Layout Engine
  * 
- * Orquestador Central de Detección Dinámica de Interfaz:
+ * Orquestador Central de Detección Dinámica de Interfaz y Viewport Real:
  * 1. Mide continuamente el espacio real disponible en el viewport (CSS pixels):
  *    - window.innerWidth / window.innerHeight
  *    - document.documentElement.clientWidth / clientHeight
  *    - Proporción de aspecto (width / height)
  *    - Orientación (landscape vs portrait)
- * 2. Determina con zona de histeresis (estabilidad en los bordes) la interfaz conveniente:
- *    - CELULAR (< 720px)
- *    - TABLETA (720px a 1120px, o pantallas verticales)
- *    - COMPUTADORA (>= 1120px en formato horizontal / escritorio)
- * 3. Conmuta entre las 3 interfaces en tiempo real SIN RECARGAR LA PÁGINA.
- * 4. Actualiza suavemente la URL en la barra de direcciones con history.replaceState.
- * 5. Notifica y sincroniza el estado de la aplicación (EncardomyApp).
+ *    - Tipo de dispositivo (touch/iPad vs desktop Mac)
+ * 2. Determina con zona de histeresis (estabilidad en los bordes para evitar parpadeos):
+ *    - CELULAR (< 768px) → Muestra la interfaz oficial de index.html
+ *    - TABLETA / iPad (768px a 1199px, o iPads en rotación vertical/horizontal) → Muestra ipad-index.html
+ *    - COMPUTADORA / Mac (>= 1200px en monitores/escritorio) → Muestra mac-index.html
+ * 3. Conmuta entre las 3 interfaces en tiempo real SIN RECARGAR LA PÁGINA (sin pérdidas de datos ni estado).
+ * 4. Actualiza suavemente la URL en la barra de direcciones con history.replaceState sin reload ni loop.
+ * 5. Adapta la vista Mac internamente a: Ventana Pequeña (Compact), Mediana (Medium), Grande (Large) y Pantalla Completa.
+ * 6. Adapta la vista iPad a orientación vertical u horizontal y a Split View instantáneamente.
  */
 
 (function () {
@@ -26,14 +28,16 @@
     rafId: null,
     resizeObserver: null,
 
-    // Umbrales con histéresis (evita parpadeo en los bordes)
-    // Para pasar a tablet: 740px; para volver a mobile: 700px
-    // Para pasar a desktop: 1140px; para volver a tablet: 1100px
+    // Umbrales con histéresis calibrada:
+    // Celular < 740px. Entre 740px y 768px preserva el estado actual.
+    // Tableta: 768px a 1160px.
+    // Entre 1160px y 1200px preserva el estado actual.
+    // Mac / Desktop: >= 1200px.
     THRESHOLDS: {
-      MOBILE_TO_TABLET: 740,
-      TABLET_TO_MOBILE: 700,
-      TABLET_TO_DESKTOP: 1140,
-      DESKTOP_TO_TABLET: 1100
+      MOBILE_TO_TABLET: 768,
+      TABLET_TO_MOBILE: 740,
+      TABLET_TO_DESKTOP: 1200,
+      DESKTOP_TO_TABLET: 1160
     },
 
     init: function () {
@@ -42,44 +46,49 @@
     },
 
     measureViewport: function () {
-      const w = window.innerWidth || document.documentElement.clientWidth || (document.body ? document.body.clientWidth : 0);
-      const h = window.innerHeight || document.documentElement.clientHeight || (document.body ? document.body.clientHeight : 0);
+      const w = Math.max(window.innerWidth || 0, document.documentElement.clientWidth || 0, (document.body ? document.body.clientWidth : 0));
+      const h = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0, (document.body ? document.body.clientHeight : 0));
       const aspect = h > 0 ? (w / h) : 1;
       const isLandscape = (w > h) || (window.matchMedia && window.matchMedia("(orientation: landscape)").matches);
       const orientation = isLandscape ? "landscape" : "portrait";
+
+      // Detección precisa de iPad / pantalla táctil
+      const maxTouch = (typeof navigator !== "undefined" && navigator.maxTouchPoints) ? navigator.maxTouchPoints : 0;
+      const isTouch = maxTouch > 0 || (typeof window !== "undefined" && "ontouchstart" in window);
+      const ua = (typeof navigator !== "undefined" && navigator.userAgent) ? navigator.userAgent : "";
+      const isIPad = isTouch && (/iPad/i.test(ua) || (ua.includes("Macintosh") && maxTouch > 1));
 
       return {
         width: w,
         height: h,
         aspect: aspect,
         isLandscape: isLandscape,
-        orientation: orientation
+        orientation: orientation,
+        isTouch: isTouch,
+        isIPad: isIPad
       };
     },
 
     determineInterface: function (v) {
-      const path = (typeof window !== "undefined" && window.location.pathname) ? window.location.pathname.split("/").pop() : "";
-      
-      // Si la URL es explícitamente ipad-*, siempre preservar la interfaz de tableta
-      // y adaptar la composición internamente a la orientación, ancho o Split View real.
-      if (path.startsWith("ipad-")) {
-        return "tablet";
-      }
-      
-      // Si la URL es explícitamente mac-*, siempre preservar la interfaz de computadora
-      // y adaptar la composición internamente al nivel de ventana (compacta, mediana, grande, ultrawide).
-      if (path.startsWith("mac-")) {
-        return "desktop";
-      }
-
       const w = v.width;
-      const aspect = v.aspect;
       const current = this.currentInterface;
 
-      // 1. Si estamos en CELULAR actualmente:
+      // 1. Detección en iPads reales:
+      // En iPad (Mini, estándar, Air, Pro) tanto vertical (768 a 1024px)
+      // como horizontal (1024 a 1366px), utilizar la interfaz de Tableta (ipad-index).
+      // Solo en Split View angosto (< 680px) usar móvil para no apretar elementos.
+      if (v.isIPad) {
+        if (w < 680) {
+          return "mobile";
+        }
+        return "tablet";
+      }
+
+      // 2. En Mac, laptops, monitores externos o ventanas redimensionables de computadora:
+      // Conmutación con histéresis:
       if (current === "mobile") {
         if (w >= this.THRESHOLDS.MOBILE_TO_TABLET) {
-          if (w >= this.THRESHOLDS.TABLET_TO_DESKTOP && aspect >= 1.0) {
+          if (w >= this.THRESHOLDS.TABLET_TO_DESKTOP && !v.isTouch) {
             return "desktop";
           }
           return "tablet";
@@ -87,9 +96,18 @@
         return "mobile";
       }
 
-      // 2. Si estamos en COMPUTADORA actualmente:
+      if (current === "tablet") {
+        if (w < this.THRESHOLDS.TABLET_TO_MOBILE) {
+          return "mobile";
+        }
+        if (w >= this.THRESHOLDS.TABLET_TO_DESKTOP && (!v.isTouch || w >= 1400)) {
+          return "desktop";
+        }
+        return "tablet";
+      }
+
       if (current === "desktop") {
-        if (w < this.THRESHOLDS.DESKTOP_TO_TABLET || aspect < 0.85) {
+        if (w < this.THRESHOLDS.DESKTOP_TO_TABLET) {
           if (w < this.THRESHOLDS.TABLET_TO_MOBILE) {
             return "mobile";
           }
@@ -98,21 +116,10 @@
         return "desktop";
       }
 
-      // 3. Si estamos en TABLETA actualmente:
-      if (current === "tablet") {
-        if (w < this.THRESHOLDS.TABLET_TO_MOBILE) {
-          return "mobile";
-        }
-        if (w >= this.THRESHOLDS.TABLET_TO_DESKTOP && aspect >= 1.0) {
-          return "desktop";
-        }
-        return "tablet";
-      }
-
-      // 4. Primera evaluación (sin estado previo para index.html general):
-      if (w >= 1140 && aspect >= 0.95) {
+      // 3. Evaluación inicial sin estado previo:
+      if (w >= this.THRESHOLDS.TABLET_TO_DESKTOP && (!v.isTouch || w >= 1400)) {
         return "desktop";
-      } else if (w >= 720) {
+      } else if (w >= 768) {
         return "tablet";
       } else {
         return "mobile";
@@ -129,8 +136,10 @@
 
       this.currentOrientation = v.orientation;
 
-      // Actualizar variables y atributos globales
+      // Actualizar variables y atributos globales en root y body
       const root = document.documentElement;
+      const body = document.body;
+
       root.style.setProperty("--vw", v.width + "px");
       root.style.setProperty("--vh", v.height + "px");
       root.setAttribute("data-screen-width", String(v.width));
@@ -138,26 +147,27 @@
       root.setAttribute("data-orientation", v.orientation);
       root.setAttribute("data-ipad-orientation", v.orientation);
 
-      if (document.body) {
-        document.body.setAttribute("data-orientation", v.orientation);
-        document.body.setAttribute("data-ipad-orientation", v.orientation);
+      if (body) {
+        body.setAttribute("data-screen-width", String(v.width));
+        body.setAttribute("data-screen-height", String(v.height));
+        body.setAttribute("data-orientation", v.orientation);
+        body.setAttribute("data-ipad-orientation", v.orientation);
       }
 
-      // Nivel de layout interno proporcional para computadoras Mac
-      // Compact: < 920px (1 col fluida sin sidebar ni inspector)
-      // Medium: 920px a 1359px (2 col: sidebar + main stage espacioso)
-      // Large / Ultrawide: >= 1360px (3 col completas: sidebar + main stage amplio + inspector)
+      // Nivel de layout interno adaptable para computadoras Mac:
+      // Ventana Compacta: < 960px (1 col fluida sin sidebar ni inspector)
+      // Ventana Mediana: 960px a 1359.98px (2 col: sidebar + main stage amplio)
+      // Ventana Grande / Pantalla Completa: >= 1360px (3 col completas: sidebar + main stage + inspector)
       let macLayout = "large";
-      if (v.width < 920) macLayout = "compact";
+      if (v.width < 960) macLayout = "compact";
       else if (v.width < 1360) macLayout = "medium";
       root.setAttribute("data-mac-layout", macLayout);
-      if (document.body) document.body.setAttribute("data-mac-layout", macLayout);
+      if (body) body.setAttribute("data-mac-layout", macLayout);
 
-      // En iPad: si el ancho es menor a 880px (Split View 1/2 o 1/3, o pantalla angosta),
-      // usar modo vertical/dock inferior para evitar que una barra lateral devore la pantalla.
+      // En iPad: si el ancho es menor a 880px (Split View o vertical), usar modo vertical
       const ipadEffectiveOrientation = (v.isLandscape && v.width >= 880) ? "landscape" : "portrait";
       root.setAttribute("data-ipad-orientation", ipadEffectiveOrientation);
-      if (document.body) document.body.setAttribute("data-ipad-orientation", ipadEffectiveOrientation);
+      if (body) body.setAttribute("data-ipad-orientation", ipadEffectiveOrientation);
 
       // Si cambió de interfaz o es la primera carga:
       if (interfaceChanged || immediate) {
@@ -171,12 +181,14 @@
       this.currentInterface = newInterface;
 
       const root = document.documentElement;
+      const body = document.body;
+
       root.setAttribute("data-current-interface", newInterface);
       root.setAttribute("data-device", newInterface);
 
-      if (document.body) {
-        document.body.setAttribute("data-current-interface", newInterface);
-        document.body.setAttribute("data-device", newInterface);
+      if (body) {
+        body.setAttribute("data-current-interface", newInterface);
+        body.setAttribute("data-device", newInterface);
       }
 
       // Sincronizar URL suavemente sin recarga (history.replaceState)
@@ -191,18 +203,19 @@
 
       // Sincronizar pills de modo de ventana Mac según el ancho real
       let currentMacMode = "Ventana Grande (3 Col)";
-      if (v.width < 920) currentMacMode = "Ventana Compacta (1 Col)";
+      if (v.width < 960) currentMacMode = "Ventana Compacta (1 Col)";
       else if (v.width < 1360) currentMacMode = "Ventana Mediana (2 Col)";
       document.querySelectorAll(".mac-window-mode-pill").forEach(pill => {
         pill.textContent = currentMacMode;
+        pill.title = `${v.width} × ${v.height} px — ${currentMacMode}`;
       });
 
-      // Refrescar componentes activos en el nuevo contenedor sin parpadeo
+      // Refrescar componentes activos en el nuevo contenedor sin parpadeo ni recarga
       if (window.EncardomyApp && typeof window.EncardomyApp.renderApp === "function") {
         window.EncardomyApp.renderApp();
       }
 
-      // Notificar a toda la aplicación
+      // Notificar a toda la aplicación con eventos desacoplados
       window.dispatchEvent(new CustomEvent("interfaceChanged", {
         detail: {
           interface: newInterface,
@@ -212,22 +225,34 @@
           aspect: v.aspect
         }
       }));
+
+      window.dispatchEvent(new CustomEvent("screenSizeChanged", {
+        detail: {
+          device: newInterface,
+          orientation: v.orientation,
+          width: v.width,
+          height: v.height,
+          isTablet: newInterface === "tablet" || newInterface === "desktop",
+          isLandscape: v.isLandscape
+        }
+      }));
     },
 
     syncUrl: function (targetInterface) {
-      if (typeof history === "undefined" || !history.replaceState) return;
+      const hist = (typeof history !== "undefined" && history.replaceState) ? history : ((typeof window !== "undefined" && window.history && window.history.replaceState) ? window.history : null);
+      if (!hist) return;
 
-      const currentPath = window.location.pathname.split("/").pop() || "index.html";
-      // Si el usuario ya está en una página dedicada ipad-* o mac-*, mantener la URL intacta
-      if (currentPath.startsWith("ipad-") || currentPath.startsWith("mac-")) {
-        return;
-      }
+      const currentPath = (window.location.pathname.split("/").pop() || "index.html");
+      
+      // Obtener el nombre base del archivo actual (eliminando 'ipad-' o 'mac-')
       let baseName = currentPath;
-
       if (baseName.startsWith("ipad-")) {
         baseName = baseName.replace("ipad-", "");
       } else if (baseName.startsWith("mac-")) {
         baseName = baseName.replace("mac-", "");
+      }
+      if (!baseName || baseName === "") {
+        baseName = "index.html";
       }
 
       let targetUrl = baseName;
@@ -241,9 +266,9 @@
 
       if (targetUrl !== currentPath) {
         try {
-          history.replaceState(null, "", targetUrl);
+          hist.replaceState(null, "", targetUrl);
         } catch (e) {
-          // Si el protocolo local restringe replaceState, ignorar silenciosamente
+          // Silenciar restricciones locales de file://
         }
       }
     },
@@ -255,7 +280,7 @@
     },
 
     setupObservers: function () {
-      // 1. ResizeObserver en elemento raíz
+      // 1. ResizeObserver en elemento raíz (supervisión continua de cambios en el contenedor)
       if (typeof ResizeObserver === "function") {
         this.resizeObserver = new ResizeObserver(() => {
           this.scheduleEvaluation();
@@ -266,12 +291,12 @@
       // 2. Escucha continua de window resize
       window.addEventListener("resize", () => {
         this.scheduleEvaluation();
-      });
+      }, { passive: true });
 
-      // 3. Orientación y rotación
+      // 3. Orientación y rotación en iPad y teléfonos móviles
       window.addEventListener("orientationchange", () => {
-        setTimeout(() => this.evaluateViewport(false), 80);
-      });
+        setTimeout(() => this.evaluateViewport(false), 60);
+      }, { passive: true });
 
       if (window.screen && window.screen.orientation) {
         window.screen.orientation.addEventListener("change", () => {
@@ -279,14 +304,15 @@
         });
       }
 
+      // 4. Media queries reactivas para cambios de orientación y puntos de quiebre
       if (window.matchMedia) {
         window.matchMedia("(orientation: landscape)").addEventListener("change", () => {
           this.scheduleEvaluation();
         });
-        window.matchMedia("(min-width: 720px)").addEventListener("change", () => {
+        window.matchMedia("(min-width: 768px)").addEventListener("change", () => {
           this.scheduleEvaluation();
         });
-        window.matchMedia("(min-width: 1120px)").addEventListener("change", () => {
+        window.matchMedia("(min-width: 1200px)").addEventListener("change", () => {
           this.scheduleEvaluation();
         });
       }

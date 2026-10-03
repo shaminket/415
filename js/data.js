@@ -697,14 +697,305 @@ const ENCARDOMY_DATA = {
   // ==========================================================================
   // FUENTE CENTRAL DE DATOS (Single Source of Truth) PARA AVISOS, TAREAS Y EXÁMENES
   // ==========================================================================
-  // Estructura oficial para sincronización automática
-  avisos: [],
-  tareas: [],
-  examenes: [],
+  // Estructura oficial actualizada para sincronización automática
+  avisos: [
+    {
+        "id": "aviso-matematicas-obra",
+        "subjectId": "matematicas",
+        "subjectName": "Matemáticas IV",
+        "title": "Obra de Teatro: ¿Cómo pasar Matemáticas sin problemas?",
+        "date": "2 de octubre de 2026 · 12:30 hrs",
+        "priority": "medium",
+        "summary": "Obra de teatro. Viernes 2 de octubre de 2026, 12:30 hrs en Teatro Auditorio del SME. Duración: 2 horas. Otorga 2 puntos extra (asistencia no obligatoria).",
+        "content": "Actividad: Obra de teatro.\nFecha: 2 de octubre de 2026.\nHora: 12:30 horas.\nDuración: 2 horas (12:30 a 14:30 hrs).\nLugar: Teatro Auditorio del SME.\nBeneficio: Otorga 2 puntos extra.\nAsistencia: NO es obligatoria.",
+        "location": "Teatro Auditorio del SME",
+        "locationUrl": "https://maps.google.com/?q=Teatro+Auditorio+del+SME",
+        "calendarEvent": {
+            "title": "Obra de Teatro: ¿Cómo pasar Matemáticas sin problemas?",
+            "startISO": "2026-10-02T12:30:00-06:00",
+            "endISO": "2026-10-02T14:30:00-06:00",
+            "location": "Teatro Auditorio del SME",
+            "description": "Obra de teatro. Otorga 2 puntos extra. Asistencia no obligatoria. Duración: 2 horas."
+        },
+        "urlMobile": "aviso-matematicas-obra.html",
+        "urlIpad": "ipad-aviso-matematicas-obra.html",
+        "urlMac": "mac-aviso-matematicas-obra.html"
+    },
+    {
+        "id": "aviso-fisica-clase-especial",
+        "subjectId": "fisica",
+        "subjectName": "Física III",
+        "title": "Clase Especial de Apoyo — ShaMinKet",
+        "date": "Domingo 4 de octubre de 2026 · 14:00 hrs",
+        "priority": "medium",
+        "summary": "Domingo 4 de octubre a las 14:00 hrs CDMX. Duración 30 a 120 min. Participación voluntaria. Tema: suma de vectores.",
+        "content": "El domingo a las 14:00 horas CDMX, ShaMinKet tendrá preparada una pequeña clase sobre el tema de suma de vectores.\n\n• Duración: 30 a 120 minutos, dependiendo de los participantes.\n• Participación voluntaria: si alguien no puede o no quiere unirse, no pasa nada.\n• Importante: Esta actividad no contradice las normas indicadas para el comunicado oficial porque no se realizará pase de lista, evaluación, revisión de trabajos, entrega de tareas ni revisión de exámenes. Es únicamente una clase de apoyo.\n• Confirmación: Si un alumno asistirá, debe confirmar mediante WhatsApp al 52 5642834619.\n• Material recomendado para la clase: 2 hojas milimétricas, 4 colores, 2 escuadras y 1 transportador.",
+        "whatsapp": "52 5642834619",
+        "urlMobile": "aviso-fisica-clase-especial.html",
+        "urlIpad": "ipad-aviso-fisica-clase-especial.html",
+        "urlMac": "mac-aviso-fisica-clase-especial.html"
+    },
+    {
+        "id": "aviso-espanol-copias",
+        "subjectId": "espanol",
+        "subjectName": "Lengua Española",
+        "title": "Material de Copias Disponible",
+        "date": "5 de octubre de 2026",
+        "priority": "high",
+        "summary": "Copias disponibles para descarga en Google Drive y en la gomita. También disponibles a domicilio con Encardomy.",
+        "content": "Las copias para Lengua Española pueden descargarse directamente desde la carpeta oficial de Google Drive o adquirirse en la gomita.\n\nFecha: 5 de octubre de 2026.",
+        "links": [
+            {
+                "label": "Abrir carpeta en Google Drive",
+                "url": "https://drive.google.com/drive/folders/1rB-R6pZYTYaGLz6wQbta6dbcVqDk-1Ol?usp=sharing"
+            }
+        ],
+        "urlMobile": "aviso-espanol-copias.html",
+        "urlIpad": "ipad-aviso-espanol-copias.html",
+        "urlMac": "mac-aviso-espanol-copias.html"
+    },
+    {
+        "id": "aviso-fisica-materiales",
+        "subjectId": "fisica",
+        "subjectName": "Física III",
+        "title": "Materiales Obligatorios para Sesión de Vectores",
+        "date": "Lunes 5 de octubre de 2026",
+        "priority": "high",
+        "summary": "Materiales requeridos para el lunes 5 de octubre: escuadras, transportador, 4 colores, tijeras, pegamento y rosa de los 4 vientos.",
+        "content": "Para la sesión del lunes 5 de octubre de 2026 se requiere llevar los siguientes materiales obligatorios:\n\n1. Escuadras\n2. Transportador\n3. 4 colores\n4. Tijeras escolares\n5. Pegamento\n6. Rosa de los 4 vientos",
+        "urlMobile": "aviso-fisica-materiales.html",
+        "urlIpad": "ipad-aviso-fisica-materiales.html",
+        "urlMac": "mac-aviso-fisica-materiales.html"
+    },
+    {
+        "id": "aviso-geografia-mapas",
+        "subjectId": "geografia",
+        "subjectName": "Geografía",
+        "title": "Mapas Requeridos para Examen Departamental",
+        "date": "Lunes 5 de octubre de 2026",
+        "priority": "high",
+        "summary": "Descarga de mapas en Google Drive para el examen del próximo lunes. Recordatorio: nombre completo (apellidos primero) + grupo dentro del margen.",
+        "content": "El próximo lunes se realizará el examen de Geografía sobre localización de estados, capitales y alcaldías. El alumno debe llevar sus mapas impresos. Además, dentro del margen debe colocar: nombre completo comenzando por apellidos + grupo.",
+        "links": [
+            {
+                "label": "Descargar Mapas en Google Drive",
+                "url": "https://drive.google.com/drive/folders/1cpaHBqMTHCgMKtQteXqd8QIuOricH7kq?usp=sharing"
+            }
+        ],
+        "urlMobile": "aviso-geografia-mapas.html",
+        "urlIpad": "ipad-aviso-geografia-mapas.html",
+        "urlMac": "mac-aviso-geografia-mapas.html"
+    },
+    {
+        "id": "aviso-historia-puntos-extra",
+        "subjectId": "historia",
+        "subjectName": "Historia Universal III",
+        "title": "Avisos de Puntos Extra para Examen",
+        "date": "Octubre 2026",
+        "priority": "medium",
+        "summary": "1 punto extra por registrar pilas (con foto) y 1 punto extra por contestar la guía de estudio.",
+        "content": "Apartado oficial de puntos extra para Historia Universal III:\n\n• Aviso 1: Lleva tus pilas para registrar, toma una foto y obtén: 1 punto extra sobre el próximo examen.\n• Aviso 2: Responder la guía de estudio otorgará: 1 punto extra para el examen. (Nota: La guía de estudio aún no está disponible).",
+        "urlMobile": "aviso-historia-puntos-extra.html",
+        "urlIpad": "ipad-aviso-historia-puntos-extra.html",
+        "urlMac": "mac-aviso-historia-puntos-extra.html"
+    },
+    {
+        "id": "aviso-espanol-don-juan",
+        "subjectId": "espanol",
+        "subjectName": "Lengua Española",
+        "title": "Obra Don Juan Tenorio — Clásico",
+        "date": "Sábado 17 de octubre de 2026 · 10:00 hrs",
+        "priority": "medium",
+        "summary": "17 de octubre de 2026, 10:00 hrs. Asistencia no obligatoria (+1 punto extra). Precio: $300 pesos en Eje 4 Sur 809, Col. Del Valle.",
+        "content": "Obra Don Juan Tenorio — Clásico.\nFecha: 17 de octubre de 2026.\nHora: 10:00 horas (duración: 2 horas).\n\n• Asistencia: Acudir a la obra NO es obligatorio. Sin embargo, si el alumno acude obtendrá 1 punto extra.\n• Precio: $300 pesos mexicanos. (IMPORTANTE: No existe precio preferencial para estudiantes porque la obra ya cuenta con descuento).\n• Ubicación: Eje 4 Sur 809, Colonia Del Valle.",
+        "location": "Eje 4 Sur 809, Colonia Del Valle",
+        "locationUrl": "https://maps.google.com/?q=Eje+4+Sur+809,+Colonia+Del+Valle",
+        "calendarEvent": {
+            "title": "Obra Don Juan Tenorio — Clásico (Lengua Española)",
+            "startISO": "2026-10-17T10:00:00-06:00",
+            "endISO": "2026-10-17T12:00:00-06:00",
+            "location": "Eje 4 Sur 809, Colonia Del Valle",
+            "description": "Obra Don Juan Tenorio. Asistencia no obligatoria (+1 punto extra). Precio: $300 pesos (sin descuento estudiante)."
+        },
+        "urlMobile": "aviso-espanol-don-juan.html",
+        "urlIpad": "ipad-aviso-espanol-don-juan.html",
+        "urlMac": "mac-aviso-espanol-don-juan.html"
+    }
+],
+  tareas: [
+    {
+        "id": "tarea-historia-cuarta-rev",
+        "subjectId": "historia",
+        "subjectName": "Historia Universal III",
+        "title": "Actividad: Cuarta Revolución Industrial",
+        "dueDate": "3 de octubre de 2026 · 23:59 hrs",
+        "priority": "urgent",
+        "summary": "Investigación sobre la Revolución Industrial y reflexión sobre uno de los videos. Nomenclatura oficial en PDF.",
+        "description": "La actividad consiste en:\n1. Realizar la investigación sobre la Revolución Industrial.\n2. Realizar una reflexión sobre UNO de los siguientes videos:\n   • Video 1: https://youtu.be/lOoLmGcnBfU?si=76ziIcIScaD5bGcX\n   • Video 2: https://youtu.be/dFc-Etxo6jY?si=FGDUqWgdbJtLjhmw\n\nNomenclatura obligatoria del archivo:\n415_apellidos del alumno_cuarta revolución industrial.pdf\n\nPuedes utilizar las herramientas PDF de Encardomy/Minweb para preparar o unir tu archivo.",
+        "links": [
+            {
+                "label": "Ver Video 1 (YouTube)",
+                "url": "https://youtu.be/lOoLmGcnBfU?si=76ziIcIScaD5bGcX"
+            },
+            {
+                "label": "Ver Video 2 (YouTube)",
+                "url": "https://youtu.be/dFc-Etxo6jY?si=FGDUqWgdbJtLjhmw"
+            },
+            {
+                "label": "Herramientas PDF de la Minweb",
+                "url": "herramientas.html"
+            }
+        ],
+        "urlMobile": "tarea-historia-cuarta-rev.html",
+        "urlIpad": "ipad-tarea-historia-cuarta-rev.html",
+        "urlMac": "mac-tarea-historia-cuarta-rev.html"
+    },
+    {
+        "id": "tarea-historia-presentacion",
+        "subjectId": "historia",
+        "subjectName": "Historia Universal III",
+        "title": "Presentación Electrónica por Equipos",
+        "dueDate": "4 de octubre de 2026 · 23:59 hrs",
+        "priority": "urgent",
+        "summary": "Presentación en equipos de 4 a 5 integrantes sobre una de las 4 Revoluciones Industriales. Formatos: .pptx, .ppt o .pdf.",
+        "description": "El alumno debe seleccionar una revolución:\n• Primera Revolución Industrial\n• Segunda Revolución Industrial\n• Tercera Revolución Industrial\n• Cuarta Revolución Industrial\n\nExisten dos opciones para realizar la presentación:\n• Opción 1: Seguir las instrucciones de Classroom (https://classroom.google.com/c/ODA1NjIzOTQwNjUy/a/ODg3NjE1NDg0MTM3/details)\n• Opción 2: Utilizar la metodología 1 + 3 = 1 (https://drive.google.com/file/d/13Rrxm22qQBBfRGnfV4nDkCwfv4w2ox4U/view?usp=sharing)\n\nEquipos: Estrictamente de 4 a 5 integrantes (no más y no menos).\n\nFormato de entrega: La presentación NO debe subirse únicamente como PDF. Son válidos:\n• 415_nombre del equipo_nombre de la Rev.Ind.pptx\n• 415_nombre del equipo_nombre de la Rev.Ind.ppt\n• 415_nombre del equipo_nombre de la Rev.Ind.pdf\n(Los tres formatos son válidos según las instrucciones indicadas). La presentación debe poder abrirse correctamente. Si contiene videos o animaciones, se recomienda enviar también un enlace directamente pegado en Classroom (no usar 'mandar por link'), configurado en 'solo ver'.\n\nEntrega por equipo: La presentación debe ser entregada solamente por 2 integrantes del equipo. Los demás integrantes deben marcar la actividad como completada.",
+        "links": [
+            {
+                "label": "Instrucciones en Classroom",
+                "url": "https://classroom.google.com/c/ODA1NjIzOTQwNjUy/a/ODg3NjE1NDg0MTM3/details"
+            },
+            {
+                "label": "Metodología 1 + 3 = 1 (Google Drive)",
+                "url": "https://drive.google.com/file/d/13Rrxm22qQBBfRGnfV4nDkCwfv4w2ox4U/view?usp=sharing"
+            }
+        ],
+        "urlMobile": "tarea-historia-presentacion.html",
+        "urlIpad": "ipad-tarea-historia-presentacion.html",
+        "urlMac": "mac-tarea-historia-presentacion.html"
+    },
+    {
+        "id": "tarea-historia-epistola",
+        "subjectId": "historia",
+        "subjectName": "Historia Universal III",
+        "title": "2 Epístola Histórica",
+        "dueDate": "5 de octubre de 2026",
+        "priority": "high",
+        "summary": "Entrega en Classroom el lunes 5 de octubre (se cierra el acceso). La maestra recoge cartas físicas el jueves 8 de octubre de 2026.",
+        "description": "2 EPISTOLA HISTÓRICA.\nFecha de entrega: lunes 5 de octubre de 2026.\n\n• El lunes se cierra el Classroom.\n• El alumno debe realizar la actividad y marcarla como completada en Classroom.\n• La maestra recogerá todas las cartas físicas el jueves 8 de octubre de 2026.\n\nAcceso directo a las instrucciones de Classroom:\nhttps://classroom.google.com/c/ODA1NjIzOTQwNjUy/a/ODg4MjYzNzkzMDk3/details",
+        "links": [
+            {
+                "label": "Instrucciones de Classroom",
+                "url": "https://classroom.google.com/c/ODA1NjIzOTQwNjUy/a/ODg4MjYzNzkzMDk3/details"
+            }
+        ],
+        "urlMobile": "tarea-historia-epistola.html",
+        "urlIpad": "ipad-tarea-historia-epistola.html",
+        "urlMac": "mac-tarea-historia-epistola.html"
+    },
+    {
+        "id": "tarea-fisica-vectores",
+        "subjectId": "fisica",
+        "subjectName": "Física III",
+        "title": "Investigación: Suma de Vectores por el Método del Polígono",
+        "dueDate": "5 de octubre de 2026",
+        "priority": "medium",
+        "summary": "Investigar todo sobre la suma de vectores por el método del polígono.",
+        "description": "Investigar todo sobre la suma de vectores por el método del polígono.",
+        "urlMobile": "tarea-fisica-vectores.html",
+        "urlIpad": "ipad-tarea-fisica-vectores.html",
+        "urlMac": "mac-tarea-fisica-vectores.html"
+    }
+],
+  examenes: [
+    {
+        "id": "examen-geografia-estados",
+        "subjectId": "geografia",
+        "subjectName": "Geografía",
+        "title": "Examen: Estados, Capitales y Alcaldías",
+        "date": "Lunes 5 de octubre de 2026",
+        "topics": "Localización de estados y capitales; localización de alcaldías.",
+        "summary": "Examen el próximo lunes 5 de octubre. Llevar mapas oficiales con nombre completo (apellidos primero) + grupo dentro del margen.",
+        "links": [
+            {
+                "label": "Descargar Mapas Oficiales en Google Drive",
+                "url": "https://drive.google.com/drive/folders/1cpaHBqMTHCgMKtQteXqd8QIuOricH7kq?usp=sharing"
+            }
+        ],
+        "notes": "El alumno debe llevar sus mapas. Además, dentro del margen debe colocar: nombre completo comenzando por apellidos + grupo.",
+        "urlMobile": "examen-geografia-estados.html",
+        "urlIpad": "ipad-examen-geografia-estados.html",
+        "urlMac": "mac-examen-geografia-estados.html"
+    },
+    {
+        "id": "examen-matematicas-oct",
+        "subjectId": "matematicas",
+        "subjectName": "Matemáticas IV",
+        "title": "Examen de Matemáticas IV",
+        "date": "Jueves 8 de octubre de 2026",
+        "topics": "Temario oficial de Matemáticas IV",
+        "summary": "Examen programado para el 8 de octubre de 2026.",
+        "notes": "Fecha oficial: 8 de octubre de 2026.",
+        "urlMobile": "examen-matematicas-oct.html",
+        "urlIpad": "ipad-examen-matematicas-oct.html",
+        "urlMac": "mac-examen-matematicas-oct.html"
+    },
+    {
+        "id": "examen-historia-revoluciones",
+        "subjectId": "historia",
+        "subjectName": "Historia Universal III",
+        "title": "Examen: Las 4 Revoluciones Industriales",
+        "date": "Jueves 15 de octubre de 2026 · 11:00 a 11:30 hrs",
+        "topics": "Las 4 Revoluciones Industriales (20 preguntas)",
+        "summary": "Jueves 15 de octubre de 2026, 11:00 a 11:30 hrs en CC1 — Centro de Cómputo 1. 20 preguntas (sujeto a disponibilidad de CC1).",
+        "location": "CC1 — Centro de Cómputo 1, ENP 4",
+        "calendarEvent": {
+            "title": "Examen de Historia Universal III: Las 4 Revoluciones Industriales",
+            "startISO": "2026-10-15T11:00:00-06:00",
+            "endISO": "2026-10-15T11:30:00-06:00",
+            "location": "CC1 — Centro de Cómputo 1, ENP 4",
+            "description": "Examen de 20 preguntas sobre Las 4 Revoluciones Industriales. Acudir directamente a CC1 (sujeto a disponibilidad de CC1)."
+        },
+        "notes": "Temas: Las 4 Revoluciones Industriales. El examen estará compuesto por 20 preguntas. Lugar: CC1 — Centro de Cómputo 1. Ese día los alumnos deben acudir directamente a CC1.\n\nAviso importante: La fecha está sujeta a cambios dependiendo de la disponibilidad de CC1.",
+        "urlMobile": "examen-historia-revoluciones.html",
+        "urlIpad": "ipad-examen-historia-revoluciones.html",
+        "urlMac": "mac-examen-historia-revoluciones.html"
+    }
+],
   herramientas: [],
   clasesPerdidas: [],
-  // Publicidad y oportunidades de interés (Vacío por ahora según Reglas 38 y 45)
-  publicidad: [],
+  publicidad: [
+    {
+        "id": "ad-copias-lengua",
+        "subjectId": "espanol",
+        "title": "Copias Impresas de Lengua Española",
+        "badge": "Servicio Escolar",
+        "price": "$20 anticipado / $25 contra entrega",
+        "description": "Por $20 pesos, Encardomy puede llevar las copias impresas. Para apartarlas se debe realizar el pago por adelantado mediante Clip. Al realizar el pago por Clip, enviar el comprobante por privado a Diego. Si prefieres pagar contra entrega: $25 pesos solicitando por WhatsApp.",
+        "clipUrl": "https://pago.clip.mx/v3/5ada33a9-a3b7-4722-bb91-00dbbf4f27c6",
+        "whatsapp": "52 5642834619",
+        "whatsappMessage": "Hola, me gustaría solicitar las copias de Lengua Española ($25 contra entrega) para el grupo 415."
+    },
+    {
+        "id": "ad-mapas-geografia",
+        "subjectId": "geografia",
+        "title": "Paquete de Mapas de Geografía (2 copias c/u)",
+        "badge": "Uno nunca sabe",
+        "price": "$15 pesos",
+        "description": "Servicio: $15 pesos. ShaMinKet entrega 2 copias de cada mapa para el examen de Geografía (estados, capitales y alcaldías). ¡Uno nunca sabe cuando se necesita un repuesto! Solicítalo por WhatsApp contra entrega.",
+        "whatsapp": "52 5642834619",
+        "whatsappMessage": "Hola, me gustaría solicitar el paquete de mapas de Geografía (2 copias c/u por $15 pesos) para el grupo 415."
+    },
+    {
+        "id": "ad-combo-lengua-historia",
+        "subjectId": "general",
+        "title": "Convocatoria Combinada: Lengua + Historia",
+        "badge": "Paquete Ahorro",
+        "price": "$30 pesos",
+        "description": "Opción correspondiente para Lengua + Historia. Precio: $30 pesos. Pago: contra entrega. Para solicitarlo envía mensaje a WhatsApp.",
+        "whatsapp": "52 5642834619",
+        "whatsappMessage": "Hola, me gustaría solicitar el paquete combinado de Lengua + Historia por $30 pesos (contra entrega)."
+    }
+],
 
   // Arquitectura oficial de Pagos Clip (Preparada para enlaces dinámicos según monto/cotización)
   clipConfig: {
@@ -842,7 +1133,7 @@ const ENCARDOMY_DATA = {
     this.notifyChange();
   },
 
-  _storageKey: "encardomy_central_academic_store",
+  _storageKey: "encardomy_central_academic_store_v3",
 
   _saveToStorageOverlay: function() {
     try {

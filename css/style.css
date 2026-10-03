@@ -1437,17 +1437,17 @@ body[data-current-interface="desktop"] .encardomy-interface-tablet {
 }
 
 /* Fallbacks nativos cuando aún no se ha evaluado data-current-interface */
-@media (max-width: 719.98px) {
+@media (max-width: 767.98px) {
   html:not([data-current-interface]) .encardomy-interface-mobile { display: block !important; }
   html:not([data-current-interface]) .encardomy-interface-tablet { display: none !important; }
   html:not([data-current-interface]) .encardomy-interface-desktop { display: none !important; }
 }
-@media (min-width: 720px) and (max-width: 1119.98px) {
+@media (min-width: 768px) and (max-width: 1199.98px) {
   html:not([data-current-interface]) .encardomy-interface-mobile { display: none !important; }
   html:not([data-current-interface]) .encardomy-interface-tablet { display: block !important; }
   html:not([data-current-interface]) .encardomy-interface-desktop { display: none !important; }
 }
-@media (min-width: 1120px) {
+@media (min-width: 1200px) {
   html:not([data-current-interface]) .encardomy-interface-mobile { display: none !important; }
   html:not([data-current-interface]) .encardomy-interface-tablet { display: none !important; }
   html:not([data-current-interface]) .encardomy-interface-desktop { display: block !important; }

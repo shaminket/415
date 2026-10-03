@@ -24,6 +24,46 @@
   <div class="encardomy-interface-mobile" id="encardomy-interface-mobile" role="region" aria-label="Interfaz para Teléfono Celular">
     <main class="mobile-app-shell">
 
+    <!-- AVISO OFICIAL: SERVICIOS ESCOLARES DISPONIBLES ENCARDOMY -->
+    <section class="glass-card" style="border-left: 5px solid #25D366; background: linear-gradient(135deg, rgba(37, 211, 102, 0.12) 0%, rgba(229, 192, 123, 0.08) 100%); margin-bottom: 20px;" aria-label="Servicios Disponibles">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #25D366; letter-spacing: 0.8px;">
+          📢 ¡Ya hay servicios escolares disponibles con Encardomy!
+        </span>
+        <span style="font-size: 11.5px; font-weight: 800; color: var(--accent-gold); background: rgba(229, 192, 123, 0.15); padding: 2px 8px; border-radius: 4px;">
+          Grupo 415
+        </span>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; margin-bottom: 8px;">
+        Servicios activos con entrega rápida en el plantel o a domicilio para el Grupo 415:
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px; font-size: 12.5px;">
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,149,0,0.3);">
+          <strong style="color: #FF9500;">📖 Copias Lengua Española:</strong><br>
+          $20 anticipado Clip / $25 contra entrega
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(52,199,89,0.3);">
+          <strong style="color: #34C759;">🌍 Mapas de Geografía:</strong><br>
+          $15 pesos (2 copias c/u · <em>“Uno nunca sabe”</em>)
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(229,192,123,0.3);">
+          <strong style="color: var(--accent-gold);">📦 Combo Lengua + Historia:</strong><br>
+          $30 pesos (pago contra entrega)
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="https://wa.me/525642834619?text=Hola%2C%20quisiera%20solicitar%20servicios%20escolares%20de%20Encardomy%20para%20el%20grupo%20415" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #25D366; color: #04140b; font-weight: 800; padding: 9px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+          <span>💬</span>
+          <span>Pedir por WhatsApp (52 5642834619)</span>
+        </a>
+        <a href="mac-interes.html" class="mac-btn-tool" style="background: rgba(255,255,255,0.08); color: var(--text-primary); font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+          <span>🎁</span>
+          <span>Ver catálogo completo en Interés ↗</span>
+        </a>
+      </div>
+    </section>
+
+
     <!-- Encabezado de la App -->
     <header class="app-header">
       <div class="brand-badge">
@@ -923,59 +963,562 @@
             </div>
           </section>
 
-          <!-- Academic Hub: Avisos, Tareas y Exámenes Sincronizados -->
-          <section>
+                    <!-- Academic Hub: Avisos, Tareas y Exámenes Sincronizados -->
+          <section style="margin-bottom: 24px;">
             <h3 class="mac-section-heading" style="font-size: 17px; margin-bottom: 14px;">📌 Centro de Actividad Escolar</h3>
-            <div class="mac-academic-hub-grid">
+            <div class="mac-academic-hub-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+              
+              <!-- Panel Avisos -->
               <div class="mac-hub-panel">
-                <div class="mac-hub-header">
-                  <h4 class="mac-hub-title"><span>📢</span> Avisos</h4>
-                  <a href="mac-avisos.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+                <div class="mac-hub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                  <h4 class="mac-hub-title" style="margin: 0; font-size: 15px; font-weight: 700;"><span>📢</span> Avisos</h4>
+                  <a href="mac-avisos.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos (7) →</a>
                 </div>
                 <div class="mac-hub-list" id="mac-avisos-list">
-                  <div class="mac-hub-empty">
-                    <p>No hay avisos por ahora.</p>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #2997FF; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-matematicas-obra.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-matematicas-obra.html" style="color: inherit; text-decoration: none;">Obra de Teatro: ¿Cómo pasar Matemáticas sin problemas?</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Obra de teatro. Viernes 2 de octubre de 2026, 12:30 hrs en Teatro Auditorio del SME. Duración: 2 horas. Otorga 2 puntos extra (asistencia no obligatoria).
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #2997FF; font-weight: 700;">📐 Matemáticas IV</span>
+                      <a href="mac-aviso-matematicas-obra.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #00C7BE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-fisica-clase-especial.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-fisica-clase-especial.html" style="color: inherit; text-decoration: none;">Clase Especial de Apoyo — ShaMinKet</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Domingo 4 de octubre a las 14:00 hrs CDMX. Duración 30 a 120 min. Participación voluntaria. Tema: suma de vectores.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #00C7BE; font-weight: 700;">⚡ Física III</span>
+                      <a href="mac-aviso-fisica-clase-especial.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #FF9500; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-espanol-copias.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-espanol-copias.html" style="color: inherit; text-decoration: none;">Material de Copias Disponible</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Copias disponibles para descarga en Google Drive y en la gomita. También disponibles a domicilio con Encardomy.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #FF9500; font-weight: 700;">📖 Lengua Española</span>
+                      <a href="mac-aviso-espanol-copias.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #00C7BE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-fisica-materiales.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-fisica-materiales.html" style="color: inherit; text-decoration: none;">Materiales Obligatorios para Sesión de Vectores</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Materiales requeridos para el lunes 5 de octubre: escuadras, transportador, 4 colores, tijeras, pegamento y rosa de los 4 vientos.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #00C7BE; font-weight: 700;">⚡ Física III</span>
+                      <a href="mac-aviso-fisica-materiales.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #34C759; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-geografia-mapas.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-geografia-mapas.html" style="color: inherit; text-decoration: none;">Mapas Requeridos para Examen Departamental</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Descarga de mapas en Google Drive para el examen del próximo lunes. Recordatorio: nombre completo (apellidos primero) + grupo dentro del margen.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #34C759; font-weight: 700;">🌍 Geografía</span>
+                      <a href="mac-aviso-geografia-mapas.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #AF52DE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-historia-puntos-extra.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-historia-puntos-extra.html" style="color: inherit; text-decoration: none;">Avisos de Puntos Extra para Examen</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      1 punto extra por registrar pilas (con foto) y 1 punto extra por contestar la guía de estudio.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #AF52DE; font-weight: 700;">🏛️ Historia Universal III</span>
+                      <a href="mac-aviso-historia-puntos-extra.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #FF9500; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-aviso-espanol-don-juan.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-aviso-espanol-don-juan.html" style="color: inherit; text-decoration: none;">Obra Don Juan Tenorio — Clásico</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      17 de octubre de 2026, 10:00 hrs. Asistencia no obligatoria (+1 punto extra). Precio: $300 pesos en Eje 4 Sur 809, Col. Del Valle.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #FF9500; font-weight: 700;">📖 Lengua Española</span>
+                      <a href="mac-aviso-espanol-don-juan.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              <!-- Panel Tareas -->
               <div class="mac-hub-panel">
-                <div class="mac-hub-header">
-                  <h4 class="mac-hub-title"><span>📝</span> Tareas</h4>
-                  <a href="mac-tareas.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todas →</a>
+                <div class="mac-hub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                  <h4 class="mac-hub-title" style="margin: 0; font-size: 15px; font-weight: 700;"><span>📝</span> Tareas</h4>
+                  <a href="mac-tareas.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todas (4) →</a>
                 </div>
                 <div class="mac-hub-list" id="mac-tareas-list">
-                  <div class="mac-hub-empty">
-                    <p>No hay tareas por ahora.</p>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #AF52DE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-tarea-historia-cuarta-rev.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-tarea-historia-cuarta-rev.html" style="color: inherit; text-decoration: none;">Actividad: Cuarta Revolución Industrial</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Investigación sobre la Revolución Industrial y reflexión sobre uno de los videos. Nomenclatura oficial en PDF.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #AF52DE; font-weight: 700;">🏛️ Historia Universal III</span>
+                      <a href="mac-tarea-historia-cuarta-rev.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #AF52DE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-tarea-historia-presentacion.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-tarea-historia-presentacion.html" style="color: inherit; text-decoration: none;">Presentación Electrónica por Equipos</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Presentación en equipos de 4 a 5 integrantes sobre una de las 4 Revoluciones Industriales. Formatos: .pptx, .ppt o .pdf.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #AF52DE; font-weight: 700;">🏛️ Historia Universal III</span>
+                      <a href="mac-tarea-historia-presentacion.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #AF52DE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-tarea-historia-epistola.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-tarea-historia-epistola.html" style="color: inherit; text-decoration: none;">2 Epístola Histórica</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Entrega en Classroom el lunes 5 de octubre (se cierra el acceso). La maestra recoge cartas físicas el jueves 8 de octubre de 2026.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #AF52DE; font-weight: 700;">🏛️ Historia Universal III</span>
+                      <a href="mac-tarea-historia-epistola.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #00C7BE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-tarea-fisica-vectores.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-tarea-fisica-vectores.html" style="color: inherit; text-decoration: none;">Investigación: Suma de Vectores por el Método del Polígono</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Investigar todo sobre la suma de vectores por el método del polígono.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #00C7BE; font-weight: 700;">⚡ Física III</span>
+                      <a href="mac-tarea-fisica-vectores.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
                   </div>
                 </div>
               </div>
 
+              <!-- Panel Exámenes -->
               <div class="mac-hub-panel">
-                <div class="mac-hub-header">
-                  <h4 class="mac-hub-title"><span>📅</span> Exámenes</h4>
-                  <a href="mac-examenes.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos →</a>
+                <div class="mac-hub-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                  <h4 class="mac-hub-title" style="margin: 0; font-size: 15px; font-weight: 700;"><span>📋</span> Exámenes</h4>
+                  <a href="mac-examenes.html" style="font-size: 12px; color: var(--mac-accent-gold); text-decoration: none; font-weight: 700;">Ver todos (3) →</a>
                 </div>
                 <div class="mac-hub-list" id="mac-examenes-list">
-                  <div class="mac-hub-empty">
-                    <p>No hay exámenes por ahora.</p>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #34C759; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-examen-geografia-estados.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-examen-geografia-estados.html" style="color: inherit; text-decoration: none;">Examen: Estados, Capitales y Alcaldías</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Examen el próximo lunes 5 de octubre. Llevar mapas oficiales con nombre completo (apellidos primero) + grupo dentro del margen.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #34C759; font-weight: 700;">🌍 Geografía</span>
+                      <a href="mac-examen-geografia-estados.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #2997FF; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-examen-matematicas-oct.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-examen-matematicas-oct.html" style="color: inherit; text-decoration: none;">Examen de Matemáticas IV</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Examen programado para el 8 de octubre de 2026.
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #2997FF; font-weight: 700;">📐 Matemáticas IV</span>
+                      <a href="mac-examen-matematicas-oct.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
+                  </div>
+
+                  <div class="mac-hub-card" style="border-left: 4px solid #AF52DE; padding: 12px 14px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='mac-examen-historia-revoluciones.html'">
+                    <div style="font-weight: 700; color: var(--text-primary); font-size: 14px; margin-bottom: 4px;">
+                      <a href="mac-examen-historia-revoluciones.html" style="color: inherit; text-decoration: none;">Examen: Las 4 Revoluciones Industriales</a>
+                    </div>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">
+                      Jueves 15 de octubre de 2026, 11:00 a 11:30 hrs en CC1 — Centro de Cómputo 1. 20 preguntas (sujeto a disponibilidad de CC1).
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: #AF52DE; font-weight: 700;">🏛️ Historia Universal III</span>
+                      <a href="mac-examen-historia-revoluciones.html" style="color: var(--accent-gold); font-weight: 700; text-decoration: none;">Más información →</a>
+                    </div>
                   </div>
                 </div>
               </div>
+
             </div>
           </section>
 
-          <!-- Bloque Secundario Integrado para Ventanas Medianas y Pequeñas (< 1240px) -->
-          <div class="mac-inline-secondary-block" style="display: none;">
-            <div class="mac-ad-spot-container">
-              <span class="mac-ad-eyebrow">Espacio Encardomy Agency</span>
-              <h3 class="mac-ad-title">Tal vez te pueda interesar</h3>
-              <div class="mac-ad-empty-message">
-                <p>No hay nada disponible por ahora.</p>
+          <!-- Sección Oficial: Directorio y Buscador de Profesores (Mac) -->
+          <section class="mac-card" style="margin-bottom: 24px;" aria-labelledby="mac-prof-section-heading">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 class="mac-section-heading" id="mac-prof-section-heading" style="margin: 0; font-size: 17px; font-weight: 800;">
+                  👨‍🏫 Directorio de Profesores del Grupo 415
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">
+                  Búsqueda instantánea de los 15 profesores asignados por nombre, materia o salón oficial.
+                </p>
               </div>
-              <a href="mac-interes.html" class="mac-btn-ad-action">Solicitar pedido personalizado →</a>
+              <a href="mac-profesores.html" class="mac-btn-tool" style="font-size: 12px; font-weight: 700; text-decoration: none;">Ver página completa →</a>
             </div>
-          </div>
+
+            <!-- Buscador Inteligente -->
+            <div class="search-box-wrapper" style="margin-bottom: 12px; background: rgba(0,0,0,0.35); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--surface-glass-border-subtle); display: flex; align-items: center; gap: 8px;">
+              <span class="search-icon-btn" aria-hidden="true">🔍</span>
+              <input 
+                type="search" 
+                id="mac-prof-search-input" 
+                class="search-input" 
+                placeholder="Buscar profesor, materia (ej. Saúl, Gabriela, Karina, Español, Física) o salón..."
+                aria-label="Buscar profesor o materia"
+                autocomplete="off"
+                style="background: transparent; border: none; outline: none; color: var(--text-primary); width: 100%; font-size: 13.5px;"
+              >
+            </div>
+
+            <div style="font-size: 11.5px; color: var(--text-tertiary); margin-bottom: 14px;">
+              💡 <em>Reconoce nombres (Saúl, Gabriela, Karina, Uriel...), materias (Español, Inglés, Mate...) y salones oficiales.</em>
+            </div>
+
+            <!-- Contenedor de Resultados de Profesores (15 profesores renderizados desde data.js) -->
+            <div id="mac-prof-results-container" class="mac-professors-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+
+                <article class="mac-prof-card" style="border-left: 4px solid #2997FF; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #2997FF;">
+                      📐 Matemáticas IV
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    QUINTANA MEJIA SAUL
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-112, B-109, B-117</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Imparte a todo el grupo 415.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #FF9500; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #FF9500;">
+                      📖 Lengua Española
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    VAZQUEZ GONZALEZ MARIA GUADALUPE
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-112, B-113, B-110</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Materia destacada con módulo propio de entregas necesarias.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #FFD60A; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #FFD60A;">
+                      🧠 Lógica
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    MUÑOZ ALONSO ALAM URIEL
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-108, B-206</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Sesiones de dos horas consecutivas los miércoles.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #FF375F; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #FF375F;">
+                      🎨 Dibujo II (Sección A)
+                    </span>
+                    <span class="tag-badge sec-a" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección A
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    JIMENEZ GENCHI ERIKA PAOLA
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-008</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Profesora asignada a la Sección A.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #FF375F; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #FF375F;">
+                      🎨 Dibujo II (Sección B)
+                    </span>
+                    <span class="tag-badge sec-b" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección B
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    YAÑEZ ARELLANO ANA ELVIRA
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>C-201</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Profesora asignada a la Sección B.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #5E5CE6; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #5E5CE6;">
+                      🗣️ Lengua extranjera Inglés IV (Sección A)
+                    </span>
+                    <span class="tag-badge sec-a" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección A
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    MALDONADO ORTEGA JAIME
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>C-306</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Profesor asignado a la Sección A.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #5E5CE6; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #5E5CE6;">
+                      🗣️ Lengua extranjera Inglés IV (Sección B)
+                    </span>
+                    <span class="tag-badge sec-b" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección B
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    RODRIGUEZ FUENTEVILLA EDGAR
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>C-205</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Profesor asignado a la Sección B.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #30D158; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #30D158;">
+                      🏃 Educación Física IV
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    MORA VILLANUEVA ARTURO EMANUEL
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>GIM1</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Gimnasio 1 los viernes.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #D4AF37; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #D4AF37;">
+                      🧭 Orientación Educativa IV (Sección A)
+                    </span>
+                    <span class="tag-badge sec-a" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección A
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    BECERRA ALCANTARA IVONNE
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-212</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Orientadora asignada a la Sección A.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #D4AF37; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #D4AF37;">
+                      🧭 Orientación Educativa IV (Sección B)
+                    </span>
+                    <span class="tag-badge sec-b" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Sección B
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    Prof. por Asignar
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-212</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Asignación pendiente para Sección B.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #BF5AF2; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #BF5AF2;">
+                      ⚖️ Género y Prevención de las Violencias
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    FLORES PRIETO ANABEL
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-108</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Asignatura oficial institucional de 4º año.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #00C7BE; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #00C7BE;">
+                      ⚡ Física III
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    REYNA GARCIA GABRIELA
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-115, A-302, B-216</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Incluye alertas automáticas de cambio de salón en sesiones consecutivas.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #AF52DE; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #AF52DE;">
+                      🏛️ Historia Universal III
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    CAPPELLO SANCHEZ KARINA
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-109, B-112</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Materia destacada con módulo propio de entregas necesarias.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #34C759; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #34C759;">
+                      🌍 Geografía
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    ZAMORA GUERRERO OLIVIA VIRGINIA
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>B-113, B-112</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Sesiones semanales en salones B-113 y B-112.
+                  </p>
+                </article>
+
+                <article class="mac-prof-card" style="border-left: 4px solid #64D2FF; padding: 14px 16px; border-radius: 8px; background: rgba(255,255,255,0.04); margin-bottom: 0;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64D2FF;">
+                      💻 Informática
+                    </span>
+                    <span class="tag-badge sec-all" style="font-size: 10.5px; padding: 2px 7px; border-radius: 4px;">
+                      Todo el grupo 415
+                    </span>
+                  </div>
+                  <h4 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0; line-height: 1.3;">
+                    SOTOMAYOR GUERRA JUAN CARLOS
+                  </h4>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                    📍 Salones: <strong>CC2, B-205</strong>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-tertiary); margin: 0; line-height: 1.4;">
+                    Centro de Cómputo 2 los jueves y Salón B-205 los martes.
+                  </p>
+                </article>
+            </div>
+          </section>
         </section>
 
         <!-- Columna 3: Inspector / Barra Derecha (Solo en Ventana Grande >= 1240px) -->

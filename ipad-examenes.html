@@ -27,6 +27,46 @@
   <div class="encardomy-interface-mobile" id="encardomy-interface-mobile" role="region" aria-label="Interfaz Móvil">
     <main class="mobile-app-shell">
 
+    <!-- AVISO OFICIAL: SERVICIOS ESCOLARES DISPONIBLES ENCARDOMY -->
+    <section class="glass-card" style="border-left: 5px solid #25D366; background: linear-gradient(135deg, rgba(37, 211, 102, 0.12) 0%, rgba(229, 192, 123, 0.08) 100%); margin-bottom: 20px;" aria-label="Servicios Disponibles">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 11.5px; font-weight: 800; text-transform: uppercase; color: #25D366; letter-spacing: 0.8px;">
+          📢 ¡Ya hay servicios escolares disponibles con Encardomy!
+        </span>
+        <span style="font-size: 11.5px; font-weight: 800; color: var(--accent-gold); background: rgba(229, 192, 123, 0.15); padding: 2px 8px; border-radius: 4px;">
+          Grupo 415
+        </span>
+      </div>
+      <p style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; margin-bottom: 8px;">
+        Servicios activos con entrega rápida en el plantel o a domicilio para el Grupo 415:
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 12px; font-size: 12.5px;">
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,149,0,0.3);">
+          <strong style="color: #FF9500;">📖 Copias Lengua Española:</strong><br>
+          $20 anticipado Clip / $25 contra entrega
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(52,199,89,0.3);">
+          <strong style="color: #34C759;">🌍 Mapas de Geografía:</strong><br>
+          $15 pesos (2 copias c/u · <em>“Uno nunca sabe”</em>)
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; border: 1px solid rgba(229,192,123,0.3);">
+          <strong style="color: var(--accent-gold);">📦 Combo Lengua + Historia:</strong><br>
+          $30 pesos (pago contra entrega)
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="https://wa.me/525642834619?text=Hola%2C%20quisiera%20solicitar%20servicios%20escolares%20de%20Encardomy%20para%20el%20grupo%20415" target="_blank" rel="noopener noreferrer" class="mac-btn-tool" style="background: #25D366; color: #04140b; font-weight: 800; padding: 9px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+          <span>💬</span>
+          <span>Pedir por WhatsApp (52 5642834619)</span>
+        </a>
+        <a href="ipad-interes.html" class="mac-btn-tool" style="background: rgba(255,255,255,0.08); color: var(--text-primary); font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+          <span>🎁</span>
+          <span>Ver catálogo completo en Interés ↗</span>
+        </a>
+      </div>
+    </section>
+
+
     <!-- Navegación superior -->
     <a href="index.html" class="back-btn-header" aria-label="Volver al inicio">
       ← Volver al Inicio
@@ -93,11 +133,90 @@
         Exámenes Programados
       </h2>
 
-      <!-- Estado Vacío Oficial (Regla 16 y 34) -->
-      <div class="empty-state-card" id="examenes-empty-state">
-        <div class="empty-state-icon" aria-hidden="true">📋</div>
-        <div class="empty-state-text">No hay exámenes por ahora.</div>
-        <div class="empty-state-subtext">Las fechas oficiales de exámenes parciales se publicarán oportunamente.</div>
+      <!-- Contenedor Sincronizado de Examenes -->
+      <div id="examenes-empty-state" style="display:none;"></div>
+      <div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+
+            <div class="glass-card" style="border-left: 5px solid #34C759; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='examen-geografia-estados.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #34C759; letter-spacing: 0.5px;">
+                    🌍 Geografía
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Lunes 5 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="examen-geografia-estados.html" style="color: inherit; text-decoration: none;">Examen: Estados, Capitales y Alcaldías</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen el próximo lunes 5 de octubre. Llevar mapas oficiales con nombre completo (apellidos primero) + grupo dentro del margen.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="examen-geografia-estados.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #2997FF; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='examen-matematicas-oct.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #2997FF; letter-spacing: 0.5px;">
+                    📐 Matemáticas IV
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 8 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="examen-matematicas-oct.html" style="color: inherit; text-decoration: none;">Examen de Matemáticas IV</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen programado para el 8 de octubre de 2026.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="examen-matematicas-oct.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #AF52DE; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='examen-historia-revoluciones.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #AF52DE; letter-spacing: 0.5px;">
+                    🏛️ Historia Universal III
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 15 de octubre de 2026 · 11:00 a 11:30 hrs
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="examen-historia-revoluciones.html" style="color: inherit; text-decoration: none;">Examen: Las 4 Revoluciones Industriales</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Jueves 15 de octubre de 2026, 11:00 a 11:30 hrs en CC1 — Centro de Cómputo 1. 20 preguntas (sujeto a disponibilidad de CC1).
+                </p>
+                <div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 CC1 — Centro de Cómputo 1, ENP 4</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="examen-historia-revoluciones.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                <button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); border: none; cursor: pointer; border-radius: 6px;" onclick='event.stopPropagation(); window.addCalendarEvent({&quot;title&quot;: &quot;Examen de Historia Universal III: Las 4 Revoluciones Industriales&quot;, &quot;startISO&quot;: &quot;2026-10-15T11:00:00-06:00&quot;, &quot;endISO&quot;: &quot;2026-10-15T11:30:00-06:00&quot;, &quot;location&quot;: &quot;CC1 \u2014 Centro de C\u00f3mputo 1, ENP 4&quot;, &quot;description&quot;: &quot;Examen de 20 preguntas sobre Las 4 Revoluciones Industriales. Acudir directamente a CC1 (sujeto a disponibilidad de CC1).&quot;})'>📅 Calendario</button>
+                
+              </div>
+            </div>
       </div>
     </section>
 
@@ -345,11 +464,90 @@
         Exámenes Programados
       </h2>
 
-      <!-- Estado Vacío Oficial (Regla 16 y 34) -->
-      <div class="empty-state-card" id="ipad-examenes-empty-state">
-        <div class="empty-state-icon" aria-hidden="true">📋</div>
-        <div class="empty-state-text">No hay exámenes por ahora.</div>
-        <div class="empty-state-subtext">Las fechas oficiales de exámenes parciales se publicarán oportunamente.</div>
+      <!-- Contenedor Sincronizado de Examenes -->
+      <div id="ipad-examenes-empty-state" style="display:none;"></div>
+      <div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+
+            <div class="glass-card" style="border-left: 5px solid #34C759; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='ipad-examen-geografia-estados.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #34C759; letter-spacing: 0.5px;">
+                    🌍 Geografía
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Lunes 5 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="ipad-examen-geografia-estados.html" style="color: inherit; text-decoration: none;">Examen: Estados, Capitales y Alcaldías</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen el próximo lunes 5 de octubre. Llevar mapas oficiales con nombre completo (apellidos primero) + grupo dentro del margen.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="ipad-examen-geografia-estados.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #2997FF; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='ipad-examen-matematicas-oct.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #2997FF; letter-spacing: 0.5px;">
+                    📐 Matemáticas IV
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 8 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="ipad-examen-matematicas-oct.html" style="color: inherit; text-decoration: none;">Examen de Matemáticas IV</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen programado para el 8 de octubre de 2026.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="ipad-examen-matematicas-oct.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #AF52DE; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='ipad-examen-historia-revoluciones.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #AF52DE; letter-spacing: 0.5px;">
+                    🏛️ Historia Universal III
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 15 de octubre de 2026 · 11:00 a 11:30 hrs
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="ipad-examen-historia-revoluciones.html" style="color: inherit; text-decoration: none;">Examen: Las 4 Revoluciones Industriales</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Jueves 15 de octubre de 2026, 11:00 a 11:30 hrs en CC1 — Centro de Cómputo 1. 20 preguntas (sujeto a disponibilidad de CC1).
+                </p>
+                <div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 CC1 — Centro de Cómputo 1, ENP 4</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="ipad-examen-historia-revoluciones.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                <button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); border: none; cursor: pointer; border-radius: 6px;" onclick='event.stopPropagation(); window.addCalendarEvent({&quot;title&quot;: &quot;Examen de Historia Universal III: Las 4 Revoluciones Industriales&quot;, &quot;startISO&quot;: &quot;2026-10-15T11:00:00-06:00&quot;, &quot;endISO&quot;: &quot;2026-10-15T11:30:00-06:00&quot;, &quot;location&quot;: &quot;CC1 \u2014 Centro de C\u00f3mputo 1, ENP 4&quot;, &quot;description&quot;: &quot;Examen de 20 preguntas sobre Las 4 Revoluciones Industriales. Acudir directamente a CC1 (sujeto a disponibilidad de CC1).&quot;})'>📅 Calendario</button>
+                
+              </div>
+            </div>
       </div>
     </section>
 
@@ -514,11 +712,90 @@
         Exámenes Programados
       </h2>
 
-      <!-- Estado Vacío Oficial (Regla 16 y 34) -->
-      <div class="empty-state-card" id="mac-examenes-empty-state">
-        <div class="empty-state-icon" aria-hidden="true">📋</div>
-        <div class="empty-state-text">No hay exámenes por ahora.</div>
-        <div class="empty-state-subtext">Las fechas oficiales de exámenes parciales se publicarán oportunamente.</div>
+      <!-- Contenedor Sincronizado de Examenes -->
+      <div id="mac-examenes-empty-state" style="display:none;"></div>
+      <div class="schedule-list tablet-cards-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+
+            <div class="glass-card" style="border-left: 5px solid #34C759; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='mac-examen-geografia-estados.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #34C759; letter-spacing: 0.5px;">
+                    🌍 Geografía
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Lunes 5 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="mac-examen-geografia-estados.html" style="color: inherit; text-decoration: none;">Examen: Estados, Capitales y Alcaldías</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen el próximo lunes 5 de octubre. Llevar mapas oficiales con nombre completo (apellidos primero) + grupo dentro del margen.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="mac-examen-geografia-estados.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #2997FF; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='mac-examen-matematicas-oct.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #2997FF; letter-spacing: 0.5px;">
+                    📐 Matemáticas IV
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 8 de octubre de 2026
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="mac-examen-matematicas-oct.html" style="color: inherit; text-decoration: none;">Examen de Matemáticas IV</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Examen programado para el 8 de octubre de 2026.
+                </p>
+                
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="mac-examen-matematicas-oct.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                
+                
+              </div>
+            </div>
+
+            <div class="glass-card" style="border-left: 5px solid #AF52DE; margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;" onclick="window.location.href='mac-examen-historia-revoluciones.html'">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; color: #AF52DE; letter-spacing: 0.5px;">
+                    🏛️ Historia Universal III
+                  </span>
+                  <span style="font-size: 11px; color: var(--text-tertiary);">
+                    Jueves 15 de octubre de 2026 · 11:00 a 11:30 hrs
+                  </span>
+                </div>
+                <h3 style="font-size: 16.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">
+                  <a href="mac-examen-historia-revoluciones.html" style="color: inherit; text-decoration: none;">Examen: Las 4 Revoluciones Industriales</a>
+                </h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 12px;">
+                  Jueves 15 de octubre de 2026, 11:00 a 11:30 hrs en CC1 — Centro de Cómputo 1. 20 preguntas (sujeto a disponibilidad de CC1).
+                </p>
+                <div style="font-size: 12px; color: var(--accent-gold); margin-bottom: 10px;">📍 CC1 — Centro de Cómputo 1, ENP 4</div>
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <a href="mac-examen-historia-revoluciones.html" class="ipad-btn-action" style="padding: 7px 14px; font-size: 12.5px; font-weight: 700; text-decoration: none; background: var(--accent-gold); color: #04140b; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px;">
+                  <span>Más información →</span>
+                </a>
+                <button type="button" class="ipad-btn-action" style="padding: 6px 12px; font-size: 12px; background: rgba(229,192,123,0.15); color: var(--accent-gold); border: none; cursor: pointer; border-radius: 6px;" onclick='event.stopPropagation(); window.addCalendarEvent({&quot;title&quot;: &quot;Examen de Historia Universal III: Las 4 Revoluciones Industriales&quot;, &quot;startISO&quot;: &quot;2026-10-15T11:00:00-06:00&quot;, &quot;endISO&quot;: &quot;2026-10-15T11:30:00-06:00&quot;, &quot;location&quot;: &quot;CC1 \u2014 Centro de C\u00f3mputo 1, ENP 4&quot;, &quot;description&quot;: &quot;Examen de 20 preguntas sobre Las 4 Revoluciones Industriales. Acudir directamente a CC1 (sujeto a disponibilidad de CC1).&quot;})'>📅 Calendario</button>
+                
+              </div>
+            </div>
       </div>
     </section>
 
